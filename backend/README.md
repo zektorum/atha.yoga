@@ -1,1 +1,0 @@
-## 🕉 Welcome to the "Atha Yoga" project repository.
