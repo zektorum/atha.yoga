@@ -1,2 +1,2 @@
-.env
-postgresql/data
+/.env
+/yoga/postgresql/data
