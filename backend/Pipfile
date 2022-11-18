@@ -9,3 +9,4 @@ name = "pypi"
 [packages]
 django = "*"
 psycopg2-binary = "*"
+gunicorn = "*"
