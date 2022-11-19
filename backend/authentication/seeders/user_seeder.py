@@ -1,5 +1,5 @@
 from faker import Faker
-from backend.auth.models import User
+from backend.authentication.models import User
 
 
 class UserSeeder:

@@ -11,4 +11,4 @@ class User(AbstractUser):
 
     status = models.CharField(max_length=100, blank=True)
     image = models.ImageField(upload_to='user_images/', blank=True)
-    is_instructor = models.NullBooleanField()  # null - user hasn't yet chosen his role
+    is_instructor = models.BooleanField(null=True)  # null - user hasn't yet chosen his role
