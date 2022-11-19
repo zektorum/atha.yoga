@@ -1,4 +1,5 @@
 from faker import Faker
+from django.contrib.auth.hashers import make_password
 from backend.authentication.models import User
 
 
@@ -10,6 +11,6 @@ class UserSeeder:
         profile = self.faker.simple_profile()
         return User(username=profile['username'],
                     email=profile['mail'],
-                    password=self.faker.password(),
+                    password=make_password(self.faker.password()),
                     status=' '.join(self.faker.words(self.faker.random_int(0, 20))),
                     is_instructor=self.faker.random_element((None, True, False)))
