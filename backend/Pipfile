@@ -13,3 +13,10 @@ gunicorn = "*"
 python-dotenv = "*"
 djangorestframework = "*"
 drf-spectacular = "*"
+
+[dev-packages]
+isort = "*"
+pre-commit = "*"
+flake8 = "*"
+mypy = "*"
+black = "*"
