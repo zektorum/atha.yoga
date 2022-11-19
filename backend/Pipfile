@@ -16,6 +16,7 @@ drf-spectacular = "*"
 django-cors-headers = "*"
 faker = "*"
 pillow = "*"
+djangorestframework-simplejwt = "*"
 
 [dev-packages]
 isort = "*"
