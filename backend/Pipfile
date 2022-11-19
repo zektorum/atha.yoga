@@ -14,6 +14,8 @@ python-dotenv = "*"
 djangorestframework = "*"
 drf-spectacular = "*"
 django-cors-headers = "*"
+faker = "*"
+pillow = "*"
 
 [dev-packages]
 isort = "*"

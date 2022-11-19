@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "drf_spectacular",
     "corsheaders",
+    "authentication",
 ]
 
 MIDDLEWARE = [
@@ -97,6 +98,7 @@ DATABASES = {
         "PORT": os.environ.get("POSTGRES_PORT", ""),
     }
 }
+AUTH_USER_MODEL = 'authentication.User'
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
