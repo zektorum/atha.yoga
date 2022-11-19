@@ -10,5 +10,5 @@ class User(AbstractUser):
     email = models.EmailField(_('email address'), unique=True, blank=False)
 
     about = models.CharField(max_length=100, blank=True)
-    image = models.ImageField(upload_to='user_images/', blank=True)
+    avatar = models.ImageField(upload_to='user_avatars/', blank=True)
     is_instructor = models.BooleanField()
