@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "corsheaders",
     "authentication",
+    "core",
 ]
 
 MIDDLEWARE = [
@@ -98,7 +99,7 @@ DATABASES = {
         "PORT": os.environ.get("POSTGRES_PORT", ""),
     }
 }
-AUTH_USER_MODEL = 'authentication.User'
+AUTH_USER_MODEL = "authentication.User"
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -138,3 +139,5 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+DEFAULT_PER_PAGE = 15
