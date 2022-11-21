@@ -9,3 +9,18 @@ name = "pypi"
 [packages]
 django = "*"
 psycopg2-binary = "*"
+gunicorn = "*"
+python-dotenv = "*"
+djangorestframework = "*"
+drf-spectacular = "*"
+django-cors-headers = "*"
+faker = "*"
+pillow = "*"
+djangorestframework-simplejwt = "*"
+
+[dev-packages]
+isort = "*"
+pre-commit = "*"
+flake8 = "*"
+mypy = "*"
+black = "*"
