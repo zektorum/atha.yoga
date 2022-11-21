@@ -124,6 +124,7 @@ module.exports = {
   output: {
     filename: getFilename('js'),
     path: path.resolve(__dirname, 'dist'),
+    publicPath: '/',
   },
   mode: envConfig.mode,
   module: {
@@ -147,4 +148,7 @@ module.exports = {
     extensions: ['.js', '.jsx'],
   },
   ...envConfig.isDev && { devtool: 'source-map' },
+  devServer: {
+    historyApiFallback: true,
+  },
 };

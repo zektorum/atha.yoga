@@ -23,4 +23,7 @@ module.exports = {
     }],
     'arrow-parens': ['error', 'as-needed'],
   },
+  globals: {
+    __API_URL__: 'readonly',
+  },
 };
