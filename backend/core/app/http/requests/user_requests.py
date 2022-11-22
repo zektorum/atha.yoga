@@ -6,7 +6,7 @@ from core.app.utils.serializers import UnimplementedSerializer
 
 class UserRegisterRequest(UnimplementedSerializer):
     email = serializers.EmailField()
-    password = serializers.CharField()
+    password = serializers.CharField(min_length=8)
     password_confirmation = serializers.CharField()
 
     def validate(self, attrs: dict) -> dict:
