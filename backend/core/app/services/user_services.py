@@ -1,8 +1,10 @@
 from functools import cached_property
 from typing import Tuple
 
+from rest_framework.exceptions import ValidationError
+
 from core.app.repositories.user_repository import UserRepository
-from core.app.services.types import UserRegisterData
+from core.app.services.types import UserRegisterData, UserLoginData
 from core.app.utils.jwt import UserToken, get_tokens_for_user
 from core.models import User
 
@@ -11,16 +13,36 @@ class UserRegister:
     repository = UserRepository()
 
     def __init__(self, data: UserRegisterData):
-        self._data = data
+        self.data = data
 
     @cached_property
     def user(self) -> User:
         user = User()
-        user.username = user.email = self._data["email"]
-        user.set_password(self._data["password"])
+        user.username = user.email = self.data["email"]
+        user.set_password(self.data["password"])
         self.repository.store(user=user)
         return user
 
     def register(self) -> Tuple[User, UserToken]:
         token_data = get_tokens_for_user(user=self.user)
+        return self.user, token_data
+
+
+class UserLogin:
+    repository = UserRepository()
+
+    def __init__(self, data: UserLoginData):
+        self.data = data
+
+    @cached_property
+    def user(self) -> User:
+        user = self.repository.find_user_by_login_data(
+            self.data["email"], self.data["password"]
+        )
+        if user is None:
+            raise ValidationError("the username or password is incorrect")
+        return user
+
+    def login(self) -> Tuple[User, UserToken]:
+        token_data = get_tokens_for_user(self.user)
         return self.user, token_data
