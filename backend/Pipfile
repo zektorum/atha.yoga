@@ -17,6 +17,7 @@ django-cors-headers = "*"
 faker = "*"
 pillow = "*"
 djangorestframework-simplejwt = "*"
+django-extensions = "*"
 
 [dev-packages]
 isort = "*"

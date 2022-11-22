@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from backend.core.app.utils.serializers import UnimplementedSerializer
+from core.app.utils.serializers import UnimplementedSerializer
 
 
 class UserRegisterRequest(UnimplementedSerializer):
