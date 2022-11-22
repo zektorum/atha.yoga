@@ -38,7 +38,7 @@ class UserLogin:
     def user(self) -> User:
         user = self.repository.find_user_by_email(self.data["email"])
         if not user or not user.check_password(self.data["password"]):
-            raise PermissionDenied("email or password is incorrect")
+            raise PermissionDenied()
         return user
 
     def login(self) -> Tuple[User, UserToken]:
