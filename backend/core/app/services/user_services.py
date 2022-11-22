@@ -3,7 +3,8 @@ from typing import Tuple
 
 from core.app.repositories.user_repository import UserRepository
 from core.app.services.types import UserRegisterData
-from core.models import User, get_tokens_for_user, UserToken
+from core.app.utils.jwt import UserToken, get_tokens_for_user
+from core.models import User
 
 
 class UserRegister:
