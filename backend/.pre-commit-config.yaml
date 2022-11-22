@@ -6,7 +6,7 @@ repos:
       - id: black
         name: Running black
         entry: black
-        exclude: '^(migrations\/.*)$'
+        exclude: '^.*\b(migrations)\b.*$'
         language: system
         files: .*.py
       - id: flake8
@@ -14,7 +14,7 @@ repos:
         entry: flake8 --count
         language: system
         files: .*.py
-        exclude: '^(migrations\/.*)$'
+        exclude: '^.*\b(migrations)\b.*$'
       - id: mypy
         name: Running mypy
         entry: mypy
