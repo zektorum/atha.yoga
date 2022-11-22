@@ -13,5 +13,5 @@ class UserResource(ModelSerializer):
             "email",
             "about",
             "avatar",
-            "is_instructor",
+            "is_teacher",
         ]

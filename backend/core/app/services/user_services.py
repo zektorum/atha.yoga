@@ -1,7 +1,7 @@
 from functools import cached_property
 from typing import Tuple
 
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import PermissionDenied
 
 from core.app.repositories.user_repository import UserRepository
 from core.app.services.types import UserRegisterData, UserLoginData
@@ -36,11 +36,9 @@ class UserLogin:
 
     @cached_property
     def user(self) -> User:
-        user = self.repository.find_user_by_login_data(
-            self.data["email"], self.data["password"]
-        )
-        if user is None:
-            raise ValidationError("the username or password is incorrect")
+        user = self.repository.find_user_by_email(self.data["email"])
+        if not user or not user.check_password(self.data["password"]):
+            raise PermissionDenied("email or password is incorrect")
         return user
 
     def login(self) -> Tuple[User, UserToken]:

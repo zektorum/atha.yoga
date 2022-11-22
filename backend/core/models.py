@@ -10,4 +10,4 @@ class User(AbstractUser):
 
     about = models.CharField(max_length=100, blank=True)
     avatar = models.ImageField(upload_to="user_avatars/", blank=True)
-    is_instructor = models.BooleanField(default=False)
+    is_teacher = models.BooleanField(default=False)
