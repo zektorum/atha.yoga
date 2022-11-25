@@ -41,7 +41,7 @@ class UserSwitchPassHandler(GenericAPIView):
         data = self.serializer_class(data=request.data)
         data.is_valid(raise_exception=True)
 
-        user, token = UserSwitchPass(data=data.validated_data).login()
+        user, token = UserSwitchPass(data=data.validated_data).switch()
         return Response(
             {"data": {"user": UserResource(user).data, "tokens": token._asdict()}}
         )

@@ -57,6 +57,7 @@ class UserSwitchPass:
         if not user or not user.check_password(self.data["password"]):
             raise PermissionDenied()
         user.set_password(self.data["new_password"])
+        self.repository.store(user=user)
         return user
 
     def switch(self) -> Tuple[User, UserToken]:
