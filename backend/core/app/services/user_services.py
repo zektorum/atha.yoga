@@ -1,7 +1,7 @@
 from functools import cached_property
 from typing import Tuple
 
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, ValidationError
 
 from core.app.repositories.user_repository import UserRepository
 from core.app.services.types import UserRegisterData, UserLoginData, UserChangePassData
@@ -18,6 +18,8 @@ class UserRegister:
     @cached_property
     def user(self) -> User:
         user = User()
+        if self.repository.registration_form_validation(self.data["email"]):
+             raise ValidationError('User with this email already exists', code='already exists')
         user.username = user.email = self.data["email"]
         user.set_password(self.data["password"])
         self.repository.store(user=user)
