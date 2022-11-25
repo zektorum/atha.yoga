@@ -9,3 +9,8 @@ class UserRegisterData(TypedDict):
 class UserLoginData(TypedDict):
     email: str
     password: str
+
+class UserChangePassData(TypedDict):
+    email: str
+    password: str
+    new_password: str
