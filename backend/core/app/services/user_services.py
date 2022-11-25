@@ -18,7 +18,7 @@ class UserRegister:
     @cached_property
     def user(self) -> User:
         user = User()
-        if self.repository.registration_form_validation(self.data["email"]):
+        if self.repository.find_user_by_email(self.data["email"]):
              raise ValidationError('User with this email already exists', code='already exists')
         user.username = user.email = self.data["email"]
         user.set_password(self.data["password"])
