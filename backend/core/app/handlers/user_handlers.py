@@ -4,9 +4,9 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from core.app.http.requests.user_requests import UserRegisterRequest, UserLoginRequest, UserSwitchPassRequest
+from core.app.http.requests.user_requests import UserRegisterRequest, UserLoginRequest, UserChangePassRequest
 from core.app.http.resources.user_resources import UserResource
-from core.app.services.user_services import UserRegister, UserLogin, UserSwitchPass
+from core.app.services.user_services import UserRegister, UserLogin, UserChangePass
 
 
 class UserRegisterHandler(GenericAPIView):
@@ -34,14 +34,14 @@ class UserLoginHandler(GenericAPIView):
             {"data": {"user": UserResource(user).data, "tokens": token._asdict()}}
         )
 
-class UserSwitchPassHandler(GenericAPIView):
-    serializer_class = UserSwitchPassRequest
+class UserChangePassHandler(GenericAPIView):
+    serializer_class = UserChangePassRequest
 
     def post(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         data = self.serializer_class(data=request.data)
         data.is_valid(raise_exception=True)
 
-        user, token = UserSwitchPass(data=data.validated_data).switch()
+        user, token = UserChangePass(data=data.validated_data).change()
         return Response(
             {"data": {"user": UserResource(user).data, "tokens": token._asdict()}}
         )

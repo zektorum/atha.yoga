@@ -10,7 +10,7 @@ class UserLoginData(TypedDict):
     email: str
     password: str
 
-class UserSwitchPassData(TypedDict):
+class UserChangePassData(TypedDict):
     email: str
     password: str
     new_password: str

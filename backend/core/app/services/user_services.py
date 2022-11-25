@@ -4,7 +4,7 @@ from typing import Tuple
 from rest_framework.exceptions import PermissionDenied
 
 from core.app.repositories.user_repository import UserRepository
-from core.app.services.types import UserRegisterData, UserLoginData, UserSwitchPassData
+from core.app.services.types import UserRegisterData, UserLoginData, UserChangePassData
 from core.app.utils.jwt import UserToken, get_tokens_for_user
 from core.models import User
 
@@ -45,10 +45,10 @@ class UserLogin:
         token_data = get_tokens_for_user(self.user)
         return self.user, token_data
 
-class UserSwitchPass:
+class UserChangePass:
     repository = UserRepository()
 
-    def __init__(self, data: UserSwitchPassData):
+    def __init__(self, data: UserChangePassData):
         self.data = data
 
     @cached_property
@@ -60,6 +60,6 @@ class UserSwitchPass:
         self.repository.store(user=user)
         return user
 
-    def switch(self) -> Tuple[User, UserToken]:
+    def change(self) -> Tuple[User, UserToken]:
         token_data = get_tokens_for_user(self.user)
         return self.user, token_data
