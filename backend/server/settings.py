@@ -78,7 +78,18 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "server.wsgi.application"
 
-REST_FRAMEWORK = {"DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema"}
+REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    'DEFAULT_THROTTLE_CLASSES': [
+        'core.custom_middleware.CustomAnonRateThrottle',
+        'core.custom_middleware.CustomUserRateThrottle'
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '100/min',
+        'user': '100/min'
+    }
+}
+
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "ATHA Yoga API",
