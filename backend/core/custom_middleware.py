@@ -1,6 +1,8 @@
-from rest_framework.throttling import UserRateThrottle, AnonRateThrottle, SimpleRateThrottle
+from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 
-DENIED_DURATION = 600
+from server.settings import REST_FRAMEWORK
+
+DENIED_DURATION = int(REST_FRAMEWORK["DEFAULT_THROTTLE_DENIED_DURATION"])
 
 
 class CustomUserRateThrottle(UserRateThrottle):
