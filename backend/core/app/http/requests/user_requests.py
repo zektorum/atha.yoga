@@ -21,6 +21,7 @@ class UserLoginRequest(UnimplementedSerializer):
     email = serializers.EmailField()
     password = serializers.CharField(min_length=8, max_length=128)
 
+
 class UserChangePassRequest(UnimplementedSerializer):
     email = serializers.EmailField()
     password = serializers.CharField(min_length=8, max_length=128)
@@ -28,7 +29,5 @@ class UserChangePassRequest(UnimplementedSerializer):
 
     def validate(self, attrs: dict) -> dict:
         if attrs["password"] == attrs["new_password"]:
-            raise ValidationError(
-                "old and new passwords shouldn't be equal"
-            )
+            raise ValidationError("old and new passwords shouldn't be equal")
         return attrs

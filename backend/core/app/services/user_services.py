@@ -19,7 +19,7 @@ class UserRegister:
     def user(self) -> User:
         user = User()
         if self.repository.find_user_by_email(self.data["email"]):
-             raise ValidationError('User with this email already exists')
+            raise ValidationError("User with this email already exists")
         user.username = user.email = self.data["email"]
         user.set_password(self.data["password"])
         self.repository.store(user=user)
@@ -46,6 +46,7 @@ class UserLogin:
     def login(self) -> Tuple[User, UserToken]:
         token_data = get_tokens_for_user(self.user)
         return self.user, token_data
+
 
 class UserChangePass:
     repository = UserRepository()
