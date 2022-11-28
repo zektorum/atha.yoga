@@ -19,10 +19,6 @@ class CommentCreate:
 
     @cached_property
     def comment(self) -> Comment:
-        from classes.models import Class
-        from datetime import datetime
-
-        Class.objects.create(name="jfifjqe fojqf qef", start_datetime=datetime.now())
         user = self.user_repository.find_user_by_email(email=self.data["email"])
         _class = self.class_repository.find_class_by_id(_id=self.data["class_id"])
         if not user or not _class:
