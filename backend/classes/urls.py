@@ -1,8 +1,11 @@
 from django.urls import path
 
-from classes.app.handlers.comment_handler import CommentAddHandler, CommentsGetHandler
+from classes.app.handlers.comment_handler import (
+    CommentCreateHandler,
+    CommentListHandler,
+)
 
 urlpatterns = [
-    path("comments/add", CommentAddHandler.as_view(), name="add_comment"),
-    path("comments/", CommentsGetHandler.as_view(), name="comments"),
+    path("comments/create/", CommentCreateHandler.as_view(), name="comment_create"),
+    path("comments/", CommentListHandler.as_view(), name="comment_list"),
 ]

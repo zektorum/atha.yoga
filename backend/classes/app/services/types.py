@@ -1,11 +1,7 @@
 from typing import TypedDict
 
 
-class CommentAddData(TypedDict):
+class CommentCreateData(TypedDict):
     email: str
     text: str
-    class_id: int
-
-
-class CommentsGetData(TypedDict):
     class_id: int

@@ -1,6 +1,6 @@
 from faker import Faker
 
-from classes.models import Class
+from backend.classes.models import Class
 
 
 class ClassSeeder:

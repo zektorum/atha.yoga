@@ -1,30 +1,32 @@
 from functools import cached_property
-from typing import List
 
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import NotFound
 
 from classes.app.repositories.class_repository import ClassRepository
 from classes.app.repositories.comment_repository import CommentRepository
 from core.app.repositories.user_repository import UserRepository
-from classes.app.services.types import CommentAddData, CommentsGetData
+from classes.app.services.types import CommentCreateData
 from classes.models import Comment
 
 
-class CommentAddService:
+class CommentCreate:
     repository = CommentRepository()
+    user_repository = UserRepository()
+    class_repository = ClassRepository()
 
-    def __init__(self, data: CommentAddData):
+    def __init__(self, data: CommentCreateData):
         self.data = data
 
     @cached_property
     def comment(self) -> Comment:
-        user_repository = UserRepository()
-        class_repository = ClassRepository()
+        from classes.models import Class
+        from datetime import datetime
 
-        user = user_repository.find_user_by_email(self.data["email"])
-        _class = class_repository.find_class_by_id(self.data["class_id"])
+        Class.objects.create(name="jfifjqe fojqf qef", start_datetime=datetime.now())
+        user = self.user_repository.find_user_by_email(email=self.data["email"])
+        _class = self.class_repository.find_class_by_id(_id=self.data["class_id"])
         if not user or not _class:
-            raise PermissionDenied()
+            raise NotFound()
 
         comment = Comment()
         comment.user = user
@@ -34,21 +36,5 @@ class CommentAddService:
         self.repository.store(comment=comment)
         return comment
 
-    def add(self) -> Comment:
+    def create(self) -> Comment:
         return self.comment
-
-
-class CommentsGetService:
-    def __init__(self, data: CommentsGetData):
-        self.data = data
-
-    @cached_property
-    def comments(self) -> List[Comment]:
-        class_repository = ClassRepository()
-        _class = class_repository.find_class_by_id(self.data["class_id"])
-        if not _class:
-            raise PermissionDenied()
-        return _class.comments
-
-    def get(self) -> List[Comment]:
-        return self.comments

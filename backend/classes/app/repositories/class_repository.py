@@ -11,5 +11,4 @@ class ClassRepository(BaseRepository):
         class_.save()
 
     def find_class_by_id(self, _id: int) -> Optional[Class]:
-        _class = Class.objects.filter(pk=_id).first()
-        return _class
+        return Class.objects.filter(pk=_id).first()
