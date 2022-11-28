@@ -12,6 +12,4 @@ class UserRepository(BaseRepository):
 
     def find_user_by_email(self, email: str) -> User:
         user = User.objects.filter(email=email).first()
-        if not user:
-            raise PermissionDenied()
         return user
