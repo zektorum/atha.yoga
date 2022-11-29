@@ -1,6 +1,6 @@
 from rest_framework.serializers import ModelSerializer
 
-from classes.models import Comment
+from lessons.models import Comment
 from core.models import User
 
 

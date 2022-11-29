@@ -1,14 +1,14 @@
 from rest_framework.serializers import ModelSerializer
 
 from comment_resources import CommentResource
-from classes.models import Class
+from lessons.models import Lesson
 
 
 class ClassResource(ModelSerializer):
     comments = CommentResource(many=True)
 
     class Meta:
-        model = Class
+        model = Lesson
         fields = [
             "id",
             "name",

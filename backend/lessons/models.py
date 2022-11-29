@@ -2,7 +2,7 @@ from django.db import models
 from core.models import User
 
 
-class Class(models.Model):
+class Lesson(models.Model):
     name = models.CharField(max_length=64)
     description = models.TextField(max_length=512, blank=True)
     # type =
@@ -19,5 +19,7 @@ class Class(models.Model):
 class Comment(models.Model):
     text = models.TextField(max_length=512)
     user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
-    _class = models.ForeignKey(Class, related_name="comments", on_delete=models.CASCADE)
+    lesson = models.ForeignKey(
+        Lesson, related_name="comments", on_delete=models.CASCADE
+    )
     created_at = models.DateTimeField(auto_now_add=True)

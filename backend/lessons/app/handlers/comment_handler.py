@@ -4,13 +4,13 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from classes.app.http.requests.comment_requests import (
+from lessons.app.http.requests.comment_requests import (
     CommentCreateRequest,
     CommentListRequest,
 )
-from classes.app.http.resources.comment_resources import CommentResource
-from classes.app.repositories.comment_repository import CommentRepository
-from classes.app.services.comment_service import CommentCreate
+from lessons.app.http.resources.comment_resources import CommentResource
+from lessons.app.repositories.comment_repository import CommentRepository
+from lessons.app.services.comment_service import CommentCreate
 
 
 class CommentCreateHandler(GenericAPIView):
@@ -31,7 +31,7 @@ class CommentListHandler(GenericAPIView):
         data = self.serializer_class(data=request.data)
         data.is_valid(raise_exception=True)
 
-        comments = CommentRepository().find_comments_by_class_id(
-            data.validated_data["class_id"]
+        comments = CommentRepository().find_comments_by_lesson_id(
+            data.validated_data["lesson_id"]
         )
         return Response({"comments": CommentResource(comments, many=True).data})

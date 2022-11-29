@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name="Class",
+            name="Lesson",
             fields=[
                 (
                     "id",
@@ -47,11 +47,11 @@ class Migration(migrations.Migration):
                 ("text", models.TextField(max_length=512)),
                 ("created_at", models.DateTimeField(auto_now_add=True)),
                 (
-                    "_class",
+                    "lesson",
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="comments",
-                        to="classes.class",
+                        to="lessons.lesson",
                     ),
                 ),
                 (

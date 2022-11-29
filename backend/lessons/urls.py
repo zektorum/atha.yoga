@@ -1,6 +1,6 @@
 from django.urls import path
 
-from classes.app.handlers.comment_handler import (
+from lessons.app.handlers.comment_handler import (
     CommentCreateHandler,
     CommentListHandler,
 )
