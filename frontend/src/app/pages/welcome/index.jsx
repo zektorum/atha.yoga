@@ -1,5 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Logo from '../../components/Logo.js';
+import SplashScreens from '../../components/SplashScreens.js';
+
 
 const WelcomePage = () => {
   const [isLogo, setIsLogo] = useState(true);
