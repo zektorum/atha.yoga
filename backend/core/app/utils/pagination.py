@@ -3,24 +3,27 @@ from typing import Optional, Type
 from django.conf import settings
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.db.models import QuerySet
+from rest_framework.request import Request
 from rest_framework.serializers import Serializer
 
 
 def paginate(
     resource: Type[Serializer],
     data: QuerySet,
-    page: int,
-    per_page: int = settings.DEFAULT_PER_PAGE,
+    request: Request,
     context: Optional[dict] = None,
 ) -> dict:
     """
     Func for paginate data in api handlers
     """
-
+    page = request.GET.get("page", 1)
     if context is None:
         context = {}
     try:
-        per_page = int(per_page) or settings.DEFAULT_PER_PAGE
+        per_page = (
+            int(request.GET.get("per_page", settings.DEFAULT_PER_PAGE))
+            or settings.DEFAULT_PER_PAGE
+        )
     except ValueError:
         per_page = settings.DEFAULT_PER_PAGE
     if not page:

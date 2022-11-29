@@ -1,6 +1,8 @@
 from typing import Any
 
+from rest_framework.decorators import permission_classes
 from rest_framework.generics import GenericAPIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 
@@ -13,6 +15,7 @@ from lessons.app.repositories.comment_repository import CommentRepository
 from lessons.app.services.comment_service import CommentCreate
 
 
+@permission_classes([IsAuthenticated])
 class CommentCreateHandler(GenericAPIView):
     serializer_class = CommentCreateRequest
 
@@ -20,7 +23,9 @@ class CommentCreateHandler(GenericAPIView):
         data = self.serializer_class(data=request.data)
         data.is_valid(raise_exception=True)
 
-        comment = CommentCreate(data=data.validated_data).create()
+        comment = CommentCreate(
+            data=data.validated_data, user=self.request.user
+        ).create()
         return Response({"comment": CommentResource(comment).data})
 
 
