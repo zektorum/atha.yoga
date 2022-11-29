@@ -8,3 +8,18 @@
 body {
   background-color: $body-color;
 }
+
+.logo__container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #0D6EFD;
+}
+
+.welcome__description {
+  height: 44px;
+  text-align: center;
+  white-space: pre;
+}
