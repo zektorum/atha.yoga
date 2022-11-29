@@ -11,4 +11,5 @@ urlpatterns = [
         name="swagger-ui",
     ),
     path("core/", include("core.urls")),
+    path("lessons/", include("lessons.urls")),
 ]

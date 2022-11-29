@@ -4,7 +4,11 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from core.app.http.requests.user_requests import UserRegisterRequest, UserLoginRequest, UserChangePassRequest
+from core.app.http.requests.user_requests import (
+    UserRegisterRequest,
+    UserLoginRequest,
+    UserChangePassRequest,
+)
 from core.app.http.resources.user_resources import UserResource
 from core.app.services.user_services import UserRegister, UserLogin, UserChangePass
 
@@ -33,6 +37,7 @@ class UserLoginHandler(GenericAPIView):
         return Response(
             {"data": {"user": UserResource(user).data, "tokens": token._asdict()}}
         )
+
 
 class UserChangePassHandler(GenericAPIView):
     serializer_class = UserChangePassRequest
