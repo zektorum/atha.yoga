@@ -19,6 +19,24 @@ import '@fontsource/roboto/700.css';
 
 import './theme/style.scss';
 
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#0D6EFD',
+    },
+    text: {
+      primary: '#212121',
+      secondary: '#616161',
+    },
+  },
+  h4: {
+    fontWeight: 500,
+  },
+  h1: {
+    fontWeight: 500,
+  },
+});
+
 const App = () => {
   const auth = useAuth();
   const Layout = auth.isLoggedIn ? ProfileLayout : BaseLayout;
