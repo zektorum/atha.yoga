@@ -20,9 +20,9 @@ class CommentCreate:
     @cached_property
     def comment(self) -> Comment:
         user = self.user_repository.find_user_by_email(email=self.data["email"])
-        lesson = self.lesson_repository.find_lesson_by_id(_id=self.data["lesson_id"])
+        lesson = self.lesson_repository.find_lesson_by_id(id_=self.data["lesson_id"])
         if not user or not lesson:
-            raise NotFound()
+            raise NotFound("no such comments found")
 
         comment = Comment()
         comment.user = user

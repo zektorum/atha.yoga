@@ -31,7 +31,7 @@ class CommentListHandler(GenericAPIView):
         data = self.serializer_class(data=request.data)
         data.is_valid(raise_exception=True)
 
-        comments = CommentRepository().find_comments_by_lesson_id(
-            data.validated_data["lesson_id"]
+        comments = CommentRepository().find_by_lesson_id(
+            lesson_id=data.validated_data["lesson_id"]
         )
         return Response({"comments": CommentResource(comments, many=True).data})

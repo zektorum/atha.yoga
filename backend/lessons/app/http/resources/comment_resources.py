@@ -24,6 +24,7 @@ class CommentResource(ModelSerializer):
     class Meta:
         model = Comment
         fields = [
+            "id",
             "text",
             "user",
             "created_at",

@@ -10,5 +10,5 @@ class LessonRepository(BaseRepository):
     def store(self, lesson: Lesson) -> None:
         lesson.save()
 
-    def find_lesson_by_id(self, _id: int) -> Optional[Lesson]:
-        return Lesson.objects.filter(pk=_id).first()
+    def find_lesson_by_id(self, id_: int) -> Optional[Lesson]:
+        return Lesson.objects.filter(pk=id_).first()
