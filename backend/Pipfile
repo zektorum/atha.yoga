@@ -18,6 +18,8 @@ faker = "*"
 pillow = "*"
 djangorestframework-simplejwt = "*"
 django-extensions = "*"
+django-elasticsearch-dsl = "*"
+types-pytz = "*"
 
 [dev-packages]
 isort = "*"

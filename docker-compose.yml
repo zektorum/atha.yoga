@@ -25,3 +25,16 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - 4040:8080
+
+  elasticsearch:
+    image: elasticsearch:7.17.5
+    env_file:
+      - ./backend/.env
+    ports:
+      - "${ELASTIC_PORT}:${ELASTIC_PORT}"
+    volumes:
+      - .devops/build/hunspell:/usr/share/elasticsearch/config/hunspell
+    environment:
+      - discovery.type=single-node
+      - ELASTIC_PASSWORD=$ELASTIC_PASSWORD
+      - xpack.security.enabled=true
