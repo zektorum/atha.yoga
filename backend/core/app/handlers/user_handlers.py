@@ -8,13 +8,9 @@ from core.app.http.requests.user_requests import (
     UserRegisterRequest,
     UserLoginRequest,
     UserChangePassRequest,
-    SendTextRequest,
-    SendHTMLRequest
 )
 from core.app.http.resources.user_resources import UserResource
 from core.app.services.user_services import UserRegister, UserLogin, UserChangePass
-from core.app.services.email_services import MailSendText, MailSendHTML
-
 
 class UserRegisterHandler(GenericAPIView):
     serializer_class = UserRegisterRequest
