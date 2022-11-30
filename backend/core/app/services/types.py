@@ -25,4 +25,3 @@ class SendHTMLData(TypedDict):
     message: str
     receivers: list
     template_name: str
-

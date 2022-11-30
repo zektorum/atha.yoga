@@ -4,7 +4,13 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from core.app.http.requests.user_requests import UserRegisterRequest, UserLoginRequest, UserChangePassRequest, SendTextRequest, SendHTMLRequest
+from core.app.http.requests.user_requests import (
+    UserRegisterRequest,
+    UserLoginRequest,
+    UserChangePassRequest,
+    SendTextRequest,
+    SendHTMLRequest
+)
 from core.app.http.resources.user_resources import UserResource
 from core.app.services.user_services import UserRegister, UserLogin, UserChangePass
 from core.app.services.email_services import MailSendText, MailSendHTML
@@ -71,5 +77,3 @@ class MailSendHTMLHandler(GenericAPIView):
             return Response('Mail was sent succesfully!')
         except Exception as e:
             return Response(e)
-
-

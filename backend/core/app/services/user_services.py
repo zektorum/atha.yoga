@@ -65,9 +65,3 @@ class UserChangePass:
     def change(self) -> Tuple[User, UserToken]:
         token_data = get_tokens_for_user(self.user)
         return self.user, token_data
-
-
-
-
-
-

@@ -14,5 +14,4 @@ urlpatterns = [
     path("core/", include("core.urls")),
     #path("sendemail/", views.sendmail, name="sendemail"),
     path("success/", views.success, name="success")
-
 ]
