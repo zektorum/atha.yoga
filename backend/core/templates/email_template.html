@@ -1,9 +1,0 @@
-<h3>Contact form</h3>
-
-<form method="post" action="{%url 'index' %}">
-    {% csrf_token %}
-    <textarea name="subject" placeholder="Text your subject..."></textarea>
-    <textarea name="message" placeholder="Text your message..."></textarea>
-    <textarea name="receivers" placeholder="Who will we send it to?..."></textarea>
-    <input type="submit" />
-</form>

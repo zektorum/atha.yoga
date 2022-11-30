@@ -15,13 +15,13 @@ class UserChangePassData(TypedDict):
     password: str
     new_password: str
 
-class SendTextData(TypedDict):
+class TextMailData(TypedDict):
     subject: str
     message: str
     receivers: list
 
-class SendHTMLData(TypedDict):
+class HtmlMailData(TypedDict):
     subject: str
     message: str
     receivers: list
-    template_name: str
+    template_path: str

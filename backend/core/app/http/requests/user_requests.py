@@ -42,7 +42,6 @@ class SendHTMLRequest(UnimplementedSerializer):
     subject = serializers.CharField(min_length=0, max_length=100)
     message = serializers.CharField(min_length=0, max_length=10000)
     receivers = serializers.ListField(min_length=1)
-    template_name = serializers.CharField(min_length=0, max_length=100)
 
 
 
