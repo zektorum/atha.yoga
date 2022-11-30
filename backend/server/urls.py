@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+from core import views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -11,4 +12,7 @@ urlpatterns = [
         name="swagger-ui",
     ),
     path("core/", include("core.urls")),
+    #path("sendemail/", views.sendmail, name="sendemail"),
+    path("success/", views.success, name="success")
+
 ]
