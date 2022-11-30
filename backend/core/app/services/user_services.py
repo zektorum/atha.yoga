@@ -1,7 +1,7 @@
 from functools import cached_property
 from typing import Tuple
 
-from rest_framework.exceptions import PermissionDenied, ValidationError
+from rest_framework.exceptions import ValidationError, AuthenticationFailed
 
 from core.app.repositories.user_repository import UserRepository
 from core.app.services.types import UserRegisterData, UserLoginData, UserChangePassData
@@ -19,7 +19,7 @@ class UserRegister:
     def user(self) -> User:
         user = User()
         if self.repository.find_user_by_email(self.data["email"]):
-             raise ValidationError('User with this email already exists')
+            raise ValidationError("User with this email already exists")
         user.username = user.email = self.data["email"]
         user.set_password(self.data["password"])
         self.repository.store(user=user)
@@ -40,12 +40,13 @@ class UserLogin:
     def user(self) -> User:
         user = self.repository.find_user_by_email(self.data["email"])
         if not user or not user.check_password(self.data["password"]):
-            raise PermissionDenied()
+            raise AuthenticationFailed()
         return user
 
     def login(self) -> Tuple[User, UserToken]:
         token_data = get_tokens_for_user(self.user)
         return self.user, token_data
+
 
 class UserChangePass:
     repository = UserRepository()
@@ -57,7 +58,7 @@ class UserChangePass:
     def user(self) -> User:
         user = self.repository.find_user_by_email(self.data["email"])
         if not user or not user.check_password(self.data["password"]):
-            raise PermissionDenied()
+            raise AuthenticationFailed()
         user.set_password(self.data["new_password"])
         self.repository.store(user=user)
         return user

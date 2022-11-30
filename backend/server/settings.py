@@ -43,8 +43,9 @@ INSTALLED_APPS = [
     "rest_framework",
     "drf_spectacular",
     "corsheaders",
-    "core",
     "django_extensions",
+    "core",
+    "lessons",
 ]
 
 MIDDLEWARE = [
@@ -78,7 +79,18 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "server.wsgi.application"
 
-REST_FRAMEWORK = {"DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema"}
+REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_THROTTLE_CLASSES": [
+        "core.custom_middleware.CustomAnonRateThrottle",
+        "core.custom_middleware.CustomUserRateThrottle"
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "100/min",
+        "user": "100/min"
+    },
+    "DEFAULT_THROTTLE_DENIED_DURATION": "600"
+}
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "ATHA Yoga API",
