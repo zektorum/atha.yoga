@@ -2,13 +2,13 @@ import random
 
 from faker import Faker
 
-from lessons.models import Comment, Lesson
 from core.models import User
+from lessons.models import Comment, Lesson
 
 
 class CommentSeeder:
     def __init__(self) -> None:
-        self.faker = Faker()
+        self.faker = Faker("ru-RU")
 
     def seed(self) -> Comment:
         user_ids = User.objects.all().values("id")

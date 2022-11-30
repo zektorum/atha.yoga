@@ -2,9 +2,10 @@ from functools import cached_property
 
 from rest_framework.exceptions import NotFound
 
-from lessons.app.repositories.lesson_repository import LessonRepository
-from lessons.app.repositories.comment_repository import CommentRepository
 from core.app.repositories.user_repository import UserRepository
+from core.models import User
+from lessons.app.repositories.comment_repository import CommentRepository
+from lessons.app.repositories.lesson_repository import LessonRepository
 from lessons.app.services.types import CommentCreateData
 from lessons.models import Comment
 
@@ -14,18 +15,18 @@ class CommentCreate:
     user_repository = UserRepository()
     lesson_repository = LessonRepository()
 
-    def __init__(self, data: CommentCreateData):
+    def __init__(self, user: User, data: CommentCreateData):
         self.data = data
+        self.user = user
 
     @cached_property
     def comment(self) -> Comment:
-        user = self.user_repository.find_user_by_email(email=self.data["email"])
         lesson = self.lesson_repository.find_lesson_by_id(id_=self.data["lesson_id"])
-        if not user or not lesson:
-            raise NotFound("no such comments found")
+        if not lesson:
+            raise NotFound(f"Undefined lesson with id {self.data['lesson_id']}")
 
         comment = Comment()
-        comment.user = user
+        comment.user = self.user
         comment.lesson = lesson
         comment.text = self.data["text"]
 
