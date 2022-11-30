@@ -2,6 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import useAuth from '../../../utils/hooks/useAuth';
+import LogIn from '../../../components/LogInDefault.js;
 
 const LoginPage = () => {
   const { message } = useSelector(state => state.message);
@@ -28,6 +29,7 @@ const LoginPage = () => {
   }
 
   return (
+    <LogIn />
     <div>
       <h2>Login page</h2>
       <form onSubmit={handleSubmit} autoComplete="off">
