@@ -1,6 +1,7 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { CssBaseline, ThemeProvider } from '@mui/material';
+import { createTheme } from '@mui/material/styles';
 import WelcomePage from './pages/welcome';
 import LoginPage from './pages/auth/login';
 import RegisterPage from './pages/auth/register';
@@ -10,7 +11,6 @@ import AuthProvider from './utils/providers/auth';
 import BaseLayout from './layouts';
 import ProfileLayout from './layouts/profile';
 import useAuth from './utils/hooks/useAuth';
-import theme from './theme';
 
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';

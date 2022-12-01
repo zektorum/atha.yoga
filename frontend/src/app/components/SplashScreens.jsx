@@ -9,9 +9,9 @@ import Link from '@mui/material/Link';
 import Container from '@mui/material/Container';
 import SwipeableViews from 'react-swipeable-views';
 import { autoPlay } from 'react-swipeable-views-utils';
-import splash1 from '../../../assets/splash1.svg';
-import splash2 from '../../../assets/splash2.svg';
-import splash3 from '../../../assets/splash3.svg';
+import splash1 from '../../assets/public/splash1.svg';
+import splash2 from '../../assets/public/splash2.svg';
+import splash3 from '../../assets/public/splash3.svg';
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
@@ -38,7 +38,7 @@ const SplashScreens = () => {
   const [activeStep, setActiveStep] = React.useState(0);
   const maxSteps = items.length;
 
-  const handleStepChange = (step) => {
+  const handleStepChange = step => {
     setActiveStep(step);
   };
 
@@ -52,10 +52,10 @@ const SplashScreens = () => {
           alignItems: 'center',
         }}
       >
-        <Typography component="h1" variant="h4" fontWeight="500" gutterBottom={3}>
+        <Typography component="h1" variant="h4" fontWeight="500" gutterBottom>
           {items[activeStep].name}
         </Typography>
-        <Typography variant="body2" color='text.secondary' className="welcome__description">
+        <Typography variant="body2" color="text.secondary" className="welcome__description">
           {items[activeStep].description}
         </Typography>
         <AutoPlaySwipeableViews

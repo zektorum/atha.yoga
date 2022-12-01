@@ -1,8 +1,10 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import {
+  Link, Navigate, useLocation, useNavigate,
+} from 'react-router-dom';
 import useAuth from '../../../utils/hooks/useAuth';
-import LogIn from '../../../components/LogInDefault.js;
+import LogIn from '../../../components/LogIn';
 
 const LoginPage = () => {
   const { message } = useSelector(state => state.message);
@@ -29,31 +31,33 @@ const LoginPage = () => {
   }
 
   return (
-    <LogIn />
-    <div>
-      <h2>Login page</h2>
-      <form onSubmit={handleSubmit} autoComplete="off">
-        <div>
-          <label htmlFor="email">email</label>
-          <input name="email" type="email" />
-        </div>
+    <>
+      <LogIn />
+      <div>
+        <h2>Login page</h2>
+        <form onSubmit={handleSubmit} autoComplete="off">
+          <div>
+            <label htmlFor="email">email</label>
+            <input name="email" type="email" />
+          </div>
 
-        <div>
-          <label htmlFor="password">password</label>
-          <input name="password" type="password" />
-        </div>
+          <div>
+            <label htmlFor="password">password</label>
+            <input name="password" type="password" />
+          </div>
 
-        <div>
-          <button type="submit" disabled={auth.isLoading}>
-            Login
-          </button>
-        </div>
+          <div>
+            <button type="submit" disabled={auth.isLoading}>
+              Login
+            </button>
+          </div>
 
-        <div>{message}</div>
+          <div>{message}</div>
 
-        <Link to="/register">Register</Link>
-      </form>
-    </div>
+          <Link to="/register">Register</Link>
+        </form>
+      </div>
+    </>
   );
 };
 

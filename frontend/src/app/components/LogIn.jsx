@@ -12,7 +12,7 @@ import IconButton from '@mui/material/IconButton';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import Container from '@mui/material/Container';
 
-export default function Sign_in_default() {
+const LogIn = () => {
   const [values, setValues] = React.useState({
     amount: '',
     password: '',
@@ -21,7 +21,7 @@ export default function Sign_in_default() {
     showPassword: false,
   });
 
-  const handleChange = (prop) => (event) => {
+  const handleChange = prop => event => {
     setValues({ ...values, [prop]: event.target.value });
   };
 
@@ -32,11 +32,11 @@ export default function Sign_in_default() {
     });
   };
 
-  const handleMouseDownPassword = (event) => {
+  const handleMouseDownPassword = event => {
     event.preventDefault();
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = event => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
@@ -56,7 +56,7 @@ export default function Sign_in_default() {
         }}
       >
         <Typography component="h1" variant="h4" fontWeight="500" sx={{ mb: 3 }}>
-          Регистрация
+          Войти в аккаунт
         </Typography>
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }} className="form__container">
           <TextField
@@ -91,8 +91,13 @@ export default function Sign_in_default() {
                   {values.showPassword ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
               </InputAdornment>
-            )}
+                )}
           />
+          <div style={{ textAlign: 'right' }}>
+            <Link href="#" variant="body2" underline="none">
+              Забыли пароль?
+            </Link>
+          </div>
           <Button
             type="submit"
             size="large"
@@ -100,39 +105,23 @@ export default function Sign_in_default() {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
-            Зарегистрироваться
+            Войти
           </Button>
           <Grid container spacing={1} alignItems="center" justifyContent="center">
             <Grid item>
               <Typography variant="body2">
-                Уже есть аккаунт?
+                Ещё нет аккаунта?
               </Typography>
             </Grid>
             <Grid item>
               <Link href="#" variant="body2" underline="none">
-                Войти
+                Зарегистрироваться
               </Link>
             </Grid>
           </Grid>
         </Box>
-        <div style={{ position: 'absolute', bottom: 32 }}>
-          <Typography variant="caption">
-            Нажимая на кнопку «Зарегистрироваться», я подтверждаю,
-          </Typography>
-          <Grid container justifyContent='center' spacing={1}>
-            <Grid item>
-              <Typography variant="caption">
-                что ознакомлен(а) с
-              </Typography>
-            </Grid>
-            <Grid item>
-              <Link variant="caption" underline="none">
-                пользовательским соглашением
-              </Link>
-            </Grid>
-          </Grid>
-        </div>
       </Box>
     </Container>
   );
-}
+};
+export default LogIn;
