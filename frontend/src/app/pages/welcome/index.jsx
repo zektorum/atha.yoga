@@ -5,9 +5,9 @@ import SplashScreens from '../../components/SplashScreens';
 const WelcomePage = () => {
   const [isLogo, setIsLogo] = useState(true);
 
-  // useEffect(() => {
-  //   setTimeout(() => setIsLogo(false), 2000);
-  // }, []);
+  useEffect(() => {
+    setTimeout(() => setIsLogo(false), 2000);
+  }, []);
 
   return isLogo ? <Logo /> : <SplashScreens />;
 };

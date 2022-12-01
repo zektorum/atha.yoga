@@ -70,7 +70,7 @@ const SplashScreens = () => {
                 <Box
                   component="img"
                   sx={{
-                    height: 300,
+                    minHeight: 300,
                     display: 'block',
                     maxWidth: 375,
                     marginTop: 5,
