@@ -11,6 +11,8 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import IconButton from '@mui/material/IconButton';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import Container from '@mui/material/Container';
+import { FormControl } from '@mui/material';
+import InputLabel from '@mui/material/InputLabel';
 
 const LogIn = () => {
   const [values, setValues] = React.useState({
@@ -70,29 +72,32 @@ const LogIn = () => {
             autoComplete="email"
             autoFocus
           />
-          <OutlinedInput
-            sx={{ mb: 2 }}
-            fullWidth
-            label="Пароль"
-            name="password"
-            placeholder="Пароль"
-            id="password"
-            autoComplete="current-password"
-            type={values.showPassword ? 'text' : 'password'}
-            value={values.password}
-            onChange={handleChange('password')}
-            endAdornment={(
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="toggle password visibility"
-                  onClick={handleClickShowPassword}
-                  onMouseDown={handleMouseDownPassword}
-                >
-                  {values.showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-                )}
-          />
+          <FormControl variant="outlined" fullWidth>
+            <InputLabel>Пароль</InputLabel>
+            <OutlinedInput
+              sx={{ mb: 2 }}
+              fullWidth
+              label="Пароль"
+              name="password"
+              placeholder="Пароль"
+              id="password"
+              autoComplete="current-password"
+              type={values.showPassword ? 'text' : 'password'}
+              value={values.password}
+              onChange={handleChange('password')}
+              endAdornment={(
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                  >
+                    {values.showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+                  )}
+            />
+          </FormControl>
           <div style={{ textAlign: 'right' }}>
             <Link href="#" variant="body2" underline="none">
               Забыли пароль?
