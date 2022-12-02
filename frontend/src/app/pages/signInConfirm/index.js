@@ -1,5 +1,5 @@
 import React from 'react';
-import SignInConfirm from '../../components/SignIn/sign_in_confirm.js';
+import SignInConfirm from '../../components/signIn/SignInConfirm';
 
 const SignInConfirmPage = () => <SignInConfirm />;
 

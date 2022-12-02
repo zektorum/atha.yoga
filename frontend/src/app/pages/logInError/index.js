@@ -1,5 +1,5 @@
 import React from 'react';
-import LogInError from '../../components/SignIn/log_in_error.js';
+import LogInError from '../../components/logIn/LogInError';
 
 const LogInErrorPage = () => <LogInError />;
 

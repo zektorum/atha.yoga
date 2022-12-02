@@ -1,5 +1,5 @@
 import React from 'react';
-import SignInDefault from '../../components/SignIn/sign_in_default.js';
+import SignInDefault from '../../components/signIn/SignInDefault';
 
 
 const SignInDefaultPage = () => <SignInDefault />;
