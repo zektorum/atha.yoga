@@ -1,5 +1,5 @@
 import React from 'react';
-import PasswordRecoveryError from '../../components/Password/password_recovery_error';
+import PasswordRecoveryError from '../../components/password/PasswordRecoveryError';
 
 const PasswordRecoveryErrorPage = () => <PasswordRecoveryError />;
 

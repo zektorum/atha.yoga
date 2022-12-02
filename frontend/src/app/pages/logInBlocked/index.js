@@ -1,5 +1,5 @@
 import React from 'react';
-import LogInBlocked from '../../components/SignIn/log_in_blocked';
+import LogInBlocked from '../../components/logIn/LogInBlocked';
 
 const LogInBlockedPage = () => <LogInBlocked />;
 

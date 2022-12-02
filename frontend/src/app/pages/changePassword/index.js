@@ -1,5 +1,5 @@
 import React from 'react';
-import ChangePassword from '../../components/Password/change_password';
+import ChangePassword from '../../components/password/ChangePassword';
 
 const ChangePasswordPage = () => <ChangePassword />;
 
