@@ -11,6 +11,8 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import IconButton from '@mui/material/IconButton';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import Container from '@mui/material/Container';
+import { FormControl } from '@mui/material';
+import InputLabel from '@mui/material/InputLabel';
 
 export default function LogInError() {
   const [values, setValues] = React.useState({
@@ -71,30 +73,33 @@ export default function LogInError() {
             autoComplete="email"
             autoFocus
           />
-          <OutlinedInput
-            error
-            sx={{ mb: 2 }}
-            fullWidth
-            label="Пароль"
-            name="password"
-            placeholder="Пароль"
-            id="password"
-            autoComplete="current-password"
-            type={values.showPassword ? 'text' : 'password'}
-            value={values.password}
-            onChange={handleChange('password')}
-            endAdornment={(
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="toggle password visibility"
-                  onClick={handleClickShowPassword}
-                  onMouseDown={handleMouseDownPassword}
-                >
-                  {values.showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            )}
-          />
+          <FormControl variant="outlined" fullWidth>
+            <InputLabel error>Пароль</InputLabel>
+            <OutlinedInput
+              error
+              sx={{ mb: 2 }}
+              fullWidth
+              label="Пароль"
+              name="password"
+              placeholder="Пароль"
+              id="password"
+              autoComplete="current-password"
+              type={values.showPassword ? 'text' : 'password'}
+              value={values.password}
+              onChange={handleChange('password')}
+              endAdornment={(
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                  >
+                    {values.showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              )}
+            />
+          </FormControl>
           <Typography variant="body2" color="error.main" sx={{ mb: 2 }}>
             Вы ввели неверную электронную почту
             и/или пароль.

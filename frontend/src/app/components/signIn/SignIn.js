@@ -17,6 +17,8 @@ import facebook from '../../assets/facebook.svg';
 import google from '../../assets/google.svg';
 import yandex from '../../assets/yandex.svg';
 import vk from '../../assets/vk.svg';
+import { FormControl } from '@mui/material';
+import InputLabel from '@mui/material/InputLabel';
 
 export default function LogIn() {
   const [values, setValues] = React.useState({
@@ -75,28 +77,30 @@ export default function LogIn() {
               autoComplete="email"
               autoFocus
             />
-            <OutlinedInput
-              margin="normal"
-              fullWidth
-              name="password"
-              placeholder="Пароль"
-              id="password"
-              autoComplete="current-password"
-              type={values.showPassword ? 'text' : 'password'}
-              value={values.password}
-              onChange={handleChange('password')}
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleClickShowPassword}
-                    onMouseDown={handleMouseDownPassword}
-                  >
-                   {values.showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              }
-            />
+            <FormControl variant="outlined" fullWidth>
+              <InputLabel>Пароль</InputLabel>
+              <OutlinedInput
+                fullWidth
+                name="password"
+                placeholder="Пароль"
+                id="password"
+                autoComplete="current-password"
+                type={values.showPassword ? 'text' : 'password'}
+                value={values.password}
+                onChange={handleChange('password')}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                    >
+                     {values.showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+              />
+            </FormControl>
             <Grid container alignItems="center">
               <Grid item>
                 <FormControlLabel
