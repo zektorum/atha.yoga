@@ -28,7 +28,7 @@ class LessonComplexities(models.TextChoices):
 
 class Lesson(TimeStampedModel):
     name = models.CharField(max_length=64)
-    description = models.TextField(max_length=512, blank=True)
+    description = models.TextField(blank=True)
     lesson_type = models.CharField(max_length=30, choices=LessonTypes.choices)
     level = models.CharField(max_length=30, choices=LessonLevels.choices)
     single = models.BooleanField(default=False)
