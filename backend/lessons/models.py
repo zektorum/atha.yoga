@@ -1,3 +1,4 @@
+from django.core.validators import MinValueValidator
 from django.db import models
 
 from core.models import User, TimeStampedModel
@@ -14,7 +15,7 @@ class LessonLevels(models.TextChoices):
     ADVANCED = "ADVANCED"
 
 
-class LessonPrices(models.TextChoices):
+class LessonPaymentTypes(models.TextChoices):
     PAYMENT = "PAYMENT"
     DONATION = "DONATION"
     FREE = "FREE"
@@ -26,18 +27,40 @@ class LessonComplexities(models.TextChoices):
     HARD = "HARD"
 
 
+class RepetitionWeekdays(models.TextChoices):
+    MONDAY = "MONDAY"
+    TUESDAY = "TUESDAY"
+    WEDNESDAY = "WEDNESDAY"
+    THURSDAY = "THURSDAY"
+    FRIDAY = "FRIDAY"
+    SATURDAY = "SATURDAY"
+    SUNDAY = "SUNDAY"
+
+
 class Lesson(TimeStampedModel):
     name = models.CharField(max_length=64)
-    description = models.TextField(max_length=512, blank=True)
+    description = models.TextField(blank=True)
     lesson_type = models.CharField(max_length=30, choices=LessonTypes.choices)
     level = models.CharField(max_length=30, choices=LessonLevels.choices)
     single = models.BooleanField(default=False)
     duration = models.DurationField()
     start_datetime = models.DateTimeField()
+    deadline_datetime = models.DateTimeField(null=True)
     complexity = models.CharField(max_length=30, choices=LessonComplexities.choices)
-    price = models.CharField(max_length=30, choices=LessonPrices.choices)
-    cost = models.FloatField(null=True)
     teacher = models.ForeignKey(User, on_delete=models.CASCADE)
+    link = models.URLField()
+    link_info = models.CharField(max_length=100, blank=True)
+    repeat_editing = models.BooleanField(default=False)
+    payment = models.CharField(max_length=30, choices=LessonPaymentTypes.choices)
+    price = models.FloatField(validators=(MinValueValidator(limit_value=0),))
+
+
+class Schedule(TimeStampedModel):
+    lesson = models.ForeignKey(
+        Lesson, on_delete=models.CASCADE, related_name="schedules"
+    )
+    weekday = models.CharField(max_length=40, choices=RepetitionWeekdays.choices)
+    start_time = models.TimeField()
 
 
 class Comment(TimeStampedModel):
