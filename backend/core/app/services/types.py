@@ -23,7 +23,7 @@ class TextMailData(NamedTuple):
     receivers: list
 
 
-class HtmlMailData(TypedDict):
+class HtmlMailData(NamedTuple):
     subject: str
     message: str
     receivers: list

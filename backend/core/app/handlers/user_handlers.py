@@ -66,11 +66,8 @@ class UserSendPwdResetMailHandler(GenericAPIView):
         data = self.serializer_class(data=request.data)
         data.is_valid(raise_exception=True)
 
-        user, pwd_reset_token = UserResetPass().reset(email=data.validated_data["email"])
-        return Response(
-            {"data": {"user": UserResource(user).data,
-                      "password reset token": pwd_reset_token}}
-        )
+        UserResetPass().reset(email=data.validated_data["email"])
+        return Response("Success")
 
 
 class UserResetPassHandler(GenericAPIView):

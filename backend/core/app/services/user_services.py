@@ -78,12 +78,11 @@ class UserChangePass:
 class UserResetPass:
     repository = UserRepository()
 
-    def reset(self, email) -> Tuple[User, int]:
+    def reset(self, email) -> None:
         user = self.repository.find_user_by_email(email)
-        pwd_reset_token = randint(100000, 999999)
-
         if not user:
             raise AuthenticationFailed("User with this email does not exist")
+        pwd_reset_token = randint(100000, 999999)
         SimpleEmailTextService(TextMailData(
             subject="Please reset your password",
             message=f"""Reset your Atha.Yoga password
@@ -91,12 +90,7 @@ class UserResetPass:
             receivers=[email]
         )).send()
         user.pwd_reset_token = pwd_reset_token
-        user.save(update_fields=["pwd_reset_token"])
-        return user, pwd_reset_token
-
-    def find_user(self, email) -> User:
-        user = self.repository.find_user_by_email(email)
-        return user
+        self.repository.store(user=user)
 
     def change(self, new_password, email, pwd_reset_token) -> Tuple[User, UserToken]:
         user = self.repository.find_user_by_email(email=email)

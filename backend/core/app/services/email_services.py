@@ -9,14 +9,11 @@ class SimpleEmailTextService:
         self.data = data
 
     def send(self) -> None:
-        subject = self.data.subject
-        message = self.data.message
-        receivers = self.data.receivers
         email = EmailMessage(
-            subject=subject,
-            body=message,
+            subject=self.data.subject,
+            body=self.data.message,
             from_email=settings.EMAIL_HOST_USER,
-            to=receivers,
+            to=self.data.receivers,
         )
         email.send(fail_silently=False)
 
@@ -26,16 +23,12 @@ class EmailHtmlService:
         self.data = data
 
     def send(self, context: dict) -> None:
-        subject = self.data["subject"]
-        message = self.data["message"]
-        receivers = self.data["receivers"]
-        template = self.data["template_path"]
-        html_body = render_to_string(template, context)
+        html_body = render_to_string(self.data.template_path, context)
         email = EmailMultiAlternatives(
-            subject=subject,
-            body=message,
+            subject=self.data.subject,
+            body=self.data.message,
             from_email=settings.EMAIL_HOST_USER,
-            to=receivers,
+            to=self.data.receivers,
         )
         email.attach_alternative(html_body, "text/html")
         email.send(fail_silently=False)
