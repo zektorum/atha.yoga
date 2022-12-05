@@ -1,6 +1,5 @@
 from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.conf import settings
-from django.shortcuts import redirect
 from django.template.loader import render_to_string
 from core.app.services.types import TextMailData, HtmlMailData
 
@@ -10,9 +9,9 @@ class SimpleEmailTextService:
         self.data = data
 
     def send(self) -> None:
-        subject = self.data["subject"]
-        message = self.data["message"]
-        receivers = self.data["receivers"]
+        subject = self.data.subject
+        message = self.data.message
+        receivers = self.data.receivers
         email = EmailMessage(
             subject=subject,
             body=message,

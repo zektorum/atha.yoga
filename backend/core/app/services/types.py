@@ -1,4 +1,4 @@
-from typing import TypedDict
+from typing import TypedDict, NamedTuple
 
 
 class UserRegisterData(TypedDict):
@@ -17,7 +17,7 @@ class UserChangePassData(TypedDict):
     new_password: str
 
 
-class TextMailData(TypedDict):
+class TextMailData(NamedTuple):
     subject: str
     message: str
     receivers: list
@@ -28,3 +28,4 @@ class HtmlMailData(TypedDict):
     message: str
     receivers: list
     template_path: str
+
