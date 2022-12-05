@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+  server:
+    build: ./backend
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+
+  db:
+    image: postgres:14
+    container_name: db
+    env_file:
+      - backend/.env
+    ports:
+      - 5432:5432
+    volumes:
+      - ./db:/var/lib/postgres/data
+
+  dozzle:
+    container_name: dozzle
+    image: amir20/dozzle:v4.4.1
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    ports:
+      - 4040:8080
+
+  elasticsearch:
+    image: elasticsearch:7.17.5
+    env_file:
+      - ./backend/.env
+    ports:
+      - "${ELASTIC_PORT}:${ELASTIC_PORT}"
+    volumes:
+      - .devops/build/hunspell:/usr/share/elasticsearch/config/hunspell
+    environment:
+      - discovery.type=single-node
+      - ELASTIC_PASSWORD=$ELASTIC_PASSWORD
+      - xpack.security.enabled=true
