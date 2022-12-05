@@ -9,6 +9,7 @@ class Migration(migrations.Migration):
         ("core", "0004_user_roles"),
     ]
 
+
     operations = [
         migrations.AddField(
             model_name="user",
