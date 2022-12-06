@@ -20,6 +20,7 @@ from core.app.services.user_services import (
 )
 
 
+
 class UserRegisterHandler(GenericAPIView):
     serializer_class = UserRegisterRequest
 

@@ -54,6 +54,10 @@ class Lesson(TimeStampedModel):
     payment = models.CharField(max_length=30, choices=LessonPaymentTypes.choices)
     price = models.FloatField(validators=(MinValueValidator(limit_value=0),))
 
+    class Meta:
+        verbose_name = "Занятие"
+        verbose_name_plural = "Занятия"
+
 
 class Schedule(TimeStampedModel):
     lesson = models.ForeignKey(
@@ -61,6 +65,10 @@ class Schedule(TimeStampedModel):
     )
     weekday = models.CharField(max_length=40, choices=RepetitionWeekdays.choices)
     start_time = models.TimeField()
+
+    class Meta:
+        verbose_name = "Расписание"
+        verbose_name_plural = "Расписания"
 
 
 class Comment(TimeStampedModel):
@@ -70,3 +78,7 @@ class Comment(TimeStampedModel):
         Lesson, related_name="comments", on_delete=models.CASCADE
     )
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Комментарий"
+        verbose_name_plural = "Комментарии"
