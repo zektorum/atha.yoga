@@ -1,17 +1,17 @@
-import * as React from 'react';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MobileStepper from '@mui/material/MobileStepper';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
-import Link from '@mui/material/Link';
 import Container from '@mui/material/Container';
 import SwipeableViews from 'react-swipeable-views';
 import { autoPlay } from 'react-swipeable-views-utils';
-import splash1 from '../../assets/public/splash1.svg';
-import splash2 from '../../assets/public/splash2.svg';
-import splash3 from '../../assets/public/splash3.svg';
+import splash1 from '../../../assets/public/splash1.svg';
+import splash2 from '../../../assets/public/splash2.svg';
+import splash3 from '../../../assets/public/splash3.svg';
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
@@ -35,7 +35,7 @@ const items = [
 
 const SplashScreens = () => {
   const theme = useTheme();
-  const [activeStep, setActiveStep] = React.useState(0);
+  const [activeStep, setActiveStep] = useState(0);
   const maxSteps = items.length;
 
   const handleStepChange = step => {
@@ -90,14 +90,16 @@ const SplashScreens = () => {
           position="static"
           activeStep={activeStep}
         />
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          sx={{ mt: 3, mb: 2 }}
-        >
-          Присоединиться
-        </Button>
+          <Button
+            component={Link}
+            to="/register"
+            type="submit"
+            fullWidth
+            variant="contained"
+            sx={{ mt: 3, mb: 2 }}
+          >
+            Присоединиться
+          </Button>
         <Grid container spacing={1} alignItems="center" justifyContent="center">
           <Grid item>
             <Typography variant="body2">
@@ -105,7 +107,7 @@ const SplashScreens = () => {
             </Typography>
           </Grid>
           <Grid item>
-            <Link href="#" variant="body2" underline="none">
+            <Link to="/login" variant="body2" underline="none">
               Войти
             </Link>
           </Grid>

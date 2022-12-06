@@ -7,6 +7,7 @@ import LoginPage from './pages/auth/login';
 import RegisterPage from './pages/auth/register';
 import ProfilePage from './pages/profile';
 import ErrorPage from './pages/error';
+import PasswordRecoveryPage from './pages/password-recovery';
 import AuthProvider from './utils/providers/auth';
 import BaseLayout from './layouts';
 import ProfileLayout from './layouts/profile';
@@ -37,7 +38,7 @@ const theme = createTheme({
       fontWeight: 500,
     },
     h6: {
-      fontSize: "1.25rem",
+      fontSize: '1.25rem',
       lineHeight: 1.2,
     },
   },
@@ -56,6 +57,7 @@ const App = () => {
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
           <Route path="profile" element={<ProfilePage auth={auth} />} />
+          <Route path="recovery-password" element={<PasswordRecoveryPage />} />
           <Route path="*" element={<ErrorPage />} />
         </Route>
       </Routes>

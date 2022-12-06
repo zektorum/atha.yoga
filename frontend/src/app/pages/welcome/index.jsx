@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import Logo from '../../components/welcome/Logo';
-import SplashScreens from '../../components/welcome/SplashScreens';
+import Logo from '../../components/logo/index.jsx';
+import SplashScreens from '../../components/splash-screens/index.jsx';
 
 const WelcomePage = () => {
   const [isLogo, setIsLogo] = useState(true);

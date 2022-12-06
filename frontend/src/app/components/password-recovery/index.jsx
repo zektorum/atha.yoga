@@ -1,12 +1,12 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import TextField from '@mui/material/TextField';
 
-export default function PasswordRecovery() {
-  const [values, setValues] = React.useState({
+const PasswordRecovery = () => {
+  const [values, setValues] = useState({
     amount: '',
     password: '',
     weight: '',
@@ -14,7 +14,7 @@ export default function PasswordRecovery() {
     showPassword: false,
   });
 
-  const handleSubmit = (event) => {
+  const handleSubmit = event => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
@@ -67,4 +67,5 @@ export default function PasswordRecovery() {
       </Box>
     </Container>
   );
-}
+};
+export default PasswordRecovery;

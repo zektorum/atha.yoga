@@ -1,8 +1,5 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -12,8 +9,8 @@ import IconButton from '@mui/material/IconButton';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import Container from '@mui/material/Container';
 
-export default function LogIn() {
-  const [values, setValues] = React.useState({
+const ChangePassword = () => {
+  const [values, setValues] = useState({
     amount: '',
     password: '',
     weight: '',
@@ -21,7 +18,7 @@ export default function LogIn() {
     showPassword: false,
   });
 
-  const handleChange = (prop) => (event) => {
+  const handleChange = prop => event => {
     setValues({ ...values, [prop]: event.target.value });
   };
 
@@ -32,11 +29,11 @@ export default function LogIn() {
     });
   };
 
-  const handleMouseDownPassword = (event) => {
+  const handleMouseDownPassword = event => {
     event.preventDefault();
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = event => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     console.log({
@@ -56,24 +53,13 @@ export default function LogIn() {
         }}
       >
         <Typography component="h1" variant="h4" sx={{ mb: 3 }}>
-          Вход
+          Изменить пароль
         </Typography>
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }} className="form__container">
-          <TextField
-            sx={{ mb: 2 }}
-            margin="normal"
-            fullWidth
-            id="email"
-            label="Электронная почта"
-            placeholder="E-mail"
-            name="email"
-            autoComplete="email"
-            autoFocus
-          />
           <OutlinedInput
-            sx={{ mb: 2 }}
+            sx={{ mb: 2, mt: 1 }}
             fullWidth
-            label="Пароль"
+            label="Новый пароль"
             name="password"
             placeholder="Пароль"
             id="password"
@@ -91,36 +77,20 @@ export default function LogIn() {
                   {values.showPassword ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
               </InputAdornment>
-                )}
+            )}
           />
-          <div style={{ textAlign: 'right' }}>
-            <Link href="#" variant="body2" underline="none">
-              Забыли пароль?
-            </Link>
-          </div>
           <Button
             type="submit"
             size="large"
             fullWidth
             variant="contained"
-            sx={{ mt: 3, mb: 2 }}
+            sx={{ mt: 2, mb: 1 }}
           >
-            Войти
+            Изменить
           </Button>
-          <Grid container spacing={1} alignItems="center" justifyContent="center">
-            <Grid item>
-              <Typography variant="body2">
-                Ещё нет аккаунта?
-              </Typography>
-            </Grid>
-            <Grid item>
-              <Link href="#" variant="body2" underline="none">
-                Зарегистрироваться
-              </Link>
-            </Grid>
-          </Grid>
         </Box>
       </Box>
     </Container>
   );
-}
+};
+export default ChangePassword;

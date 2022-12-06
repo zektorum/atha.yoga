@@ -1,7 +1,7 @@
-import * as React from 'react';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -15,7 +15,7 @@ import { FormControl } from '@mui/material';
 import InputLabel from '@mui/material/InputLabel';
 
 const LogIn = () => {
-  const [values, setValues] = React.useState({
+  const [values, setValues] = useState({
     amount: '',
     password: '',
     weight: '',
@@ -32,10 +32,6 @@ const LogIn = () => {
       ...values,
       showPassword: !values.showPassword,
     });
-  };
-
-  const handleMouseDownPassword = event => {
-    event.preventDefault();
   };
 
   const handleSubmit = event => {
@@ -90,7 +86,6 @@ const LogIn = () => {
                   <IconButton
                     aria-label="toggle password visibility"
                     onClick={handleClickShowPassword}
-                    onMouseDown={handleMouseDownPassword}
                   >
                     {values.showPassword ? <VisibilityOff /> : <Visibility />}
                   </IconButton>
@@ -99,7 +94,7 @@ const LogIn = () => {
             />
           </FormControl>
           <div style={{ textAlign: 'right' }}>
-            <Link href="#" variant="body2" underline="none">
+            <Link to="/recovery-password" variant="body2" underline="none">
               Забыли пароль?
             </Link>
           </div>
@@ -119,7 +114,7 @@ const LogIn = () => {
               </Typography>
             </Grid>
             <Grid item>
-              <Link href="#" variant="body2" underline="none">
+              <Link to="/register" variant="body2" underline="none">
                 Зарегистрироваться
               </Link>
             </Grid>
