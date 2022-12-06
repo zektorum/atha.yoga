@@ -84,7 +84,7 @@ class UserResetPass:
         if not user:
             raise PermissionDenied("User with this email does not exist")
         pwd_reset_token = str(uuid.uuid4())
-        SimpleEmailTextService(TextMailData(
+        SimpleEmailTextService(data=TextMailData(
             subject="Please reset your password",
             message=f"""Reset your Atha.Yoga password
             Click here: {settings.SITE_PROTOCOL_URL}/?token={pwd_reset_token}/""",
