@@ -45,3 +45,7 @@ class User(AbstractUser):
         if not self.has_role(role=role):
             return
         del self.roles[self.roles.index(role)]
+
+    class Meta:
+        verbose_name = "Пользователь"
+        verbose_name_plural = "Пользователи"
