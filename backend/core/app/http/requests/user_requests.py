@@ -43,3 +43,13 @@ class SendHTMLRequest(UnimplementedSerializer):
     subject = serializers.CharField(min_length=0, max_length=100)
     message = serializers.CharField(min_length=0, max_length=10000)
     receivers = serializers.ListField(min_length=1)
+
+
+class UserSendPwdResetMailRequest(UnimplementedSerializer):
+    email = serializers.EmailField()
+
+
+class UserResetPassRequest(UnimplementedSerializer):
+    pwd_reset_token = serializers.CharField(max_length=128)
+    email = serializers.EmailField()
+    new_password = serializers.CharField(min_length=8, max_length=128)
