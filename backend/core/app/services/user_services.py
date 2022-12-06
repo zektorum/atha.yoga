@@ -2,7 +2,7 @@ from functools import cached_property
 from typing import Tuple
 from random import randint
 
-from rest_framework.exceptions import ValidationError, AuthenticationFailed
+from rest_framework.exceptions import ValidationError, AuthenticationFailed, PermissionDenied
 
 from core.app.repositories.user_repository import UserRepository
 from core.app.services.types import (
@@ -81,7 +81,7 @@ class UserResetPass:
     def reset(self, email) -> None:
         user = self.repository.find_user_by_email(email)
         if not user:
-            raise AuthenticationFailed("User with this email does not exist")
+            raise PermissionDenied("User with this email does not exist")
         pwd_reset_token = randint(100000, 999999)
         SimpleEmailTextService(TextMailData(
             subject="Please reset your password",
@@ -95,7 +95,7 @@ class UserResetPass:
     def change(self, new_password, email, pwd_reset_token) -> Tuple[User, UserToken]:
         user = self.repository.find_user_by_email(email=email)
         if not user:
-            raise AuthenticationFailed("User with this email does not exist")
+            raise PermissionDenied("User with this email does not exist")
         if pwd_reset_token != user.pwd_reset_token:
             raise AuthenticationFailed(f"Tokens don't match")
         user.set_password(new_password)
