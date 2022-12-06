@@ -1,6 +1,7 @@
 from functools import cached_property
 from typing import Tuple
-from random import randint
+import uuid
+from django.conf import settings
 
 from rest_framework.exceptions import ValidationError, AuthenticationFailed, PermissionDenied
 
@@ -82,11 +83,11 @@ class UserResetPass:
         user = self.repository.find_user_by_email(email)
         if not user:
             raise PermissionDenied("User with this email does not exist")
-        pwd_reset_token = randint(100000, 999999)
+        pwd_reset_token = str(uuid.uuid4())
         SimpleEmailTextService(TextMailData(
             subject="Please reset your password",
             message=f"""Reset your Atha.Yoga password
-            Click here: http://athayoga.su/?token={pwd_reset_token}/""",
+            Click here: {settings.SITE_PROTOCOL_URL}/?token={pwd_reset_token}/""",
             receivers=[email]
         )).send()
         user.pwd_reset_token = pwd_reset_token

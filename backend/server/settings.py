@@ -29,6 +29,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "")
 DEBUG = bool(int(os.environ.get("DEBUG", "0")))
 
 ALLOWED_HOSTS = ["*"]
+SITE_PROTOCOL_URL = "http://athayoga.su"
 CORS_ORIGIN_ALLOW_ALL = True
 
 # Application definition
