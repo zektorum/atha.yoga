@@ -23,6 +23,10 @@ types-pytz = "*"
 django-multi-captcha-admin = "*"
 install = "*"
 django-recaptcha2 = "*"
+furl = "*"
+requests = "*"
+dacite = "*"
+types-requests = "*"
 
 [dev-packages]
 isort = "*"

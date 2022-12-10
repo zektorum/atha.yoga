@@ -1,3 +1,4 @@
+import uuid
 from typing import List, Union
 
 from django.contrib.auth.models import AbstractUser
@@ -50,3 +51,10 @@ class User(AbstractUser):
     class Meta:
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
+
+
+class Transaction(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True, unique=True, default=uuid.uuid4, editable=False
+    )
+    amount = models.PositiveIntegerField()
