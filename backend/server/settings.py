@@ -12,7 +12,6 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "")
 DEBUG = bool(int(os.environ.get("DEBUG", "0")))
 
 ALLOWED_HOSTS = ["*"]
-SITE_URL = os.environ.get("SITE_URL")
 CORS_ORIGIN_ALLOW_ALL = True
 
 # Application definition
@@ -188,3 +187,6 @@ LOGGING = {
         },
     },
 }
+
+SITE_URL = os.environ.get("SITE_URL")
+BACKEND_URL = os.environ.get("BACKEND_URL")

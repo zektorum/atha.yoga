@@ -2,6 +2,8 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import TypedDict, NamedTuple
 
+from dacite import from_dict, Config
+
 
 class UserRegisterData(TypedDict):
     email: str
@@ -55,8 +57,16 @@ class PaymentStatuses(Enum):
 
 
 @dataclass
-class InitPaymentResponse(TypedDict):
+class InitPaymentResponse:
     Success: bool
     Status: PaymentStatuses
-    PaymentId: int
+    PaymentId: str
     PaymentURL: str
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "InitPaymentResponse":
+        return from_dict(
+            data_class=InitPaymentResponse,
+            data=data,
+            config=Config(type_hooks={PaymentStatuses: PaymentStatuses}),
+        )

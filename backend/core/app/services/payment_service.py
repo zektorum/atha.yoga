@@ -5,7 +5,6 @@ from typing import Tuple, Any, List, cast
 
 import furl
 import requests
-from dacite import from_dict
 from django.utils.timezone import now
 
 from core.app.services.types import InitPaymentResponse, PaymentStatuses
@@ -19,7 +18,7 @@ class TinkoffPaymentService:
     BASE_URL = "https://securepay.tinkoff.ru/v2"
 
     def init_pay(
-        self, amount: int, transaction_id: int, description: str
+        self, amount: int, transaction_id: str, description: str
     ) -> InitPaymentResponse:
         url = furl.furl(url=self.BASE_URL).join("Init")
         params = {
@@ -27,16 +26,20 @@ class TinkoffPaymentService:
             "Amount": amount,
             "Description": description,
             "OrderId": transaction_id,
-            "RedirectDueDate": now() + timedelta(hours=1),
-            "SuccessURL": furl.furl(url=settings.SITE_URL).join("success-payment"),
+            "RedirectDueDate": (now() + timedelta(hours=1))
+            .replace(microsecond=0)
+            .isoformat(),
+            "SuccessURL": furl.furl(url=settings.BACKEND_URL)
+            .join(f"core/success-payment/{transaction_id}/")
+            .url,
         }
-        res = requests.post(url=url, data=params).json()
+        res = requests.post(url=url.url, data=params).json()
         if not res.get("Success"):
             logger.error(res)
             raise ServerError(detail="Payment not success")
-        return from_dict(InitPaymentResponse, res)
+        return InitPaymentResponse.from_dict(data=res)
 
-    def payment_status(self, payment_id: int) -> PaymentStatuses:
+    def payment_status(self, payment_id: str) -> PaymentStatuses:
         url = furl.furl(url=self.BASE_URL).join("GetState")
         params = {
             "TerminalKey": settings.TERMINAL_KEY,

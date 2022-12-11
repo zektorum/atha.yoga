@@ -1,12 +1,13 @@
 from django.urls import path
-from core import views
-from core.app.handlers.user_handlers import (UserRegisterHandler,
-                                             UserLoginHandler,
-                                             UserChangePassHandler,
-                                             UserSendPwdResetMailHandler,
-                                             UserResetPassHandler
-                                             )
 
+from core.app.handlers.payments_handlers import SuccessPaymentHandler
+from core.app.handlers.user_handlers import (
+    UserRegisterHandler,
+    UserLoginHandler,
+    UserChangePassHandler,
+    UserSendPwdResetMailHandler,
+    UserResetPassHandler,
+)
 
 urlpatterns = [
     path("register/", UserRegisterHandler.as_view(), name="registration"),
@@ -14,4 +15,5 @@ urlpatterns = [
     path("changepass/", UserChangePassHandler.as_view(), name="changepass"),
     path("resetpass/", UserSendPwdResetMailHandler.as_view(), name="resetpass"),
     path("resetpass/confirm/", UserResetPassHandler.as_view(), name="resetpass_change"),
+    path("success-payment/<str:transaction_id>/", SuccessPaymentHandler.as_view()),
 ]
