@@ -12,6 +12,7 @@ from core.app.http.requests.user_requests import (
 from core.app.http.resources.user_resources import UserResource
 from core.app.services.user_services import UserRegister, UserLogin, UserChangePass
 
+
 class UserRegisterHandler(GenericAPIView):
     serializer_class = UserRegisterRequest
 

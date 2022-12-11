@@ -1,5 +1,7 @@
 from typing import TypedDict
 
+import PIL.JpegImagePlugin
+
 
 class UserRegisterData(TypedDict):
     email: str
@@ -28,3 +30,18 @@ class HtmlMailData(TypedDict):
     message: str
     receivers: list
     template_path: str
+
+
+class QuestionnaireTeacherData(TypedDict):
+    name: str
+    surname: str
+    date_of_birth: str
+    gender: str
+    about_me: str
+    work_experience: str
+    vk_link: str
+    telegram_link: str
+    certificate_photos: PIL.JpegImagePlugin.JpegImageFile
+    passport_photo: PIL.JpegImagePlugin.JpegImageFile
+    user_photo: PIL.JpegImagePlugin.JpegImageFile
+    roles: str
