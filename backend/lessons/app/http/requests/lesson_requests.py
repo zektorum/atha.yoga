@@ -45,3 +45,7 @@ class LessonCreateRequest(UnimplementedSerializer):
     payment = serializers.ChoiceField(choices=LessonPaymentTypes.choices)
     price = serializers.IntegerField(min_value=0)
     schedule = ScheduleCreateRequest(many=True, allow_null=True)
+
+
+class FavoriteLessonAddRemoveRequest(UnimplementedSerializer):
+    lesson_id = serializers.IntegerField(min_value=1)
