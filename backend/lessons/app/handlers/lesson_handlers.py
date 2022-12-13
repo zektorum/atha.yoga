@@ -9,10 +9,11 @@ from core.app.utils.pagination import paginate
 from lessons.app.http.requests.lesson_requests import (
     LessonFilterRequest,
     LessonCreateRequest,
+    FavoriteLessonAddRemoveRequest,
 )
 from lessons.app.http.resources.lesson_resources import LessonResource
 from lessons.app.repositories.lesson_repository import LessonRepository
-from lessons.app.services.lesson_service import LessonCreator
+from lessons.app.services.lesson_service import LessonCreator, FavoriteLessonsWork
 
 
 class LessonsFilterHandler(GenericAPIView):
@@ -42,3 +43,40 @@ class LessonCreateHandler(GenericAPIView):
         ).create()
 
         return Response({"data": LessonResource(lesson).data})
+
+
+@permission_classes([IsAuthenticated])
+class FavoriteLessonAddHandler(GenericAPIView):
+    serializer_class = FavoriteLessonAddRemoveRequest
+
+    def post(self, *args: Any, **kwargs: Any) -> Response:
+        data = self.serializer_class(data=self.request.data)
+        data.is_valid(raise_exception=True)
+
+        lesson = FavoriteLessonsWork(
+            user=self.request.user, lesson_id=data.validated_data["lesson_id"]
+        ).add()
+
+        return Response({"data": LessonResource(lesson).data})
+
+
+@permission_classes([IsAuthenticated])
+class FavoriteLessonRemoveHandler(GenericAPIView):
+    serializer_class = FavoriteLessonAddRemoveRequest
+
+    def post(self, *args: Any, **kwargs: Any) -> Response:
+        data = self.serializer_class(data=self.request.data)
+        data.is_valid(raise_exception=True)
+
+        lesson = FavoriteLessonsWork(
+            user=self.request.user, lesson_id=data.validated_data["lesson_id"]
+        ).remove()
+
+        return Response({"data": LessonResource(lesson).data})
+
+
+@permission_classes([IsAuthenticated])
+class FavoriteLessonListHandler(GenericAPIView):
+    def get(self, *args: Any, **kwargs: Any) -> Response:
+        lessons = LessonRepository().find_user_favorite_lessons(user=self.request.user)
+        return Response({"data": LessonResource(lessons, many=True).data})

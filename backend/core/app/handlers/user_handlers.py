@@ -9,16 +9,15 @@ from core.app.http.requests.user_requests import (
     UserLoginRequest,
     UserChangePassRequest,
     UserResetPassRequest,
-    UserSendPwdResetMailRequest
+    UserSendPwdResetMailRequest,
 )
 from core.app.http.resources.user_resources import UserResource
 from core.app.services.user_services import (
     UserRegister,
     UserLogin,
     UserChangePass,
-    UserResetPass
+    UserResetPass,
 )
-
 
 
 class UserRegisterHandler(GenericAPIView):
@@ -81,7 +80,7 @@ class UserResetPassHandler(GenericAPIView):
         user, token = UserResetPass().change(
             new_password=data.validated_data["new_password"],
             email=data.validated_data["email"],
-            pwd_reset_token=data.validated_data["pwd_reset_token"]
+            pwd_reset_token=data.validated_data["pwd_reset_token"],
         )
         return Response(
             {"data": {"user": UserResource(user).data, "tokens": token._asdict()}}
