@@ -12,8 +12,7 @@ import AuthProvider from './utils/providers/auth';
 import BaseLayout from './layouts';
 import ProfileLayout from './layouts/profile';
 import useAuth from './utils/hooks/useAuth';
-import Calendar from './components/calendar';
-
+import CalendarPage from './pages/calendar';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
@@ -42,6 +41,18 @@ const theme = createTheme({
       fontSize: '1.25rem',
       lineHeight: 1.2,
     },
+    iter_h1: {
+      fontFamily: 'Inter',
+      fontWeight: 600,
+      fontSize: '18px',
+      lineHeight: 1.2,
+    },
+    iter_h2: {
+      fontFamily: 'Inter',
+      fontWeight: 400,
+      fontSize: '14px',
+      lineHeight: 1.2,
+    },
   },
 });
 
@@ -60,7 +71,7 @@ const App = () => {
           <Route path="profile" element={<ProfilePage auth={auth} />} />
           <Route path="recovery-password" element={<PasswordRecoveryPage />} />
           <Route path="*" element={<ErrorPage />} />
-          <Route path="calendar" element={<Calendar />} />
+          <Route path="calendar" element={<CalendarPage />} />
         </Route>
       </Routes>
     </ThemeProvider>
