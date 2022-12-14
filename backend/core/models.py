@@ -34,6 +34,7 @@ class User(AbstractUser):
     avatar = models.ImageField(upload_to="user_avatars/", blank=True)
     is_teacher = models.BooleanField(default=False)
     roles = models.JSONField(default=user_default_roles)
+    pwd_reset_token = models.CharField(_("pwd reset token"), max_length=300)
 
     pwd_reset_token = models.CharField(_("pwd reset token"), max_length=300)
 
@@ -49,5 +50,29 @@ class User(AbstractUser):
         del self.roles[self.roles.index(role)]
 
     class Meta:
-        verbose_name = "Пользователь"
-        verbose_name_plural = "Пользователи"
+          verbose_name = "Пользователь"
+          verbose_name_plural = "Пользователи"
+
+
+class GenderTypes(models.TextChoices):
+    MALE = "MALE"
+    FEMALE = "FEMALE"
+
+
+class QuestionnaireTeacher(TimeStampedModel):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(_("name"), max_length=30)
+    surname = models.CharField(_("surname"), max_length=30)
+    date_of_birth = models.DateField(_("date of birth"))
+    gender = models.CharField(_("gender"), max_length=10, choices=GenderTypes.choices)
+    about_me = models.CharField(_("about my self"), max_length=3000)
+    work_experience = models.CharField(_("work_experience"), max_length=1000)
+    vk_link = models.CharField(_("vk link"), max_length=50, blank=True)
+    telegram_link = models.CharField(_("telegram link"), max_length=50, blank=True)
+    certificate_photos = models.ImageField(upload_to="user_certificate/")
+    passport_photo = models.ImageField(upload_to="user_passport/")
+    user_photo = models.ImageField(upload_to="user_avatars/")
+
+    class Meta:
+        verbose_name = "Анкета преподавателя"
+        verbose_name_plural = "Анкета преподавателя"
