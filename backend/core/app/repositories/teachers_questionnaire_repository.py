@@ -1,16 +1,18 @@
-from typing import Optional
-
-
 from core.app.repositories.base_repository import BaseRepository
-from core.models import QuestionnaireTeacher, User
+from core.models import QuestionnaireTeacher, User, QuestionnaireTeacherStatuses
 
 
 class QuestionnaireTeacherRepository(BaseRepository):
-    model = QuestionnaireTeacher()
+    model = QuestionnaireTeacher
 
     def store(self, questionnaire: QuestionnaireTeacher) -> None:
         questionnaire.save()
 
-    def check_user_by_roles(self, roles: str) -> Optional[User]:
-        user = User.objects.filter(roles=roles)
-        return user
+    def has_moderate_questionnaires(self, user: User) -> bool:
+        return self.model.objects.filter(
+            user_id=user.id,
+            status__in=[
+                QuestionnaireTeacherStatuses.MODERATION,
+                QuestionnaireTeacherStatuses.ACCEPTED,
+            ],
+        )

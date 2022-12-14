@@ -4,6 +4,7 @@ from rest_framework.decorators import permission_classes
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from core.app.utils.pagination import paginate
 from lessons.app.http.requests.lesson_requests import (
@@ -76,7 +77,7 @@ class FavoriteLessonRemoveHandler(GenericAPIView):
 
 
 @permission_classes([IsAuthenticated])
-class FavoriteLessonListHandler(GenericAPIView):
+class FavoriteLessonListHandler(APIView):
     def get(self, *args: Any, **kwargs: Any) -> Response:
         lessons = LessonRepository().find_user_favorite_lessons(user=self.request.user)
         return Response({"data": LessonResource(lessons, many=True).data})

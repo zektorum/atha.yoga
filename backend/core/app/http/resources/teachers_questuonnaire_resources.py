@@ -7,16 +7,15 @@ class QuestionnaireTeacherResource(ModelSerializer):
     class Meta:
         model = QuestionnaireTeacher
         fields = [
-            'id',
-            'first_name',
-            'last_name',
-            'date_birth',
-            'gender',
-            'about_me',
-            'work_experience',
-            'vk_link',
-            'telegram_link',
-            'certificate_photos',
-            'passport_photo',
-            'user_photo'
+            "id",
+            "user",
+            "name",
+            "surname",
+            "date_of_birth",
+            "gender",
+            "about_me",
+            "work_experience",
+            "vk_link",
+            "telegram_link",
+            "status",
         ]

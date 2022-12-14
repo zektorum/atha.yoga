@@ -22,6 +22,7 @@ django-elasticsearch-dsl = "*"
 types-pytz = "*"
 install = "*"
 django-recaptcha = "*"
+django-polymorphic = "*"
 
 [dev-packages]
 isort = "*"

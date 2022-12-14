@@ -1,6 +1,6 @@
-from typing import TypedDict, NamedTuple
+from typing import TypedDict, NamedTuple, List
 
-import PIL.JpegImagePlugin
+from django.core.files.uploadedfile import InMemoryUploadedFile
 
 
 class UserRegisterData(TypedDict):
@@ -41,7 +41,6 @@ class QuestionnaireTeacherData(TypedDict):
     work_experience: str
     vk_link: str
     telegram_link: str
-    certificate_photos: PIL.JpegImagePlugin.JpegImageFile
-    passport_photo: PIL.JpegImagePlugin.JpegImageFile
-    user_photo: PIL.JpegImagePlugin.JpegImageFile
-    roles: str
+    certificate_photos: List[InMemoryUploadedFile]
+    passport_photos: List[InMemoryUploadedFile]
+    user_photos: List[InMemoryUploadedFile]
