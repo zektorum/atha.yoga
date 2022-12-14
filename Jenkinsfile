@@ -2,13 +2,17 @@ pipeline {
     agent any
     stages {
         stage('Build') {
+            environment {
+                BRANCH_NAME="${env.BRANCH_NAME}"
+            }
             steps {
-                sh 'docker-compose build'
+                sh 'cp backend/.env.$BRANCH_NAME backend/.env'
+                sh 'docker-compose --env-file backend/.env build'
             }
         }
         stage('Deploy') {
             steps {
-                sh 'docker-compose up -d'
+                sh 'docker-compose --env-file backend/.env up -d'
             }
         }
     }
