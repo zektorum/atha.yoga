@@ -8,8 +8,6 @@ const ProfileLayout = ({ auth }) => (
     container
     justifyContent="flex-start"
     alignItems="flex-start"
-    spacing={2}
-    sx={{ paddingTop: '20px' }}
   >
     <Grid
       item
@@ -22,7 +20,7 @@ const ProfileLayout = ({ auth }) => (
       <Menu auth={auth} />
     </Grid>
 
-    <Grid item md={6} sm={1} container>
+    <Grid item md sm={1} container>
       <Outlet />
     </Grid>
   </Grid>

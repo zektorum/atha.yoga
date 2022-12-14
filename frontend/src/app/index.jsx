@@ -21,7 +21,7 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
 import './theme/style.scss';
-import SearchLessonsPage from "./pages/search-lessons";
+import SearchLessonsPage from './pages/search-lessons';
 
 const theme = createTheme({
   palette: {
