@@ -45,7 +45,7 @@ services:
     env_file:
       - "${ENV_FILE}"
     ports:
-      - "${ELASTIC_PORT}:${ELASTIC_PORT}"
+      - "${ELASTIC_PORT}:9200"
     volumes:
       - .devops/build/hunspell:/usr/share/elasticsearch/config/hunspell
     environment:
