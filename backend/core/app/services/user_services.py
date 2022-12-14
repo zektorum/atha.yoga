@@ -1,24 +1,25 @@
+import uuid
 from functools import cached_property
 from typing import Tuple
-import uuid
-from django.conf import settings
 
+from django.conf import settings
 from rest_framework.exceptions import (
     ValidationError,
     AuthenticationFailed,
     PermissionDenied,
 )
 
+from core.app.errors import ErrorsMessages
 from core.app.repositories.user_repository import UserRepository
+from core.app.services.email_services import SimpleEmailTextService
+from core.app.services.types import TextMailData
 from core.app.services.types import (
     UserRegisterData,
     UserLoginData,
     UserChangePassData,
 )
-from core.app.services.email_services import SimpleEmailTextService
 from core.app.utils.jwt import UserToken, get_tokens_for_user
 from core.models import User
-from core.app.services.types import TextMailData
 
 
 class UserRegister:
@@ -52,7 +53,7 @@ class UserLogin:
     def user(self) -> User:
         user = self.repository.find_user_by_email(self.data["email"])
         if not user or not user.check_password(self.data["password"]):
-            raise AuthenticationFailed()
+            raise AuthenticationFailed(ErrorsMessages.AUTH_FAILED.value)
         return user
 
     def login(self) -> Tuple[User, UserToken]:
