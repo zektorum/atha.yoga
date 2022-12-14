@@ -36,6 +36,8 @@ class User(AbstractUser):
     roles = models.JSONField(default=user_default_roles)
     pwd_reset_token = models.CharField(_("pwd reset token"), max_length=300)
 
+    pwd_reset_token = models.CharField(_("pwd reset token"), max_length=300)
+
     def has_role(self, role: UserRoles) -> bool:
         return role in self.roles
 
@@ -48,8 +50,8 @@ class User(AbstractUser):
         del self.roles[self.roles.index(role)]
 
     class Meta:
-        verbose_name = "Пользователи"
-        verbose_name_plural = "Пользователи"
+          verbose_name = "Пользователь"
+          verbose_name_plural = "Пользователи"
 
 
 class GenderTypes(models.TextChoices):

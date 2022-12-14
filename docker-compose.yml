@@ -2,34 +2,48 @@ version: '3'
 
 services:
   server:
-    build: ./backend
+    build: backend/
+    container_name: "backend-${CONTAINER_SUFFIX}"
+    env_file:
+      - "${ENV_FILE}"
     ports:
-      - 8080:8080
+      - "${BACKEND_PORT}:8000"
+    volumes:
+      - ./backend/static:/opt/services/backend/src/static
     depends_on:
       - db
 
+  frontend:
+    build: frontend/
+    container_name: "frontend-${CONTAINER_SUFFIX}"
+    ports:
+      - "${FRONTEND_PORT}:8080"
+
   db:
     image: postgres:14
-    container_name: db
+    container_name: "db-${CONTAINER_SUFFIX}"
     env_file:
-      - backend/.env
+      - "${ENV_FILE}"
     ports:
-      - 5432:5432
+      - "${DATABASE_PORT}:5432"
     volumes:
       - ./db:/var/lib/postgres/data
 
   dozzle:
-    container_name: dozzle
+    container_name: "dozzle-${CONTAINER_SUFFIX}"
     image: amir20/dozzle:v4.4.1
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
-      - 4040:8080
+      - "${DOZZLE_PORT}:${DOZZLE_PORT}"
+    environment:
+      - "DOZZLE_ADDR=:${DOZZLE_PORT}"
 
   elasticsearch:
     image: elasticsearch:7.17.5
+    container_name: "elasticsearch-${CONTAINER_SUFFIX}"
     env_file:
-      - ./backend/.env
+      - "${ENV_FILE}"
     ports:
       - "${ELASTIC_PORT}:${ELASTIC_PORT}"
     volumes:
@@ -38,3 +52,4 @@ services:
       - discovery.type=single-node
       - ELASTIC_PASSWORD=$ELASTIC_PASSWORD
       - xpack.security.enabled=true
+      - ES_JAVA_OPTS=-Xms750m -Xmx750m

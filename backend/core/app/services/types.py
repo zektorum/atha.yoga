@@ -1,4 +1,4 @@
-from typing import TypedDict
+from typing import TypedDict, NamedTuple
 
 import PIL.JpegImagePlugin
 
@@ -19,13 +19,13 @@ class UserChangePassData(TypedDict):
     new_password: str
 
 
-class TextMailData(TypedDict):
+class TextMailData(NamedTuple):
     subject: str
     message: str
     receivers: list
 
 
-class HtmlMailData(TypedDict):
+class HtmlMailData(NamedTuple):
     subject: str
     message: str
     receivers: list
