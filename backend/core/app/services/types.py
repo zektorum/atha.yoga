@@ -1,4 +1,6 @@
-from typing import TypedDict, NamedTuple
+from typing import TypedDict, NamedTuple, List
+
+from django.core.files.uploadedfile import InMemoryUploadedFile
 
 
 class UserRegisterData(TypedDict):
@@ -29,3 +31,16 @@ class HtmlMailData(NamedTuple):
     receivers: list
     template_path: str
 
+
+class QuestionnaireTeacherData(TypedDict):
+    name: str
+    surname: str
+    date_of_birth: str
+    gender: str
+    about_me: str
+    work_experience: str
+    vk_link: str
+    telegram_link: str
+    certificate_photos: List[InMemoryUploadedFile]
+    passport_photos: List[InMemoryUploadedFile]
+    user_photos: List[InMemoryUploadedFile]

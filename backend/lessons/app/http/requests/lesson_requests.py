@@ -47,5 +47,12 @@ class LessonCreateRequest(UnimplementedSerializer):
     schedule = ScheduleCreateRequest(many=True, allow_null=True)
 
 
+class LessonUpdateRequest(UnimplementedSerializer):
+    description = serializers.CharField(max_length=150, allow_blank=True)
+    complexity = serializers.ChoiceField(choices=LessonComplexities.choices)
+    level = serializers.ChoiceField(choices=LessonLevels.choices)
+    duration = serializers.DurationField()
+
+
 class FavoriteLessonAddRemoveRequest(UnimplementedSerializer):
     lesson_id = serializers.IntegerField(min_value=1)
