@@ -1,11 +1,12 @@
 from functools import cached_property
 
-from rest_framework.exceptions import NotFound, ValidationError
+from rest_framework.exceptions import NotFound, ValidationError, PermissionDenied
 
-from core.models import User
+from core.app.utils.util import setup_resource_attributes
+from core.models import User, UserRoles
 from lessons.app.repositories.lesson_repository import LessonRepository
 from lessons.app.repositories.schedule_repository import ScheduleRepository
-from lessons.app.services.types import LessonCreateData
+from lessons.app.services.types import LessonCreateData, LessonUpdateData
 from lessons.models import Lesson, Schedule
 
 
@@ -49,11 +50,31 @@ class LessonCreator:
         self.schedule_repos.bulk_create(objs=schedule_to_create)
 
     def create(self) -> Lesson:
-        # if not self._user.has_role(UserRoles.TEACHER):
-        #     raise PermissionDenied("User must be teacher for create lessons")
+        if not self._user.has_role(UserRoles.TEACHER):
+            raise PermissionDenied("User must be teacher for create lessons")
         self.repos.store(lesson=self.lesson)
         self._create_schedule()
         return self.lesson
+
+
+class LessonUpdator:
+    repository = LessonRepository()
+
+    def __init__(self, user: User, pk: int, data: LessonUpdateData):
+        self._pk = pk
+        self._user = user
+        self._data = data
+
+    def update(self) -> Lesson:
+        lesson = self.repository.find_by_id_teacher(
+            id_=self._pk, teacher_id=self._user.id
+        )
+        if not lesson:
+            raise NotFound(f"Undefined lesson with pk {self._pk}")
+        setup_resource_attributes(
+            instance=lesson, validated_data=self._data, fields=list(self._data.keys())
+        )
+        return lesson
 
 
 class FavoriteLessonsWork:
@@ -65,7 +86,7 @@ class FavoriteLessonsWork:
 
     @cached_property
     def lesson(self) -> Lesson:
-        lesson = self.repository.find_lesson_by_id(id_=self.lesson_id)
+        lesson = self.repository.find_by_id(id_=self.lesson_id)
         if not lesson:
             raise NotFound(f"Undefined lesson with id {self.lesson_id}")
         return lesson

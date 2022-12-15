@@ -21,7 +21,7 @@ class CommentCreate:
 
     @cached_property
     def comment(self) -> Comment:
-        lesson = self.lesson_repository.find_lesson_by_id(id_=self.data["lesson_id"])
+        lesson = self.lesson_repository.find_by_id(id_=self.data["lesson_id"])
         if not lesson:
             raise NotFound(f"Undefined lesson with id {self.data['lesson_id']}")
 
