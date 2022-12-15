@@ -1,7 +1,6 @@
 from typing import Any
 
 from rest_framework.decorators import permission_classes
-from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -92,15 +91,14 @@ class LessonTicketBuyHandler(GenericAPIView):
         data.is_valid(raise_exception=True)
 
         lesson = TicketRepository().find_lesson_by_id(id_=data.validated_data["lesson_id"])
-        if not lesson:
-            raise PermissionDenied("Lesson does not exist")
 
-        ticket = TicketRepository().find_ticket_for_lesson(name=lesson.id, user=self.request.user)
+        ticket = TicketRepository().find_ticket_for_lesson(lesson=lesson.id, user=self.request.user)
+
         if not ticket:
-            ticket = TicketService(name=lesson,
+            ticket = TicketService(lesson=lesson,
                                    amount=data.validated_data["amount"], user=self.request.user).buy_ticket()
         else:
-            ticket = TicketService(name=lesson,
+            ticket = TicketService(lesson=lesson,
                                    amount=data.validated_data["amount"], user=self.request.user).add_ticket()
 
         return Response("ticket obtained")
@@ -115,6 +113,7 @@ class LessonTicketUseHandler(GenericAPIView):
         data.is_valid(raise_exception=True)
 
         lesson = TicketRepository().find_lesson_by_id(id_=data.validated_data["lesson_id"])
-        ticket = TicketService(name=lesson, amount=None, user=self.request.user).use_ticket()
 
-        return Response({"data": ticket.name.id})
+        ticket = TicketService(lesson=lesson, amount=None, user=self.request.user).use_ticket()
+
+        return Response({"data": {"lesson_id": ticket.lesson.id}})

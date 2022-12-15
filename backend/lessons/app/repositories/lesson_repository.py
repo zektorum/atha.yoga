@@ -2,6 +2,7 @@ from typing import Optional
 
 from django.db.models import QuerySet, Q, F
 from elasticsearch_dsl import Q as EQ
+from rest_framework.exceptions import PermissionDenied
 
 from core.app.repositories.base_repository import BaseRepository
 from core.models import User
@@ -64,8 +65,16 @@ class TicketRepository(BaseRepository):
     def store(self, ticket: Ticket) -> None:
         ticket.save()
 
-    def find_ticket_for_lesson(self, name: Lesson, user: User) -> Optional[Ticket]:
-        return self.model.objects.filter(name=name, user=user).first()
+    def del_zero_ticket(self, ticket: Ticket) -> None:
+        ticket.delete()
 
-    def find_lesson_by_id(self, id_: int) -> Optional[Lesson]:
-        return LessonRepository.model.objects.filter(pk=id_).first()
+    def find_ticket_for_lesson(self, lesson: Lesson, user: User) -> Ticket:
+        ticket = self.model.objects.filter(lesson=lesson, user=user).first()
+
+        return ticket
+
+    def find_lesson_by_id(self, id_: int) -> Lesson:
+        lesson = LessonRepository.model.objects.filter(pk=id_).first()
+        if not lesson:
+            raise PermissionDenied("Lesson does not exist")
+        return lesson

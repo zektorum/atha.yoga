@@ -89,8 +89,8 @@ class Comment(TimeStampedModel):
 
 
 class Ticket(models.Model):
-    name = models.ForeignKey(Lesson, on_delete=models.DO_NOTHING)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    lesson = models.ForeignKey(Lesson, on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     amount = models.CharField(max_length=8)
 
     class Meta:

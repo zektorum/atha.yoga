@@ -1,6 +1,6 @@
 from functools import cached_property
 
-from rest_framework.exceptions import NotFound, ValidationError
+from rest_framework.exceptions import NotFound, ValidationError, PermissionDenied
 
 from core.models import User
 from lessons.app.repositories.lesson_repository import LessonRepository, TicketRepository
@@ -90,15 +90,15 @@ class FavoriteLessonsWork:
 class TicketService:
     repositories = TicketRepository()
 
-    def __init__(self, name: Lesson, user: User, amount):
-        self.name = name
+    def __init__(self, lesson: Lesson, user: User, amount):
+        self.lesson = lesson
         self.user = user
         self.amount = amount
 
     @cached_property
     def ticket(self) -> Ticket:
         ticket = Ticket()
-        ticket.name = self.name
+        ticket.lesson = self.lesson
         ticket.user = self.user
         ticket.amount = self.amount
         return ticket
@@ -108,13 +108,19 @@ class TicketService:
         return self.ticket
 
     def add_ticket(self) -> Ticket:
-        ticket = self.repositories.find_ticket_for_lesson(name=self.ticket.name, user=self.ticket.user)
+        ticket = self.repositories.find_ticket_for_lesson(lesson=self.ticket.lesson, user=self.ticket.user)
         ticket.amount = int(ticket.amount) + int(self.amount)
         self.repositories.store(ticket=ticket)
-        return self.ticket
+        return ticket
 
     def use_ticket(self) -> Ticket:
-        ticket = self.repositories.find_ticket_for_lesson(name=self.ticket.name, user=self.ticket.user)
+        ticket = self.repositories.find_ticket_for_lesson(lesson=self.ticket.lesson, user=self.ticket.user)
+        if not ticket:
+            raise PermissionDenied("ticket for lesson does not exist")
         ticket.amount = int(ticket.amount) - 1
-        self.repositories.store(ticket=ticket)
-        return self.ticket
+
+        if ticket.amount == 0:
+            self.repositories.del_zero_ticket(ticket=ticket)
+        else:
+            self.repositories.store(ticket=ticket)
+        return ticket
