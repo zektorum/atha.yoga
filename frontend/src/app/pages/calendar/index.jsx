@@ -10,6 +10,7 @@ const CalendarPage = () => (
   <Grid
     container
     flexDirection="column"
+    sx={{ height: '100%'}}
   >
     <Grid
       item
@@ -33,7 +34,7 @@ const CalendarPage = () => (
       alignItems="center"
       justifyContent="center"
       sx={{
-        height: '100vh',
+        flex: '1 0 auto'
       }}
     >
       <Box mb="80px">
