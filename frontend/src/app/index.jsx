@@ -14,7 +14,6 @@ import ProfileLayout from './layouts/profile';
 import useAuth from './utils/hooks/useAuth';
 import CalendarPage from './pages/calendar';
 import LessonCard from './components/lesson-card';
-import MenuPage from './pages/menu/index';
 
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
@@ -65,7 +64,6 @@ const App = () => {
           <Route path="*" element={<ErrorPage />} />
           <Route path="search-lessons" element={<SearchLessonsPage />} />
           <Route path="calendar" element={<CalendarPage />} />
-          <Route path="menu" element={<MenuPage />} />
         </Route>
       </Routes>
     </ThemeProvider>

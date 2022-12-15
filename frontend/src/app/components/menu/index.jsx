@@ -10,10 +10,10 @@ import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined
 import ConfirmationNumberOutlinedIcon from '@mui/icons-material/ConfirmationNumberOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import { Link } from 'react-router-dom';
-import menu_logo from '../../../assets/public/menu_logo.svg';
+import menuLogo from '../../../assets/public/menu_logo.svg';
 
 const Menu = ({ auth }) => {
-  const menu_item_style = {
+  const menuItemStyle = {
     minHeight: '36px',
     '& .MuiTypography-root': {
        color: 'text.secondary',
@@ -38,13 +38,14 @@ const Menu = ({ auth }) => {
           backgroundColor: '#F5F5F5'
         }}
       >
+        <button onClick={auth.logout}>Logout</button>
         <div style={{ textAlign: 'center', marginBottom: '18px' }}>
-          <img src={menu_logo} alt="atha yoga logo" style={{ width: '103px', height: '26px' }} />
+          <img src={menuLogo} alt="atha yoga logo" style={{ width: '103px', height: '26px' }} />
         </div>
         <MenuItem
           component={Link}
           to="search-lessons"
-          sx={{ ...menu_item_style }}
+          sx={{ ...menuItemStyle }}
         >
           <ListItemIcon>
             <SearchIcon color="disabled" fontSize="medium" />
@@ -59,7 +60,7 @@ const Menu = ({ auth }) => {
               )}
           />
         </MenuItem>
-        <MenuItem component={Link} to="" sx={{ ...menu_item_style }}>
+        <MenuItem component={Link} to="" sx={{ ...menuItemStyle }}>
           <ListItemIcon>
             <FavoriteBorderIcon color="disabled" fontSize="medium" />
           </ListItemIcon>
@@ -73,7 +74,7 @@ const Menu = ({ auth }) => {
               )}
           />
         </MenuItem>
-        <MenuItem component={Link} to="" sx={{ ...menu_item_style }}>
+        <MenuItem component={Link} to="" sx={{ ...menuItemStyle }}>
           <ListItemIcon>
             <ConfirmationNumberOutlinedIcon color="disabled" fontSize="medium" />
           </ListItemIcon>
@@ -87,7 +88,7 @@ const Menu = ({ auth }) => {
                 )}
           />
         </MenuItem>
-        <MenuItem component={Link} to="/calendar" sx={{ ...menu_item_style }}>
+        <MenuItem component={Link} to="/calendar" sx={{ ...menuItemStyle }}>
           <ListItemIcon>
             <CalendarMonthOutlinedIcon color="disabled" fontSize="medium" />
           </ListItemIcon>
@@ -101,7 +102,7 @@ const Menu = ({ auth }) => {
                 )}
           />
         </MenuItem>
-        <MenuItem component={Link} to="/profile" sx={{ ...menu_item_style }}>
+        <MenuItem component={Link} to="/profile" sx={{ ...menuItemStyle }}>
           <ListItemIcon>
             <AccountCircleOutlinedIcon color="disabled" fontSize="medium" />
           </ListItemIcon>

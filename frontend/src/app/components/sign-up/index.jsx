@@ -48,10 +48,6 @@ const SignUp = () => {
     context.register({ email: data.get('email'), password: data.get('password') });
   };
 
-  const handleMouseDownPassword = event => {
-    event.preventDefault();
-  };
-
   const MyFormHelperText = () => {
     const { focused } = useFormControl() || {};
 
@@ -111,7 +107,6 @@ const SignUp = () => {
             <IconButton
                 aria-label="toggle password visibility"
                 onClick={handleClickShowPassword}
-                onMouseDown={handleMouseDownPassword}
                 edge="end"
             >
               {values.showPassword ? <VisibilityOff /> : <Visibility />}
