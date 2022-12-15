@@ -13,6 +13,7 @@ import Container from '@mui/material/Container';
 import { useDispatch, useSelector } from 'react-redux';
 import { AuthContext } from '../../utils/providers/auth';
 import { clearMessage, setMessage } from '../../core/slices/message';
+import {OutlinedInput, FormControl, InputLabel, useFormControl, FormHelperText} from "@mui/material";
 
 const SignUp = () => {
   const [values, setValues] = useState({
@@ -47,6 +48,19 @@ const SignUp = () => {
     context.register({ email: data.get('email'), password: data.get('password') });
   };
 
+  const MyFormHelperText = () => {
+    const { focused } = useFormControl() || {};
+
+    const helperText = React.useMemo(() => {
+      if (focused) {
+        return 'Не меньше 10 символов, знаки 3 из 4 категорий: 0-9, a-z, A-Z и специальные символы';
+      }
+      return '';
+    }, [focused]);
+
+    return <FormHelperText>{helperText}</FormHelperText>;
+  };
+
   return (
     <Container component="main" maxWidth="xs">
       <Box
@@ -75,8 +89,9 @@ const SignUp = () => {
             onFocus={() => handleFocus('email')}
             autoFocus
           />
-          <TextField
-            sx={{ mb: 2 }}
+          <FormControl fullWidth variant="outlined" sx={{ mb: 2 }}>
+          <InputLabel>Пароль</InputLabel>
+          <OutlinedInput
             fullWidth
             label="Пароль"
             name="password"
@@ -101,6 +116,8 @@ const SignUp = () => {
                 ),
             }}
           />
+          <MyFormHelperText />
+          </FormControl>
           <Button
             type="submit"
             size="large"
