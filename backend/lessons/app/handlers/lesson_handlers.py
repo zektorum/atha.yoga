@@ -1,6 +1,7 @@
 from typing import Any
 
 from rest_framework.decorators import permission_classes
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -9,11 +10,11 @@ from core.app.utils.pagination import paginate
 from lessons.app.http.requests.lesson_requests import (
     LessonFilterRequest,
     LessonCreateRequest,
-    FavoriteLessonAddRemoveRequest,
+    FavoriteLessonAddRemoveRequest, LessonTicketBuyRequest, LessonTicketUseRequest,
 )
 from lessons.app.http.resources.lesson_resources import LessonResource
-from lessons.app.repositories.lesson_repository import LessonRepository
-from lessons.app.services.lesson_service import LessonCreator, FavoriteLessonsWork
+from lessons.app.repositories.lesson_repository import LessonRepository, TicketRepository
+from lessons.app.services.lesson_service import LessonCreator, FavoriteLessonsWork, TicketService
 
 
 class LessonsFilterHandler(GenericAPIView):
@@ -90,11 +91,19 @@ class LessonTicketBuyHandler(GenericAPIView):
         data = self.serializer_class(data=self.request.data)
         data.is_valid(raise_exception=True)
 
-        ticket = TicketCreator(
-            data=data.validated_data, user=self.request.user
-        ).create()
+        lesson = TicketRepository().find_lesson_by_id(id_=data.validated_data["lesson_id"])
+        if not lesson:
+            raise PermissionDenied("Lesson does not exist")
 
-        return Response({"data": TicketResource(ticket).data})
+        ticket = TicketRepository().find_ticket_for_lesson(name=lesson.id, user=self.request.user)
+        if not ticket:
+            ticket = TicketService(name=lesson,
+                                   amount=data.validated_data["amount"], user=self.request.user).buy_ticket()
+        else:
+            ticket = TicketService(name=lesson,
+                                   amount=data.validated_data["amount"], user=self.request.user).add_ticket()
+
+        return Response("ticket obtained")
 
 
 @permission_classes([IsAuthenticated])
@@ -105,14 +114,7 @@ class LessonTicketUseHandler(GenericAPIView):
         data = self.serializer_class(data=self.request.data)
         data.is_valid(raise_exception=True)
 
-        ticket = TicketRepository().find_amount_of_ticket(name=data.validated_data["name"])
+        lesson = TicketRepository().find_lesson_by_id(id_=data.validated_data["lesson_id"])
+        ticket = TicketService(name=lesson, amount=None, user=self.request.user).use_ticket()
 
-        if not ticket:
-            raise PermissionDenied("dont have ticket for this lesson")
-        if int(ticket.amount) > 0:
-            ticket.amount = int(ticket.amount) - 1
-            ticket.save()
-        else:
-            raise PermissionDenied("dont have ticket for this lesson")
-
-        return Response({"data": TicketResource(ticket).data["name"]})
+        return Response({"data": ticket.name.id})

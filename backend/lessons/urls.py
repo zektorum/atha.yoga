@@ -9,7 +9,7 @@ from lessons.app.handlers.lesson_handlers import (
     LessonCreateHandler,
     FavoriteLessonAddHandler,
     FavoriteLessonRemoveHandler,
-    FavoriteLessonListHandler,
+    FavoriteLessonListHandler, LessonTicketBuyHandler, LessonTicketUseHandler,
 )
 
 urlpatterns = [

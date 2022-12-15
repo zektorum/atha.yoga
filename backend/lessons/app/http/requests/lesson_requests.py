@@ -49,3 +49,12 @@ class LessonCreateRequest(UnimplementedSerializer):
 
 class FavoriteLessonAddRemoveRequest(UnimplementedSerializer):
     lesson_id = serializers.IntegerField(min_value=1)
+
+
+class LessonTicketBuyRequest(UnimplementedSerializer):
+    lesson_id = serializers.IntegerField(min_value=1)
+    amount = serializers.IntegerField(min_value=1)
+
+
+class LessonTicketUseRequest(UnimplementedSerializer):
+    lesson_id = serializers.IntegerField(min_value=1)

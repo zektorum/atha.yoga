@@ -7,7 +7,7 @@ from core.app.repositories.base_repository import BaseRepository
 from core.models import User
 from lessons.app.repositories.types import LessonFilterData
 from lessons.documents import LessonDocument
-from lessons.models import Lesson
+from lessons.models import Lesson, Ticket
 
 
 class LessonRepository(BaseRepository):
@@ -56,3 +56,16 @@ class LessonRepository(BaseRepository):
             )
             filter_query &= Q(end_datetime__lte=data["end_datetime"])
         return base_query.filter(filter_query)
+
+
+class TicketRepository(BaseRepository):
+    model = Ticket
+
+    def store(self, ticket: Ticket) -> None:
+        ticket.save()
+
+    def find_ticket_for_lesson(self, name: Lesson, user: User) -> Optional[Ticket]:
+        return self.model.objects.filter(name=name, user=user).first()
+
+    def find_lesson_by_id(self, id_: int) -> Optional[Lesson]:
+        return LessonRepository.model.objects.filter(pk=id_).first()
