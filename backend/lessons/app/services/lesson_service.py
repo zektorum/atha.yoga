@@ -90,7 +90,7 @@ class FavoriteLessonsWork:
 class TicketService:
     repositories = TicketRepository()
 
-    def __init__(self, lesson: Lesson, user: User, amount):
+    def __init__(self, lesson: Lesson, user: User, amount: int):
         self.lesson = lesson
         self.user = user
         self.amount = amount
