@@ -70,7 +70,6 @@ class TicketRepository(BaseRepository):
 
     def find_ticket_for_lesson(self, lesson: Lesson, user: User) -> Ticket:
         ticket = self.model.objects.filter(lesson=lesson, user=user).first()
-
         return ticket
 
     def find_lesson_by_id(self, id_: int) -> Lesson:
