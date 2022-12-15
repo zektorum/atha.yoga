@@ -80,3 +80,39 @@ class FavoriteLessonListHandler(GenericAPIView):
     def get(self, *args: Any, **kwargs: Any) -> Response:
         lessons = LessonRepository().find_user_favorite_lessons(user=self.request.user)
         return Response({"data": LessonResource(lessons, many=True).data})
+
+
+@permission_classes([IsAuthenticated])
+class LessonTicketBuyHandler(GenericAPIView):
+    serializer_class = LessonTicketBuyRequest
+
+    def post(self, *args: Any, **kwargs: Any) -> Response:
+        data = self.serializer_class(data=self.request.data)
+        data.is_valid(raise_exception=True)
+
+        ticket = TicketCreator(
+            data=data.validated_data, user=self.request.user
+        ).create()
+
+        return Response({"data": TicketResource(ticket).data})
+
+
+@permission_classes([IsAuthenticated])
+class LessonTicketUseHandler(GenericAPIView):
+    serializer_class = LessonTicketUseRequest
+
+    def put(self, *args: Any, **kwargs: Any) -> Response:
+        data = self.serializer_class(data=self.request.data)
+        data.is_valid(raise_exception=True)
+
+        ticket = TicketRepository().find_amount_of_ticket(name=data.validated_data["name"])
+
+        if not ticket:
+            raise PermissionDenied("dont have ticket for this lesson")
+        if int(ticket.amount) > 0:
+            ticket.amount = int(ticket.amount) - 1
+            ticket.save()
+        else:
+            raise PermissionDenied("dont have ticket for this lesson")
+
+        return Response({"data": TicketResource(ticket).data["name"]})
