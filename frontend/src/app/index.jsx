@@ -13,15 +13,14 @@ import BaseLayout from './layouts';
 import ProfileLayout from './layouts/profile';
 import useAuth from './utils/hooks/useAuth';
 import CalendarPage from './pages/calendar';
-import LessonCard from './components/lesson-card';
 import Search from './components/search';
+import SearchLessonsPage from './pages/search-lessons';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
 import './theme/style.scss';
-import SearchLessonsPage from "./pages/search-lessons";
 
 const theme = createTheme({
   palette: {
