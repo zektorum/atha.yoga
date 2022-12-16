@@ -1,25 +1,27 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useCallback, useState } from 'react';
 import {
-  InputBase, Paper, Typography,
+  debounce, InputBase, Paper, Typography,
 } from '@mui/material';
-import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
+import IconButton from '@mui/material/IconButton';
+import { useDispatch, useSelector } from 'react-redux';
 import filterSlice from '../../core/slices/lessons/filter';
-import useDebounce from '../../utils/hooks/useDebounce';
 
-const SearchLessonsPage = () => {
+const Search = () => {
   const dispatch = useDispatch();
   const [query, setQuery] = useState('');
   const { lessons, isSearching, errorMessage } = useSelector(state => state.lessons);
 
-  const searchQuery = useDebounce(query, 500);
-
-  useEffect(() => {
+  async function doSearch() {
     dispatch(filterSlice(query));
-  }, [searchQuery]);
+  }
+
+  const doSearchDebounced = useCallback(debounce(doSearch, 500), []);
+
   function updateSearch(e) {
     setQuery(e.target.value);
+
+    doSearchDebounced();
   }
 
   return (
@@ -41,14 +43,14 @@ const SearchLessonsPage = () => {
       </Paper>
       {isSearching && <Typography>Searching...</Typography>}
       {errorMessage && (
-        <Typography color="error.main">
-          Error:
-          {errorMessage}
-        </Typography>
+      <Typography color="error.main">
+        Error:
+        {errorMessage}
+      </Typography>
       )}
       {lessons && <Typography>{JSON.stringify(lessons)}</Typography>}
     </>
   );
 };
 
-export default SearchLessonsPage;
+export default Search;
