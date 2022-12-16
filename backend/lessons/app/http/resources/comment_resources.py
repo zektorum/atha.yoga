@@ -1,6 +1,6 @@
 from rest_framework.serializers import ModelSerializer
 
-from lessons.models import Comment
+from lessons.models import LessonComment
 from core.models import User
 
 
@@ -22,7 +22,7 @@ class CommentResource(ModelSerializer):
     user = CommentUserResource()
 
     class Meta:
-        model = Comment
+        model = LessonComment
         fields = [
             "id",
             "text",

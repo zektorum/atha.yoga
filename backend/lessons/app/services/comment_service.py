@@ -7,7 +7,7 @@ from core.models import User
 from lessons.app.repositories.comment_repository import CommentRepository
 from lessons.app.repositories.lesson_repository import LessonRepository
 from lessons.app.services.types import CommentCreateData
-from lessons.models import Comment
+from lessons.models import LessonComment
 
 
 class CommentCreate:
@@ -20,12 +20,12 @@ class CommentCreate:
         self.user = user
 
     @cached_property
-    def comment(self) -> Comment:
+    def comment(self) -> LessonComment:
         lesson = self.lesson_repository.find_by_id(id_=self.data["lesson_id"])
         if not lesson:
             raise NotFound(f"Undefined lesson with id {self.data['lesson_id']}")
 
-        comment = Comment()
+        comment = LessonComment()
         comment.user = self.user
         comment.lesson = lesson
         comment.text = self.data["text"]
@@ -33,5 +33,5 @@ class CommentCreate:
         self.repository.store(comment=comment)
         return comment
 
-    def create(self) -> Comment:
+    def create(self) -> LessonComment:
         return self.comment

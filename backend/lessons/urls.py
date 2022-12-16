@@ -7,10 +7,10 @@ from lessons.app.handlers.comment_handler import (
 from lessons.app.handlers.lesson_handlers import (
     LessonsFilterHandler,
     LessonCreateHandler,
+    LessonUpdateHandler,
     FavoriteLessonAddHandler,
     FavoriteLessonRemoveHandler,
     FavoriteLessonListHandler,
-    LessonUpdateHandler,
 )
 
 urlpatterns = [

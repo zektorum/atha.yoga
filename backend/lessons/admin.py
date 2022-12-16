@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Lesson, Schedule, Comment
+from .models import Lesson, Schedule, LessonComment
 
 
 @admin.register(Lesson)
@@ -48,7 +48,7 @@ class ScheduleAdmin(admin.ModelAdmin):
     date_hierarchy = "created_at"
 
 
-@admin.register(Comment)
+@admin.register(LessonComment)
 class CommentAdmin(admin.ModelAdmin):
     list_display = (
         "id",
