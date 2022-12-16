@@ -4,13 +4,13 @@ import {
 } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { Link } from 'react-router-dom';
-import imageYoga from '../../../assets/public/profile_calendar.png';
+import profileCalendar from '../../../assets/public/profile_calendar.png';
 
 const CalendarPage = () => (
   <Grid
     container
     flexDirection="column"
-    sx={{ height: '100%'}}
+    sx={{ height: '100%' }}
   >
     <Grid
       item
@@ -34,11 +34,11 @@ const CalendarPage = () => (
       alignItems="center"
       justifyContent="center"
       sx={{
-        flex: '1 0 auto'
+        flex: '1 0 auto',
       }}
     >
       <Box mb="80px">
-        <img src={imageYoga} alt="yoga-calendar" />
+        <img src={profileCalendar} alt="yoga-calendar" />
       </Box>
       <Typography textAlign="center" fontSize="18px" color="text.secondary">
         Список занятий пока пуст

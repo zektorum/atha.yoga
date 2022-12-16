@@ -21,7 +21,7 @@ const ProfileLayout = ({ auth }) => (
       <Menu auth={auth} />
     </Grid>
 
-    <Grid item md sm={1} container sx={{ height: '100%' }}>
+    <Grid item md={9.5} sm={1} container sx={{ height: '100%' }}>
       <Outlet />
     </Grid>
   </Grid>
