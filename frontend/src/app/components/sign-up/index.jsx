@@ -145,13 +145,13 @@ const SignUp = () => {
     </Box>
     <div style={{
       position: 'absolute',
-      bottom: 32,
+      bottom: '32px',
       textAlign: 'center',
-      maxWidth: 380,
+      maxWidth: '668px',
       lineHeight: 0.1,
     }}
     >
-      <Typography variant="caption">
+      <Typography variant="caption" sx={{display: 'block'}}>
         Нажимая на кнопку «Зарегистрироваться», вы принимаете условия
         <Typography
             component={Link}
@@ -163,7 +163,7 @@ const SignUp = () => {
           Пользовательского соглашения
         </Typography>
       </Typography>
-      <Typography variant="caption" sx={{ maxWidth: 300 }} marginLeft={1}>
+      <Typography variant="caption" marginLeft={1}>
         и
         <Typography
             component={Link}
