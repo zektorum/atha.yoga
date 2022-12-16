@@ -40,6 +40,9 @@ const theme = createTheme({
     h1: {
       fontWeight: 500,
     },
+    h5: {
+      fontWeight: 500,
+    },
     h6: {
       fontSize: '1.25rem',
       lineHeight: 1.2,
