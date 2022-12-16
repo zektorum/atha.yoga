@@ -19,6 +19,7 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
 import './theme/style.scss';
+import Modal from './components/settings-modal';
 
 const theme = createTheme({
   palette: {
@@ -53,6 +54,14 @@ const theme = createTheme({
       fontSize: '14px',
       lineHeight: 1.2,
     },
+    modal: {
+      fontFamily: 'Roboto',
+      fontWeight: 500,
+      fontSize: '16px',
+      lineHeight: '120%',
+      fontStyle: 'normal',
+      color: '#212121',
+    },
   },
 });
 
@@ -72,6 +81,7 @@ const App = () => {
           <Route path="recovery-password" element={<PasswordRecoveryPage />} />
           <Route path="*" element={<ErrorPage />} />
           <Route path="calendar" element={<CalendarPage />} />
+          <Route path="modal" element={<Modal />} />
         </Route>
       </Routes>
     </ThemeProvider>
