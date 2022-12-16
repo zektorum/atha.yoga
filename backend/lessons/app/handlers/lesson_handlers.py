@@ -110,4 +110,4 @@ class LessonTicketUseHandler(GenericAPIView):
 
         ticket = TicketService(lesson=lesson, amount=None, user=self.request.user).use_ticket()
 
-        return Response({"data": {"lesson_id": ticket.lesson.link}})
+        return Response({"data": {"lesson_link": ticket.lesson.link}})
