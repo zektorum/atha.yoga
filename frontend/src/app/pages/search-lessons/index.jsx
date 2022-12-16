@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+  Box,
   InputBase, Paper, Typography,
 } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
@@ -23,7 +24,7 @@ const SearchLessonsPage = () => {
   }
 
   return (
-    <>
+    <Box>
       <Paper
         component="form"
         sx={{
@@ -47,7 +48,7 @@ const SearchLessonsPage = () => {
         </Typography>
       )}
       {lessons && <Typography>{JSON.stringify(lessons)}</Typography>}
-    </>
+    </Box>
   );
 };
 
