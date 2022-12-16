@@ -92,14 +92,8 @@ class LessonTicketBuyHandler(GenericAPIView):
 
         lesson = TicketRepository().find_lesson_by_id(id_=data.validated_data["lesson_id"])
 
-        ticket = TicketRepository().find_ticket_for_lesson(lesson=lesson.id, user=self.request.user)
-
-        if not ticket:
-            ticket = TicketService(lesson=lesson,
-                                   amount=data.validated_data["amount"], user=self.request.user).buy_ticket()
-        else:
-            ticket = TicketService(lesson=lesson,
-                                   amount=data.validated_data["amount"], user=self.request.user).add_ticket()
+        ticket = TicketService(lesson=lesson,
+                               amount=data.validated_data["amount"], user=self.request.user).buy_ticket()
 
         return Response("ticket obtained")
 
@@ -116,4 +110,4 @@ class LessonTicketUseHandler(GenericAPIView):
 
         ticket = TicketService(lesson=lesson, amount=None, user=self.request.user).use_ticket()
 
-        return Response({"data": {"lesson_id": ticket.lesson.id}})
+        return Response({"data": {"lesson_id": ticket.lesson.link}})

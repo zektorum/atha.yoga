@@ -68,9 +68,8 @@ class TicketRepository(BaseRepository):
     def del_zero_ticket(self, ticket: Ticket) -> None:
         ticket.delete()
 
-    def find_ticket_for_lesson(self, lesson: Lesson, user: User) -> Ticket:
-        ticket = self.model.objects.filter(lesson=lesson, user=user).first()
-        return ticket
+    def ticket_for_lesson(self, lesson: Lesson, user: User) -> Optional[Ticket]:
+        return self.model.objects.filter(lesson=lesson.id, user=user).first()
 
     def find_lesson_by_id(self, id_: int) -> Lesson:
         lesson = LessonRepository.model.objects.filter(pk=id_).first()

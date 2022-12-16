@@ -1,4 +1,5 @@
 from functools import cached_property
+from typing import Optional
 
 from rest_framework.exceptions import NotFound, ValidationError, PermissionDenied
 
@@ -90,7 +91,7 @@ class FavoriteLessonsWork:
 class TicketService:
     repositories = TicketRepository()
 
-    def __init__(self, lesson: Lesson, user: User, amount: int):
+    def __init__(self, lesson: Lesson, user: User, amount: Optional[int]):
         self.lesson = lesson
         self.user = user
         self.amount = amount
@@ -104,17 +105,17 @@ class TicketService:
         return ticket
 
     def buy_ticket(self) -> Ticket:
-        self.repositories.store(ticket=self.ticket)
-        return self.ticket
+        ticket = self.repositories.ticket_for_lesson(lesson=self.ticket.lesson, user=self.ticket.user)
+        if not ticket:
+            self.repositories.store(ticket=self.ticket)
+            return self.ticket
 
-    def add_ticket(self) -> Ticket:
-        ticket = self.repositories.find_ticket_for_lesson(lesson=self.ticket.lesson, user=self.ticket.user)
         ticket.amount = int(ticket.amount) + int(self.amount)
         self.repositories.store(ticket=ticket)
         return ticket
 
     def use_ticket(self) -> Ticket:
-        ticket = self.repositories.find_ticket_for_lesson(lesson=self.ticket.lesson, user=self.ticket.user)
+        ticket = self.repositories.ticket_for_lesson(lesson=self.ticket.lesson, user=self.ticket.user)
         if not ticket:
             raise PermissionDenied("ticket for lesson does not exist")
         ticket.amount = int(ticket.amount) - 1
