@@ -10,12 +10,14 @@ from lessons.app.handlers.lesson_handlers import (
     FavoriteLessonAddHandler,
     FavoriteLessonRemoveHandler,
     FavoriteLessonListHandler,
+    LessonUpdateHandler,
 )
 
 urlpatterns = [
     path("comments/create/", CommentCreateHandler.as_view(), name="comment_create"),
     path("comments/", CommentListHandler.as_view(), name="comment_list"),
-    path("create/", LessonCreateHandler.as_view(), name="lesson_create"),
+    path("", LessonCreateHandler.as_view(), name="lesson_create"),
+    path("<int:pk>", LessonUpdateHandler.as_view(), name="lesson_update"),
     path("filter/", LessonsFilterHandler.as_view(), name="lessons_filter"),
     path(
         "favorites/", FavoriteLessonListHandler.as_view(), name="favorite_lesson_list"
