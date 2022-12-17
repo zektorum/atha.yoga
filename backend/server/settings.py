@@ -182,3 +182,53 @@ ELASTICSEARCH_DSL = {
 
 RECAPTCHA_PUBLIC_KEY = os.getenv("RECAPTCHA_PUBLIC_KEY")
 RECAPTCHA_PRIVATE_KEY = os.getenv("RECAPTCHA_PRIVATE_KEY")
+
+
+LOGGING = {
+    "version": 1,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
+            "style": "{",
+        },
+        "simple": {
+            "format": "Time: {asctime} \n Module: {module} \n Line: {lineno} \n Message: {message} \n",
+            "style": "{",
+        },
+    },
+    "filters": {"require_debug_false": {"()": "django.utils.log.RequireDebugFalse"}},
+    "handlers": {
+        "console": {
+            "formatter": "verbose",
+            "class": "logging.StreamHandler",
+        },
+        "app_log": {
+            "class": "logging.FileHandler",
+            "filename": os.path.join(BASE_DIR, "core/logs/app_log.log"),
+            "formatter": "simple",
+            "level": "DEBUG",
+        },
+        "daily_file": {
+            "level": "ERROR",
+            "class": "logging.handlers.TimedRotatingFileHandler",
+            "filename": os.path.join(BASE_DIR, "core/logs/daily_log.log"),
+            "when": "D",
+            "interval": 1,
+            "backupCount": 10,
+            "formatter": "simple",
+        },
+    },
+    "loggers": {
+        "app_log": {"handlers": ["app_log"], "propagate": False, "level": "DEBUG"},
+        "daily_log": {"handlers": ["daily_file"], "propagate": False, "level": "ERROR"},
+        "django": {
+            "handlers": ["console"],
+            "propagate": True,
+            "level": "INFO",
+        },
+        "": {
+            "handlers": ["console"],
+            "level": "INFO",
+        },
+    },
+}
