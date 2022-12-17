@@ -22,9 +22,6 @@ class Attachment(PolymorphicModel):
     created_at = models.DateTimeField(auto_now_add=True, db_index=False)
     updated_at = models.DateTimeField(auto_now=True, db_index=False)
 
-    class Meta(object):
-        abstract = True
-
 
 class UserRoles(models.TextChoices):
     STUDENT = "STUDENT"
@@ -43,7 +40,6 @@ class User(AbstractUser):
 
     about = models.CharField(max_length=100, blank=True)
     avatar = models.ImageField(upload_to="user_avatars/", blank=True)
-    is_teacher = models.BooleanField(default=False)
     roles = models.JSONField(default=user_default_roles)
     pwd_reset_token = models.CharField(_("pwd reset token"), max_length=300)
 
@@ -106,15 +102,12 @@ class QuestionnaireTeacher(TimeStampedModel):
 
 
 class QuestionnaireTeacherCertificatePhoto(Attachment):
-    image = models.ImageField(upload_to="user_certificate/")
     questionnaire = models.ForeignKey(QuestionnaireTeacher, on_delete=models.CASCADE)
 
 
 class QuestionnaireTeacherPassportPhoto(Attachment):
-    image = models.ImageField(upload_to="user_passport/")
     questionnaire = models.ForeignKey(QuestionnaireTeacher, on_delete=models.CASCADE)
 
 
 class QuestionnaireTeacherUserPhoto(Attachment):
-    image = models.ImageField(upload_to="user_avatars/")
     questionnaire = models.ForeignKey(QuestionnaireTeacher, on_delete=models.CASCADE)
