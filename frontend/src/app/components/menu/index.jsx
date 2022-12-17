@@ -14,6 +14,7 @@ import menuLogo from '../../../assets/public/menu_logo.svg';
 
 const Menu = ({ auth }) => {
   const menuItemStyle = {
+    width: '13vw',
     minHeight: '36px',
     '& .MuiTypography-root': {
        color: 'text.secondary',
