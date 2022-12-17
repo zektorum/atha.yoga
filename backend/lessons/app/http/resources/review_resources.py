@@ -1,7 +1,7 @@
 from rest_framework.serializers import ModelSerializer
 
-from lessons.models import LessonReview
 from core.models import User
+from lessons.models import LessonReview
 
 
 class LessonReviewUserResource(ModelSerializer):
@@ -14,7 +14,6 @@ class LessonReviewUserResource(ModelSerializer):
             "email",
             "about",
             "avatar",
-            "is_teacher",
         ]
 
 

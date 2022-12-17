@@ -1,7 +1,7 @@
 from rest_framework.serializers import ModelSerializer
 
-from lessons.models import LessonComment
 from core.models import User
+from lessons.models import LessonComment
 
 
 class LessonCommentUserResource(ModelSerializer):
@@ -14,7 +14,6 @@ class LessonCommentUserResource(ModelSerializer):
             "email",
             "about",
             "avatar",
-            "is_teacher",
         ]
 
 
