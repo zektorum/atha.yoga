@@ -79,7 +79,9 @@ class QuestionnaireTeacherStatuses(models.TextChoices):
 
 
 class QuestionnaireTeacher(TimeStampedModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="teacher_profiles"
+    )
     name = models.CharField(_("name"), max_length=30)
     surname = models.CharField(_("surname"), max_length=30)
     date_of_birth = models.DateField(_("date of birth"))
