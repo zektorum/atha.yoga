@@ -93,7 +93,7 @@ class UserResetPass:
             data=TextMailData(
                 subject="Please reset your password",
                 message=f"""Reset your Atha.Yoga password
-            Click here: {settings.SITE_PROTOCOL_URL}/?token={pwd_reset_token}/""",
+            Click here: {settings.SITE_URL}/?token={pwd_reset_token}/""",
                 receivers=[email],
             )
         ).send()
