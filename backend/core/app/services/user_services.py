@@ -35,10 +35,10 @@ class UserRegister:
             raise ValidationError("User with this email already exists")
         user.username = user.email = self.data["email"]
         user.set_password(self.data["password"])
-        self.repository.store(user=user)
         return user
 
     def register(self) -> Tuple[User, UserToken]:
+        self.repository.store(self.user)
         token_data = get_tokens_for_user(user=self.user)
         return self.user, token_data
 
@@ -73,10 +73,10 @@ class UserChangePass:
         if not user or not user.check_password(self.data["password"]):
             raise AuthenticationFailed()
         user.set_password(self.data["new_password"])
-        self.repository.store(user=user)
         return user
 
     def change(self) -> Tuple[User, UserToken]:
+        self.repository.store(self.user)
         token_data = get_tokens_for_user(self.user)
         return self.user, token_data
 
