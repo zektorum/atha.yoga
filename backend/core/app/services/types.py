@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import TypedDict, NamedTuple
+from typing import TypedDict, NamedTuple, List
+
+from django.core.files.uploadedfile import InMemoryUploadedFile
 
 from dacite import from_dict, Config
 
@@ -70,3 +72,17 @@ class InitPaymentResponse:
             data=data,
             config=Config(type_hooks={PaymentStatuses: PaymentStatuses}),
         )
+
+
+class QuestionnaireTeacherData(TypedDict):
+    name: str
+    surname: str
+    date_of_birth: str
+    gender: str
+    about_me: str
+    work_experience: str
+    vk_link: str
+    telegram_link: str
+    certificate_photos: List[InMemoryUploadedFile]
+    passport_photos: List[InMemoryUploadedFile]
+    user_photos: List[InMemoryUploadedFile]

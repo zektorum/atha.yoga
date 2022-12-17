@@ -9,6 +9,7 @@ from rest_framework.exceptions import (
     PermissionDenied,
 )
 
+from core.app.errors import ErrorsMessages
 from core.app.repositories.user_repository import UserRepository
 from core.app.services.email_services import SimpleEmailTextService
 from core.app.services.types import TextMailData
@@ -52,7 +53,7 @@ class UserLogin:
     def user(self) -> User:
         user = self.repository.find_user_by_email(self.data["email"])
         if not user or not user.check_password(self.data["password"]):
-            raise AuthenticationFailed()
+            raise AuthenticationFailed(ErrorsMessages.AUTH_FAILED.value)
         return user
 
     def login(self) -> Tuple[User, UserToken]:

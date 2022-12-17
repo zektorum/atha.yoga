@@ -13,12 +13,23 @@ DEBUG = bool(int(os.environ.get("DEBUG", "0")))
 
 ALLOWED_HOSTS = ["*"]
 CORS_ORIGIN_ALLOW_ALL = True
+CSRF_TRUSTED_ORIGINS = [
+    "https://develop.athayoga.su",
+    "https://stage.athayoga.su",
+    "http://localhost",
+    "http://localhost:3000",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+]
 
 # Application definition
 
 INSTALLED_APPS = [
+    "base",
+    "captcha",
     "django.contrib.admin",
     "django.contrib.auth",
+    "polymorphic",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
@@ -79,6 +90,7 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "Atha yoga",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
+    "COMPONENT_SPLIT_REQUEST": True,
 }
 
 DATABASES = {
@@ -114,8 +126,11 @@ USE_I18N = True
 USE_T10N = True
 USE_TZ = True
 
-STATIC_URL = os.path.join(BASE_DIR, "static/")
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "static"
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -135,6 +150,7 @@ ELASTICSEARCH_DSL = {
         f"{os.environ.get('ELASTIC_HOST')}:{os.environ.get('ELASTIC_PORT')}"
     },
 }
+
 
 TERMINAL_KEY = os.getenv("TERMINAL_KEY")
 TERMINAL_PASSWORD = os.getenv("TERMINAL_PASSWORD")
@@ -190,3 +206,6 @@ LOGGING = {
 
 SITE_URL = os.environ.get("SITE_URL")
 BACKEND_URL = os.environ.get("BACKEND_URL")
+
+RECAPTCHA_PUBLIC_KEY = os.getenv("RECAPTCHA_PUBLIC_KEY")
+RECAPTCHA_PRIVATE_KEY = os.getenv("RECAPTCHA_PRIVATE_KEY")

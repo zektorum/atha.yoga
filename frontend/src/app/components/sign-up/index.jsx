@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -9,10 +9,11 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import IconButton from '@mui/material/IconButton';
-import OutlinedInput from '@mui/material/OutlinedInput';
 import Container from '@mui/material/Container';
-import { FormControl } from '@mui/material';
-import InputLabel from '@mui/material/InputLabel';
+import { useDispatch, useSelector } from 'react-redux';
+import { AuthContext } from '../../utils/providers/auth';
+import { clearMessage, setMessage } from '../../core/slices/message';
+import {OutlinedInput, FormControl, InputLabel, useFormControl, FormHelperText} from "@mui/material";
 
 const SignUp = () => {
   const [values, setValues] = useState({
@@ -22,9 +23,16 @@ const SignUp = () => {
     weightRange: '',
     showPassword: false,
   });
+  const context = useContext(AuthContext);
+  const { message } = useSelector(state => state.message);
+  const dispatch = useDispatch();
 
-  const handleChange = prop => event => {
-    setValues({ ...values, [prop]: event.target.value });
+  useEffect(() => {
+    dispatch(clearMessage());
+  }, []);
+
+  const handleFocus = el => {
+    dispatch(setMessage({ ...message, [el]: '' }));
   };
 
   const handleClickShowPassword = () => {
@@ -34,112 +42,142 @@ const SignUp = () => {
     });
   };
 
-  const handleMouseDownPassword = event => {
-    event.preventDefault();
-  };
-
   const handleSubmit = event => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+    context.register({ email: data.get('email'), password: data.get('password') });
+  };
+
+  const MyFormHelperText = () => {
+    const { focused } = useFormControl() || {};
+
+    const helperText = React.useMemo(() => {
+      if (focused) {
+        return 'Не меньше 10 символов, знаки 3 из 4 категорий: 0-9, a-z, A-Z и специальные символы';
+      }
+      return '';
+    }, [focused]);
+
+    return <FormHelperText>{helperText}</FormHelperText>;
   };
 
   return (
-    <Container component="main" maxWidth="xs">
-      <Box
-        sx={{
-          marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
+  <Container component="main" maxWidth="xs">
+  <Box
+    sx={{
+      marginTop: 8,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+    }}
+  >
+    <Typography component="h1" variant="h4" fontWeight="500" sx={{ mb: 3 }}>
+      Регистрация
+    </Typography>
+    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }} className="form__container">
+      <TextField
+        sx={{ mb: 2 }}
+        margin="normal"
+        fullWidth
+        id="email"
+        label="Электронная почта"
+        placeholder="E-mail"
+        name="email"
+        autoComplete="email"
+        error={!!message?.email}
+        helperText={message?.email}
+        onFocus={() => handleFocus('email')}
+        autoFocus
+      />
+      <FormControl fullWidth variant="outlined" sx={{ mb: 2 }}>
+      <InputLabel>Пароль</InputLabel>
+      <OutlinedInput
+        fullWidth
+        label="Пароль"
+        name="password"
+        placeholder="Пароль"
+        id="password"
+        autoComplete="current-password"
+        type={values.showPassword ? 'text' : 'password'}
+        error={!!message?.password}
+        helperText={message?.password}
+        onFocus={() => handleFocus('password')}
+        endAdornment={
+          <InputAdornment position="end">
+            <IconButton
+                aria-label="toggle password visibility"
+                onClick={handleClickShowPassword}
+                edge="end"
+            >
+              {values.showPassword ? <VisibilityOff /> : <Visibility />}
+            </IconButton>
+          </InputAdornment>
+        }
+      />
+      <MyFormHelperText />
+      </FormControl>
+      <Button
+        type="submit"
+        size="large"
+        fullWidth
+        variant="contained"
+        sx={{ mt: 3, mb: 2 }}
       >
-        <Typography component="h1" variant="h4" fontWeight="500" sx={{ mb: 3 }}>
-          Регистрация
-        </Typography>
-        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }} className="form__container">
-          <TextField
-            sx={{ mb: 2 }}
-            margin="normal"
-            fullWidth
-            id="email"
-            label="Электронная почта"
-            placeholder="E-mail"
-            name="email"
-            autoComplete="email"
-            autoFocus
-          />
-          <FormControl variant="outlined" fullWidth>
-            <InputLabel>Пароль</InputLabel>
-            <OutlinedInput
-              sx={{ mb: 2 }}
-              fullWidth
-              label="Пароль"
-              name="password"
-              placeholder="Пароль"
-              id="password"
-              autoComplete="current-password"
-              type={values.showPassword ? 'text' : 'password'}
-              value={values.password}
-              onChange={handleChange('password')}
-              endAdornment={(
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleClickShowPassword}
-                    onMouseDown={handleMouseDownPassword}
-                  >
-                    {values.showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              )}
-            />
-          </FormControl>
-          <Button
-            type="submit"
-            size="large"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-          >
-            Зарегистрироваться
-          </Button>
-          <Grid container spacing={1} alignItems="center" justifyContent="center">
-            <Grid item>
-              <Typography variant="body2">
-                Уже есть аккаунт?
-              </Typography>
-            </Grid>
-            <Grid item>
-              <Link to="/login" variant="body2" underline="none">
-                Войти
-              </Link>
-            </Grid>
-          </Grid>
-        </Box>
-        <div style={{ position: 'absolute', bottom: 32 }}>
-          <Typography variant="caption">
-            Нажимая на кнопку «Зарегистрироваться», я подтверждаю,
+        Зарегистрироваться
+      </Button>
+      <Grid container spacing={1} alignItems="center" justifyContent="center">
+        <Grid item>
+          <Typography variant="body2">
+            Уже есть аккаунт?
           </Typography>
-          <Grid container justifyContent="center" spacing={1}>
-            <Grid item>
-              <Typography variant="caption">
-                что ознакомлен(а) с
-              </Typography>
-            </Grid>
-            <Grid item>
-              <Link variant="caption" underline="none">
-                пользовательским соглашением
-              </Link>
-            </Grid>
-          </Grid>
-        </div>
-      </Box>
-    </Container>
-  );
+        </Grid>
+        <Grid item>
+          <Typography
+              component={Link}
+              to="/login"
+              variant="body2"
+              sx={{ textDecoration: 'none' }}
+          >
+            Войти
+          </Typography>
+        </Grid>
+      </Grid>
+    </Box>
+    <div style={{
+      position: 'absolute',
+      bottom: 32,
+      textAlign: 'center',
+      maxWidth: 380,
+      lineHeight: 0.1,
+    }}
+    >
+      <Typography variant="caption">
+        Нажимая на кнопку «Зарегистрироваться», вы принимаете условия
+        <Typography
+            component={Link}
+            variant="caption"
+            to="#"
+            sx={{ textDecoration: 'none' }}
+            marginLeft={1}
+        >
+          Пользовательского соглашения
+        </Typography>
+      </Typography>
+      <Typography variant="caption" sx={{ maxWidth: 300 }} marginLeft={1}>
+        и
+        <Typography
+            component={Link}
+            variant="caption"
+            to="#"
+            sx={{ textDecoration: 'none' }}
+            marginLeft={1}
+        >
+          Политики конфиденциальности
+        </Typography>
+      </Typography>
+    </div>
+  </Box>
+</Container>
+);
 };
-
 export default SignUp;
