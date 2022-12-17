@@ -83,6 +83,7 @@ REST_FRAMEWORK = {
     "DEFAULT_THROTTLE_RATES": {"anon": "100/min", "user": "100/min"},
     "DEFAULT_THROTTLE_DENIED_DURATION": "600",
     "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework.authentication.BasicAuthentication",
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     "EXCEPTION_HANDLER": "core.app.utils.exceptions.custom_exception_handler",
