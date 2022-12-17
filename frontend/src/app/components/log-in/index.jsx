@@ -101,9 +101,9 @@ const LogIn = () => {
             }}
           />
           <div style={{ textAlign: 'right' }}>
-            <Link to="/recovery-password" variant="body2" underline="none">
+            <Typography component={Link} variant="body2" to="/recovery-password" sx={{ textDecoration: 'none' }}>
               Забыли пароль?
-            </Link>
+            </Typography>
           </div>
           {message?.detail && (
             <Typography sx={{ mt: 2 }} color="error.main">{message?.detail}</Typography>
@@ -124,9 +124,9 @@ const LogIn = () => {
               </Typography>
             </Grid>
             <Grid item>
-              <Link to="/register" variant="body2" underline="none">
+              <Typography component={Link} variant="body2" to="/register" sx={{ textDecoration: 'none' }}>
                 Зарегистрироваться
-              </Link>
+              </Typography>
             </Grid>
           </Grid>
         </Box>
