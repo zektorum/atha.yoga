@@ -13,21 +13,15 @@ from lessons.app.handlers.lesson_handlers import (
     FavoriteLessonRemoveHandler,
     FavoriteLessonListHandler,
 )
+from lessons.app.handlers.review_handlers import (
+    LessonReviewListHandler,
+    LessonReviewCreateHandler,
+    LessonReviewRemoveHandler,
+)
 
 urlpatterns = [
-    path("<int:pk>/comments/", LessonCommentListHandler.as_view(), name="comment_list"),
-    path(
-        "<int:pk>/comments/create/",
-        LessonCommentCreateHandler.as_view(),
-        name="comment_create",
-    ),
-    path(
-        "<int:lesson_pk>/comments/<int:comment_pk>/remove/",
-        LessonCommentRemoveHandler.as_view(),
-        name="comment_remove",
-    ),
     path("", LessonCreateHandler.as_view(), name="lesson_create"),
-    path("<int:pk>", LessonUpdateHandler.as_view(), name="lesson_update"),
+    path("<int:pk>/", LessonUpdateHandler.as_view(), name="lesson_update"),
     path("filter/", LessonsFilterHandler.as_view(), name="lessons_filter"),
     path(
         "favorites/", FavoriteLessonListHandler.as_view(), name="favorite_lesson_list"
@@ -39,5 +33,31 @@ urlpatterns = [
         "favorites/remove/",
         FavoriteLessonRemoveHandler.as_view(),
         name="favorite_lesson_remove",
+    ),
+    path("<int:pk>/comments/", LessonCommentListHandler.as_view(), name="comment_list"),
+    path(
+        "<int:pk>/comments/create/",
+        LessonCommentCreateHandler.as_view(),
+        name="comment_create",
+    ),
+    path(
+        "<int:lesson_pk>/comments/<int:comment_pk>/remove/",
+        LessonCommentRemoveHandler.as_view(),
+        name="comment_remove",
+    ),
+    path(
+        "<int:pk>/lesson-reviews/",
+        LessonReviewListHandler.as_view(),
+        name="lesson_review_list",
+    ),
+    path(
+        "<int:pk>/lesson-reviews/create/",
+        LessonReviewCreateHandler.as_view(),
+        name="lesson_review_create",
+    ),
+    path(
+        "<int:lesson_pk>/lesson-reviews/<int:review_pk>/remove/",
+        LessonReviewRemoveHandler.as_view(),
+        name="lesson_review_remove",
     ),
 ]

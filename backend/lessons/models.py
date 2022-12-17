@@ -64,7 +64,7 @@ class Lesson(TimeStampedModel):
         verbose_name_plural = "Занятия"
 
 
-class Review(PolymorphicModel):
+class Review(PolymorphicModel, TimeStampedModel):
     text = models.TextField()
     star_rating = models.IntegerField(
         validators=(MinValueValidator(limit_value=1), MaxValueValidator(limit_value=5))

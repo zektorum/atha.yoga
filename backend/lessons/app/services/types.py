@@ -10,6 +10,11 @@ from lessons.models import (
 )
 
 
+class LessonReviewCreateData(TypedDict):
+    star_rating: int
+    text: str
+
+
 class ScheduleCreateData(TypedDict):
     weekday: RepetitionWeekdays
     start_time: datetime.time
