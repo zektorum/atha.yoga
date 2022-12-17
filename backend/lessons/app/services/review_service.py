@@ -24,7 +24,7 @@ class LessonReviewCreate:
             raise NotFound(f"Undefined lesson with id {self.lesson_id}")
         if lesson.teacher.id == self.user.id:
             raise PermissionDenied("Teacher can't review own lesson")
-        if lesson.reviews.filter(user_id=self.user.id).exists():
+        if self.repository.check_for_user_review(user_id=self.user.id, lesson=lesson):
             raise PermissionDenied("User can't review lesson twice")
 
         review = LessonReview()
@@ -33,18 +33,17 @@ class LessonReviewCreate:
         review.text = self.data["text"]
         review.star_rating = self.data["star_rating"]
 
-        self.repository.store(review=review)
         return review
 
     def create(self) -> LessonReview:
+        self.repository.store(review=self.review)
         return self.review
 
 
 class LessonReviewRemove:
     repository = LessonReviewRepository()
 
-    def __init__(self, lesson_id: int, review_id: int, user: User):
-        self.lesson_id = lesson_id
+    def __init__(self, review_id: int, user: User):
         self.review_id = review_id
         self.user = user
 
@@ -53,10 +52,6 @@ class LessonReviewRemove:
         review = self.repository.find_by_id(id_=self.review_id)
         if not review:
             raise NotFound(f"Undefined review with id {self.review_id}")
-        if review.lesson.id != self.lesson_id:
-            raise NotFound(
-                f"Undefined review with id {self.review_id} for lesson with id {self.lesson_id}"
-            )
         if review.user.id != self.user.id:
             raise PermissionDenied(
                 f"User with id {self.user.id} can't remove review with id {self.review_id}"

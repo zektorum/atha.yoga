@@ -41,7 +41,7 @@ urlpatterns = [
         name="comment_create",
     ),
     path(
-        "<int:lesson_pk>/comments/<int:comment_pk>/remove/",
+        "comments/<int:pk>/remove/",
         LessonCommentRemoveHandler.as_view(),
         name="comment_remove",
     ),
@@ -56,7 +56,7 @@ urlpatterns = [
         name="lesson_review_create",
     ),
     path(
-        "<int:lesson_pk>/lesson-reviews/<int:review_pk>/remove/",
+        "lesson-reviews/<int:pk>/remove/",
         LessonReviewRemoveHandler.as_view(),
         name="lesson_review_remove",
     ),

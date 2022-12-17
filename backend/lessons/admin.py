@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Lesson, Schedule, LessonComment
+from .models import Lesson, Schedule, LessonComment, LessonReview
 
 
 @admin.register(Lesson)
@@ -49,12 +49,27 @@ class ScheduleAdmin(admin.ModelAdmin):
 
 
 @admin.register(LessonComment)
-class CommentAdmin(admin.ModelAdmin):
+class LessonCommentAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "user",
         "lesson",
         "created_at",
     )
+    search_fields = ("text",)
     list_filter = ("created_at",)
+    date_hierarchy = "created_at"
+
+
+@admin.register(LessonReview)
+class LessonReviewAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "user",
+        "lesson",
+        "star_rating",
+        "created_at",
+    )
+    search_fields = ("text",)
+    list_filter = ("star_rating", "created_at")
     date_hierarchy = "created_at"

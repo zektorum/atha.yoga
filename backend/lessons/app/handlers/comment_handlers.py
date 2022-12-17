@@ -38,15 +38,6 @@ class LessonCommentCreateHandler(GenericAPIView):
 
 @permission_classes([IsAuthenticated])
 class LessonCommentRemoveHandler(APIView):
-    def delete(
-        self,
-        request: Request,
-        lesson_pk: int,
-        comment_pk: int,
-        *args: Any,
-        **kwargs: Any
-    ) -> Response:
-        comment = LessonCommentRemove(
-            lesson_id=lesson_pk, comment_id=comment_pk, user=request.user
-        ).remove()
+    def delete(self, request: Request, pk: int, *args: Any, **kwargs: Any) -> Response:
+        comment = LessonCommentRemove(comment_id=pk, user=request.user).remove()
         return Response({"comment": LessonCommentResource(comment).data})

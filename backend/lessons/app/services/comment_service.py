@@ -30,18 +30,17 @@ class LessonCommentCreate:
         comment.lesson = lesson
         comment.text = self.text
 
-        self.repository.store(comment=comment)
         return comment
 
     def create(self) -> LessonComment:
+        self.repository.store(comment=self.comment)
         return self.comment
 
 
 class LessonCommentRemove:
     repository = LessonCommentRepository()
 
-    def __init__(self, lesson_id: int, comment_id: int, user: User):
-        self.lesson_id = lesson_id
+    def __init__(self, comment_id: int, user: User):
         self.comment_id = comment_id
         self.user = user
 
@@ -50,10 +49,6 @@ class LessonCommentRemove:
         comment = self.repository.find_by_id(id_=self.comment_id)
         if not comment:
             raise NotFound(f"Undefined comment with id {self.comment_id}")
-        if comment.lesson.id != self.lesson_id:
-            raise NotFound(
-                f"Undefined comment with id {self.comment_id} for lesson with id {self.lesson_id}"
-            )
         if comment.user.id != self.user.id:
             raise PermissionDenied(
                 f"User with id {self.user.id} can't remove comment with id {self.comment_id}"

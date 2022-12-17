@@ -114,18 +114,3 @@ class LessonComment(Comment):
     class Meta:
         verbose_name = "Комментарий к уроку"
         verbose_name_plural = "Комментарии к уроку"
-
-
-# class Course(TimeStampedModel):
-#     lessons = models.ManyToManyField(Lesson, related_name="courses")
-#     name = models.CharField(max_length=64)
-#     description = models.TextField(blank=True)
-#     teacher = models.ForeignKey(User, on_delete=models.CASCADE)
-#     course_type = models.CharField(max_length=30, choices=LessonTypes.choices)
-#     level = models.CharField(max_length=30, choices=LessonLevels.choices)
-#     payment = models.CharField(max_length=30, choices=LessonPaymentTypes.choices)
-#     price = models.FloatField(validators=(MinValueValidator(limit_value=0),))
-#
-#     class Meta:
-#         verbose_name = "Курс"
-#         verbose_name_plural = "Курсы"

@@ -35,15 +35,6 @@ class LessonReviewCreateHandler(GenericAPIView):
 
 @permission_classes([IsAuthenticated])
 class LessonReviewRemoveHandler(APIView):
-    def delete(
-        self,
-        request: Request,
-        lesson_pk: int,
-        review_pk: int,
-        *args: Any,
-        **kwargs: Any
-    ) -> Response:
-        review = LessonReviewRemove(
-            lesson_id=lesson_pk, review_id=review_pk, user=request.user
-        ).remove()
+    def delete(self, request: Request, pk: int, *args: Any, **kwargs: Any) -> Response:
+        review = LessonReviewRemove(review_id=pk, user=request.user).remove()
         return Response({"review": LessonReviewResource(review).data})
