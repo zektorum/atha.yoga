@@ -94,15 +94,18 @@ class UserResetPassHandler(GenericAPIView):
 
 @permission_classes([IsAuthenticated])
 class LoggedUserProfileHandler(APIView):
+    repository = UserRepository()
+
     def get(self, *args: Any, **kwargs: Any) -> Response:
-        return Response({"data": UserResource(self.request.user).data})
+        user = self.repository.find_by_id(id_=self.request.user.id, fetch_rels=True)
+        return Response({"data": UserResource(user).data})
 
 
 class UserProfileHandler(APIView):
     repository = UserRepository()
 
     def get(self, request: Request, pk: int, *args: Any, **kwargs: Any) -> Response:
-        user = self.repository.find_by_id(id_=pk)
+        user = self.repository.find_by_id(id_=self.request.user.id, fetch_rels=True)
         if not user:
             raise NotFound(f"Undefined user with pk {pk}")
 
