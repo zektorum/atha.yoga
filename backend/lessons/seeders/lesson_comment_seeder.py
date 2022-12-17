@@ -23,5 +23,5 @@ class LessonCommentSeeder:
         return LessonComment(
             user=User.objects.get(pk=random_user_id),
             text=" ".join(self.faker.words(self.faker.random_int(1, 20))),
-            _class=User.objects.get(pk=random_lesson_id),
+            lesson=Lesson.objects.get(pk=random_lesson_id),
         )

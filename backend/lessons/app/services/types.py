@@ -10,11 +10,6 @@ from lessons.models import (
 )
 
 
-class CommentCreateData(TypedDict):
-    text: str
-    lesson_id: int
-
-
 class ScheduleCreateData(TypedDict):
     weekday: RepetitionWeekdays
     start_time: datetime.time

@@ -4,7 +4,7 @@ from lessons.models import LessonComment
 from core.models import User
 
 
-class CommentUserResource(ModelSerializer):
+class LessonCommentUserResource(ModelSerializer):
     class Meta:
         model = User
         fields = [
@@ -18,8 +18,8 @@ class CommentUserResource(ModelSerializer):
         ]
 
 
-class CommentResource(ModelSerializer):
-    user = CommentUserResource()
+class LessonCommentResource(ModelSerializer):
+    user = LessonCommentUserResource()
 
     class Meta:
         model = LessonComment
