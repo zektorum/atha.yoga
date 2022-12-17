@@ -12,3 +12,6 @@ class UserRepository(BaseRepository):
 
     def find_user_by_email(self, email: str) -> Optional[User]:
         return User.objects.filter(email=email).first()
+
+    def find_by_id(self, id_: int) -> Optional[User]:
+        return self.model.objects.filter(pk=id_).first()

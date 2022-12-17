@@ -1,8 +1,12 @@
 from typing import Any
 
+from rest_framework.decorators import permission_classes
+from rest_framework.exceptions import NotFound
 from rest_framework.generics import GenericAPIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from core.app.http.requests.user_requests import (
     UserRegisterRequest,
@@ -12,6 +16,7 @@ from core.app.http.requests.user_requests import (
     UserSendPwdResetMailRequest,
 )
 from core.app.http.resources.user_resources import UserResource
+from core.app.repositories.user_repository import UserRepository
 from core.app.services.user_services import (
     UserRegister,
     UserLogin,
@@ -85,3 +90,20 @@ class UserResetPassHandler(GenericAPIView):
         return Response(
             {"data": {"user": UserResource(user).data, "tokens": token._asdict()}}
         )
+
+
+@permission_classes([IsAuthenticated])
+class LoggedUserProfileHandler(APIView):
+    def get(self, *args: Any, **kwargs: Any) -> Response:
+        return Response({"data": UserResource(self.request.user).data})
+
+
+class UserProfileHandler(APIView):
+    repository = UserRepository()
+
+    def get(self, request: Request, pk: int, *args: Any, **kwargs: Any) -> Response:
+        user = self.repository.find_by_id(id_=pk)
+        if not user:
+            raise NotFound(f"Undefined user with pk {pk}")
+
+        return Response({"data": UserResource(user).data})

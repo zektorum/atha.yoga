@@ -10,6 +10,8 @@ from core.app.handlers.user_handlers import (
     UserChangePassHandler,
     UserSendPwdResetMailHandler,
     UserResetPassHandler,
+    LoggedUserProfileHandler,
+    UserProfileHandler,
 )
 
 urlpatterns = [
@@ -23,5 +25,7 @@ urlpatterns = [
     ),
     path("resetpass/", UserSendPwdResetMailHandler.as_view(), name="resetpass"),
     path("resetpass/confirm/", UserResetPassHandler.as_view(), name="resetpass_change"),
+    path("im/", LoggedUserProfileHandler.as_view(), name="im"),
+    path("profile/<int:pk>/", UserProfileHandler.as_view(), name="im"),
     path("success-payment/<str:transaction_id>/", SuccessPaymentHandler.as_view()),
 ]
