@@ -20,7 +20,7 @@ class TeacherProfileResource(ModelSerializer):
 
 
 class UserResource(ModelSerializer):
-    public_teacher_profiles = TeacherProfileResource(many=True)
+    public_teacher_profiles = TeacherProfileResource(many=True, allow_null=True)
 
     class Meta:
         model = User
