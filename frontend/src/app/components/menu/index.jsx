@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -9,16 +9,17 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import ConfirmationNumberOutlinedIcon from '@mui/icons-material/ConfirmationNumberOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
+import Box from '@mui/material/Box';
 import menuLogo from '../../../assets/public/menu_logo.svg';
 
 const Menu = ({ auth }) => {
   const menuItemStyle = {
     minHeight: '36px',
     '& .MuiTypography-root': {
-       color: 'text.secondary',
+      color: 'text.secondary',
     },
-    '&:hover': {
+    '&:hover, &.active': {
       backgroundColor: 'primary.main',
       borderRadius: '5px',
       '& .MuiSvgIcon-root, & .MuiTypography-root': {
@@ -27,7 +28,7 @@ const Menu = ({ auth }) => {
     },
   };
   return (
-    <Grid container>
+    <Box sx={{ width: '100%' }}>
       <MenuList
         sx={{
           height: '100vh',
@@ -43,7 +44,7 @@ const Menu = ({ auth }) => {
           <img src={menuLogo} alt="atha yoga logo" style={{ width: '103px', height: '26px' }} />
         </div>
         <MenuItem
-          component={Link}
+          component={NavLink}
           to="search-lessons"
           sx={{ ...menuItemStyle }}
         >
@@ -60,7 +61,7 @@ const Menu = ({ auth }) => {
               )}
           />
         </MenuItem>
-        <MenuItem component={Link} to="" sx={{ ...menuItemStyle }}>
+        <MenuItem component={NavLink} to="/" sx={{ ...menuItemStyle }}>
           <ListItemIcon>
             <FavoriteBorderIcon color="disabled" fontSize="medium" />
           </ListItemIcon>
@@ -74,7 +75,7 @@ const Menu = ({ auth }) => {
               )}
           />
         </MenuItem>
-        <MenuItem component={Link} to="" sx={{ ...menuItemStyle }}>
+        <MenuItem component={NavLink} to="/" sx={{ ...menuItemStyle }}>
           <ListItemIcon>
             <ConfirmationNumberOutlinedIcon color="disabled" fontSize="medium" />
           </ListItemIcon>
@@ -88,7 +89,7 @@ const Menu = ({ auth }) => {
                 )}
           />
         </MenuItem>
-        <MenuItem component={Link} to="/calendar" sx={{ ...menuItemStyle }}>
+        <MenuItem component={NavLink} to="/calendar" sx={{ ...menuItemStyle }}>
           <ListItemIcon>
             <CalendarMonthOutlinedIcon color="disabled" fontSize="medium" />
           </ListItemIcon>
@@ -102,7 +103,7 @@ const Menu = ({ auth }) => {
                 )}
           />
         </MenuItem>
-        <MenuItem component={Link} to="/profile" sx={{ ...menuItemStyle }}>
+        <MenuItem component={NavLink} to="/profile" sx={{ ...menuItemStyle }}>
           <ListItemIcon>
             <AccountCircleOutlinedIcon color="disabled" fontSize="medium" />
           </ListItemIcon>
@@ -117,7 +118,7 @@ const Menu = ({ auth }) => {
           />
         </MenuItem>
       </MenuList>
-    </Grid>
+    </Box>
   );
 };
 

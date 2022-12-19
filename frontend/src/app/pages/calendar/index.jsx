@@ -33,12 +33,9 @@ const CalendarPage = () => (
       flexDirection="column"
       alignItems="center"
       justifyContent="center"
-      sx={{
-        flex: '1 0 auto',
-      }}
     >
-      <Box mb="80px">
-        <img src={profileCalendar} alt="yoga-calendar" />
+      <Box sx={{ height: '50%' }} mb="80px">
+        <img src={profileCalendar} style={{ height: '100%' }} alt="yoga-calendar" />
       </Box>
       <Typography textAlign="center" fontSize="18px" color="text.secondary">
         Список занятий пока пуст
