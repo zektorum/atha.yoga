@@ -36,7 +36,7 @@ const SearchLessonsPage = () => {
         }}
       >
         <Typography fontSize="24px" fontWeight="500" color="text.secondary">
-          Календарь
+          Поиск
         </Typography>
         <SettingsIcon color="disabled" />
       </Box>
