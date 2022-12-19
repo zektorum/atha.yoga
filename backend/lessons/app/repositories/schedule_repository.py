@@ -14,8 +14,8 @@ class ScheduleRepository(BaseRepository):
     def find(self, id_: int) -> Optional[Schedule]:
         return self.model.objects.filter(pk=id_).first()
 
-    def allow(self, user: User) -> Optional[Schedule]:
-        return self.model.participants.filter(id=user.id)
+    def allow(self, scheduled_lesson: Schedule, user: User) -> Optional[Schedule]:
+        return scheduled_lesson.participants.filter(id=user.id)
 
-    def access(self, user: User) -> None:
-        return self.model.participants.add(user)
+    def access(self, scheduled_lesson: Schedule, user: User) -> None:
+        return scheduled_lesson.participants.add(user)

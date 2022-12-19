@@ -143,7 +143,7 @@ class TicketService:
         if not scheduled_lesson:
             raise NotFound(f"Undefined scheduled_lesson with id {schedule_id}")
 
-        participant = ScheduleRepository().allow(user)
+        participant = ScheduleRepository().allow(scheduled_lesson, user)
         if participant:
             return scheduled_lesson.lesson.link
 
@@ -152,7 +152,7 @@ class TicketService:
             raise NotFound("You dont have ticket for this lesson")
         ticket.amount = int(ticket.amount) - 1
 
-        ScheduleRepository().access(user)
+        ScheduleRepository().access(scheduled_lesson, user)
 
         if ticket.amount == 0:
             self.repositories.destroy(ticket=ticket)
