@@ -28,14 +28,14 @@ class LessonComplexities(models.TextChoices):
     HARD = "HARD"
 
 
-class RepetitionWeekdays(models.TextChoices):
-    MONDAY = "MONDAY"
-    TUESDAY = "TUESDAY"
-    WEDNESDAY = "WEDNESDAY"
-    THURSDAY = "THURSDAY"
-    FRIDAY = "FRIDAY"
-    SATURDAY = "SATURDAY"
-    SUNDAY = "SUNDAY"
+class RepetitionWeekdays(models.IntegerChoices):
+    MONDAY = 0
+    TUESDAY = 1
+    WEDNESDAY = 2
+    THURSDAY = 3
+    FRIDAY = 4
+    SATURDAY = 5
+    SUNDAY = 6
 
 
 class Lesson(TimeStampedModel):
@@ -88,8 +88,7 @@ class Schedule(TimeStampedModel):
     lesson = models.ForeignKey(
         Lesson, on_delete=models.CASCADE, related_name="schedules"
     )
-    weekday = models.CharField(max_length=40, choices=RepetitionWeekdays.choices)
-    start_time = models.TimeField()
+    start_at = models.DateTimeField()
 
     class Meta:
         verbose_name = "Расписание"

@@ -13,9 +13,7 @@ from core.models import (
     User,
     QuestionnaireTeacher,
     UserRoles,
-    QuestionnaireTeacherCertificatePhoto,
-    QuestionnaireTeacherPassportPhoto,
-    QuestionnaireTeacherUserPhoto,
+    Attachment,
 )
 
 
@@ -26,39 +24,6 @@ class QuestionnaireTeacherRegister:
     def __init__(self, user: User, data: QuestionnaireTeacherData):
         self.data = data
         self.user = user
-
-    def certificates_photos_create(self, questionnaire: QuestionnaireTeacher) -> None:
-        certificates_to_create = []
-        for item in self.data["certificate_photos"]:
-            certificate = QuestionnaireTeacherCertificatePhoto()
-            certificate.image = item
-            certificate.questionnaire = questionnaire
-            certificates_to_create.append(certificate)
-        AttachmentRepository(model=QuestionnaireTeacherCertificatePhoto).bulk_create(
-            models=certificates_to_create
-        )
-
-    def passport_photos_create(self, questionnaire: QuestionnaireTeacher) -> None:
-        passports_to_create = []
-        for item in self.data["passport_photos"]:
-            passport_photo = QuestionnaireTeacherPassportPhoto()
-            passport_photo.image = item
-            passport_photo.questionnaire = questionnaire
-            passports_to_create.append(passport_photo)
-        AttachmentRepository(model=QuestionnaireTeacherPassportPhoto).bulk_create(
-            models=passports_to_create
-        )
-
-    def user_photos_create(self, questionnaire: QuestionnaireTeacher) -> None:
-        user_photos_to_create = []
-        for item in self.data["user_photos"]:
-            user_photo = QuestionnaireTeacherUserPhoto()
-            user_photo.image = item
-            user_photo.questionnaire = questionnaire
-            user_photos_to_create.append(user_photo)
-        AttachmentRepository(model=QuestionnaireTeacherPassportPhoto).bulk_create(
-            models=user_photos_to_create
-        )
 
     @cached_property
     def questionnaire(self) -> QuestionnaireTeacher:
@@ -71,19 +36,29 @@ class QuestionnaireTeacherRegister:
         questionnaire.work_experience = self.data["work_experience"]
         questionnaire.vk_link = self.data["vk_link"]
         questionnaire.telegram_link = self.data["telegram_link"]
+        questionnaire.passport_photo = self.data["passport_photo"]
+        questionnaire.user_photo = self.data["user_photo"]
+        questionnaire.user_with_passport_photo = self.data["user_with_passport_photo"]
         questionnaire.user = self.user
-
-        with transaction.atomic():
-            self.questionnaire_repository.store(questionnaire=questionnaire)
-            self.certificates_photos_create(questionnaire=questionnaire)
-            self.passport_photos_create(questionnaire=questionnaire)
-            self.user_photos_create(questionnaire=questionnaire)
         return questionnaire
+
+    def create_questionnaire_certificate_photos(
+        self, questionnaire: QuestionnaireTeacher
+    ) -> None:
+        photos = []
+        for item in self.data["certificate_photos"]:
+            attachment = Attachment()
+            attachment.image = item
+            photos.append(attachment)
+        AttachmentRepository(model=Attachment).bulk_create(models=photos)
+        questionnaire.setup_certificate_photos(photos=photos)
 
     def create(self) -> QuestionnaireTeacher:
         if self.user.has_role(role=UserRoles.TEACHER):
             raise NotAcceptable("User already has teacher role")
         if self.questionnaire_repository.has_moderate_questionnaires(user=self.user):
             raise NotAcceptable("User has moderate questionnaires")
-
+        with transaction.atomic():
+            self.questionnaire_repository.store(questionnaire=self.questionnaire)
+            self.create_questionnaire_certificate_photos(self.questionnaire)
         return self.questionnaire
