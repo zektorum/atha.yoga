@@ -64,20 +64,7 @@ const SearchLessonsPage = () => {
           ))}
         </Box>
       </Container>
-      {/* <Container>
-        <Grid container justifyContent="flex-start">
-          {lessons && lessons.data?.map(lesson => (
-            <Grid item>
-              <LessonCard
-                key={lesson.id}
-                title={lesson.name}
-                description={lesson.description}
-              />
-            </Grid>
-          ))}
-        </Grid>
-      </Container> */}
-      {lessons && console.log(lessons.data)}
+      {/* {lessons && console.log(lessons.data)} */}
     </Box>
   );
 };
