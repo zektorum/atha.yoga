@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  Box,
-  InputBase, Paper, Typography,
+  Box, InputBase, Paper, Typography, Container,
 } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 import filterSlice from '../../core/slices/lessons/filter';
 import useDebounce from '../../utils/hooks/useDebounce';
+import LessonCard from '../../components/lesson-card';
 
 const SearchLessonsPage = () => {
   const dispatch = useDispatch();
@@ -24,7 +24,7 @@ const SearchLessonsPage = () => {
   }
 
   return (
-    <Box>
+    <Box sx={{ width: '100%' }}>
       <Paper
         component="form"
         sx={{
@@ -47,7 +47,37 @@ const SearchLessonsPage = () => {
           {errorMessage}
         </Typography>
       )}
-      {lessons && <Typography>{JSON.stringify(lessons)}</Typography>}
+      <Container>
+        <Box sx={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+        }}
+        >
+          {lessons && lessons.data?.map(lesson => (
+
+            <LessonCard
+              key={lesson.id}
+              title={lesson.name}
+              description={lesson.description}
+            />
+          ))}
+        </Box>
+      </Container>
+      {/* <Container>
+        <Grid container justifyContent="flex-start">
+          {lessons && lessons.data?.map(lesson => (
+            <Grid item>
+              <LessonCard
+                key={lesson.id}
+                title={lesson.name}
+                description={lesson.description}
+              />
+            </Grid>
+          ))}
+        </Grid>
+      </Container> */}
+      {lessons && console.log(lessons.data)}
     </Box>
   );
 };
