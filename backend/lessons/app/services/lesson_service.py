@@ -121,7 +121,7 @@ class TicketService:
         ticket = Ticket()
         lesson = LessonRepository().find_by_id(id_=lesson_id)
         if not lesson:
-            raise NotFound("Lesson not found")
+            raise NotFound(f"Undefined lesson with id {lesson_id}")
         ticket.lesson = lesson
         ticket.user = user
         ticket.amount = amount
@@ -138,16 +138,25 @@ class TicketService:
         self.repositories.store(ticket=ticket)
         return ticket
 
-    def participant(self, schedule_id: int, user: User) -> Ticket:
+    def participant(self, schedule_id: int, user: User) -> str:
         scheduled_lesson = ScheduleRepository().find(id_=schedule_id)
+        if not scheduled_lesson:
+            raise NotFound(f"Undefined scheduled_lesson with id {schedule_id}")
+
+        participant = ScheduleRepository().allow(user)
+        if participant:
+            return scheduled_lesson.lesson.link
 
         ticket = self.repositories.ticket_for_lesson(lesson_id=scheduled_lesson.lesson.id, user=user)
         if not ticket:
             raise NotFound("You dont have ticket for this lesson")
         ticket.amount = int(ticket.amount) - 1
+
+        ScheduleRepository().access(user)
+
         if ticket.amount == 0:
             self.repositories.destroy(ticket=ticket)
-        self.repositories.store(ticket=ticket)
+            return ticket.lesson.link
 
-        scheduled_lesson.participants.add(user)
-        return ticket
+        self.repositories.store(ticket=ticket)
+        return ticket.lesson.link

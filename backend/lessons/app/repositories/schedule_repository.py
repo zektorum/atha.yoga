@@ -1,6 +1,7 @@
 from typing import List, Optional
 
 from core.app.repositories.base_repository import BaseRepository
+from core.models import User
 from lessons.models import Schedule
 
 
@@ -12,3 +13,9 @@ class ScheduleRepository(BaseRepository):
 
     def find(self, id_: int) -> Optional[Schedule]:
         return self.model.objects.filter(pk=id_).first()
+
+    def allow(self, user: User) -> Optional[Schedule]:
+        return self.model.participants.filter(id=user.id)
+
+    def access(self, user: User) -> None:
+        return self.model.participants.add(user)

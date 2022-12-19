@@ -121,7 +121,7 @@ class LessonTicketBuyHandler(GenericAPIView):
         ticket = TicketService().buy_ticket(lesson_id=data.validated_data["lesson_id"], user=self.request.user,
                                             amount=data.validated_data["amount"])
 
-        return Response("ticket obtained")
+        return Response("Ticket obtained")
 
 
 @permission_classes([IsAuthenticated])
@@ -132,6 +132,6 @@ class LessonTicketUseHandler(GenericAPIView):
         data = self.serializer_class(data=self.request.data)
         data.is_valid(raise_exception=True)
 
-        ticket = TicketService().participant(schedule_id=data.validated_data["schedule_id"], user=self.request.user)
+        link = TicketService().participant(schedule_id=data.validated_data["schedule_id"], user=self.request.user)
 
-        return Response({"data": {"lesson_link": ticket.lesson.link}})
+        return Response({"data": {"lesson_link": link}})
