@@ -132,6 +132,6 @@ class LessonTicketUseHandler(GenericAPIView):
         data = self.serializer_class(data=self.request.data)
         data.is_valid(raise_exception=True)
 
-        link = TicketService().participant(schedule_id=data.validated_data["schedule_id"], user=self.request.user)
+        link = TicketService().participate(schedule_id=data.validated_data["schedule_id"], user=self.request.user)
 
         return Response({"data": {"lesson_link": link}})
