@@ -8,10 +8,9 @@ from lessons.app.handlers.comment_handlers import (
 from lessons.app.handlers.lesson_handlers import (
     LessonsFilterHandler,
     LessonCreateHandler,
-    LessonUpdateHandler,
     FavoriteLessonAddHandler,
     FavoriteLessonRemoveHandler,
-    FavoriteLessonListHandler, LessonTicketBuyHandler, LessonTicketUseHandler,
+    FavoriteLessonListHandler, LessonTicketBuyHandler, LessonTicketUseHandler, LessonUpdateHandler,
 )
 from lessons.app.handlers.review_handlers import (
     LessonReviewListHandler,
@@ -62,6 +61,4 @@ urlpatterns = [
         LessonReviewRemoveHandler.as_view(),
         name="lesson_review_remove",
     ),
-    path("ticket/buy/", LessonTicketBuyHandler.as_view()),
-    path("ticket/use/", LessonTicketUseHandler.as_view()),
 ]
