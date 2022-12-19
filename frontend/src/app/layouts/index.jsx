@@ -17,7 +17,7 @@ const Layout = () => (
         gap: '35px',
       }}>
       <img style={{maxWidth: '100%'}} src={signUpLogo} alt="Atha yoga logo" />
-      <Typography variant="h5" color="common.white">Исследуйте • Занимайтесь • Создавайте</Typography>
+      <Typography variant="h5" color="common.white" textAlign="center">Исследуйте • Занимайтесь • Создавайте</Typography>
     </div>
     <Outlet />
   </div>
