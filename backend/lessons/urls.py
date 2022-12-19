@@ -11,13 +11,13 @@ from lessons.app.handlers.lesson_handlers import (
     LessonUpdateHandler,
     FavoriteLessonAddHandler,
     FavoriteLessonRemoveHandler,
-    FavoriteLessonListHandler,
+    FavoriteLessonListHandler, LessonTicketBuyHandler, LessonTicketUseHandler,
 )
 from lessons.app.handlers.review_handlers import (
     LessonReviewListHandler,
     LessonReviewCreateHandler,
     LessonReviewRemoveHandler,
-    )
+)
 
 urlpatterns = [
     path("", LessonCreateHandler.as_view(), name="lesson_create"),
