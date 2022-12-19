@@ -73,9 +73,3 @@ class TicketRepository(BaseRepository):
 
     def ticket_for_lesson(self, lesson_id: int, user: User) -> Optional[Ticket]:
         return self.model.objects.filter(lesson_id=lesson_id, user=user.id).first()
-
-    def find_lesson_by_id(self, id_: int) -> Optional[Lesson]:
-        lesson = LessonRepository.model.objects.filter(pk=id_).first()
-        if not lesson:
-            raise PermissionDenied("Lesson does not exist")
-        return lesson

@@ -121,14 +121,13 @@ class TicketService:
         ticket = Ticket()
         lesson = LessonRepository().find_by_id(id_=lesson_id)
         if not lesson:
-            pass  # TODO ask about message
+            raise NotFound("Lesson not found")
         ticket.lesson = lesson
         ticket.user = user
         ticket.amount = amount
         return ticket
 
     def buy_ticket(self, lesson_id: int, user: User, amount: int) -> Ticket:
-
         ticket = self.repositories.ticket_for_lesson(lesson_id=lesson_id, user=user)
         if not ticket:
             ticket = self.create_ticket(lesson_id=lesson_id, user=user, amount=amount)
@@ -144,12 +143,11 @@ class TicketService:
 
         ticket = self.repositories.ticket_for_lesson(lesson_id=scheduled_lesson.lesson.id, user=user)
         if not ticket:
-            pass  # TODO ask about message
+            raise NotFound("You dont have ticket for this lesson")
         ticket.amount = int(ticket.amount) - 1
         if ticket.amount == 0:
             self.repositories.destroy(ticket=ticket)
         self.repositories.store(ticket=ticket)
 
-        # ScheduleRepository().model.participants.update_or_create()
-
+        scheduled_lesson.participants.add(user)
         return ticket
