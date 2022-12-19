@@ -64,4 +64,4 @@ class LessonTicketBuyRequest(UnimplementedSerializer):
 
 
 class LessonTicketUseRequest(UnimplementedSerializer):
-    lesson_id = serializers.IntegerField(min_value=1)
+    schedule_id = serializers.IntegerField(min_value=1)

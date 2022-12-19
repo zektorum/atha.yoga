@@ -69,6 +69,7 @@ class Schedule(TimeStampedModel):
     )
     weekday = models.CharField(max_length=40, choices=RepetitionWeekdays.choices)
     start_time = models.TimeField()
+    participants = models.ManyToManyField(User)
 
     class Meta:
         verbose_name = "Расписание"

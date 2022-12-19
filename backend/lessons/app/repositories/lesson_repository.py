@@ -68,13 +68,13 @@ class TicketRepository(BaseRepository):
     def store(self, ticket: Ticket) -> None:
         ticket.save()
 
-    def del_zero_ticket(self, ticket: Ticket) -> None:
+    def destroy(self, ticket: Ticket) -> None:
         ticket.delete()
 
-    def ticket_for_lesson(self, lesson: Lesson, user: User) -> Optional[Ticket]:
-        return self.model.objects.filter(lesson=lesson.id, user=user).first()
+    def ticket_for_lesson(self, lesson_id: int, user: User) -> Optional[Ticket]:
+        return self.model.objects.filter(lesson_id=lesson_id, user=user.id).first()
 
-    def find_lesson_by_id(self, id_: int) -> Lesson:
+    def find_lesson_by_id(self, id_: int) -> Optional[Lesson]:
         lesson = LessonRepository.model.objects.filter(pk=id_).first()
         if not lesson:
             raise PermissionDenied("Lesson does not exist")

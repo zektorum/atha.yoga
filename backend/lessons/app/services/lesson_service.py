@@ -13,6 +13,7 @@ from lessons.app.services.types import LessonCreateData, LessonUpdateData
 from lessons.models import Lesson, Schedule
 from lessons.app.services.types import LessonCreateData
 from lessons.models import Lesson, Schedule, Ticket
+from lessons.seeders.lesson_seeder import LessonSeeder
 
 
 class LessonCreator:
@@ -116,37 +117,39 @@ class FavoriteLessonsWork:
 class TicketService:
     repositories = TicketRepository()
 
-    def __init__(self, lesson: Lesson, user: User, amount: Optional[int]):
-        self.lesson = lesson
-        self.user = user
-        self.amount = amount
-
-    @cached_property
-    def ticket(self) -> Ticket:
+    def create_ticket(self, lesson_id: int, user: User, amount: int):
         ticket = Ticket()
-        ticket.lesson = self.lesson
-        ticket.user = self.user
-        ticket.amount = self.amount
+        lesson = LessonRepository().find_by_id(id_=lesson_id)
+        if not lesson:
+            pass  # TODO ask about message
+        ticket.lesson = lesson
+        ticket.user = user
+        ticket.amount = amount
         return ticket
 
-    def buy_ticket(self) -> Ticket:
-        ticket = self.repositories.ticket_for_lesson(lesson=self.ticket.lesson, user=self.ticket.user)
-        if not ticket:
-            self.repositories.store(ticket=self.ticket)
-            return self.ticket
+    def buy_ticket(self, lesson_id: int, user: User, amount: int) -> Ticket:
 
-        ticket.amount = int(ticket.amount) + int(self.amount)
+        ticket = self.repositories.ticket_for_lesson(lesson_id=lesson_id, user=user)
+        if not ticket:
+            ticket = self.create_ticket(lesson_id=lesson_id, user=user, amount=amount)
+            self.repositories.store(ticket=ticket)
+            return ticket
+
+        ticket.amount = int(ticket.amount) + int(amount)
         self.repositories.store(ticket=ticket)
         return ticket
 
-    def use_ticket(self) -> Ticket:
-        ticket = self.repositories.ticket_for_lesson(lesson=self.ticket.lesson, user=self.ticket.user)
-        if not ticket:
-            raise PermissionDenied("ticket for lesson does not exist")
-        ticket.amount = int(ticket.amount) - 1
+    def participant(self, schedule_id: int, user: User) -> Ticket:
+        scheduled_lesson = ScheduleRepository().find(id_=schedule_id)
 
+        ticket = self.repositories.ticket_for_lesson(lesson_id=scheduled_lesson.lesson.id, user=user)
+        if not ticket:
+            pass  # TODO ask about message
+        ticket.amount = int(ticket.amount) - 1
         if ticket.amount == 0:
-            self.repositories.del_zero_ticket(ticket=ticket)
-        else:
-            self.repositories.store(ticket=ticket)
+            self.repositories.destroy(ticket=ticket)
+        self.repositories.store(ticket=ticket)
+
+        # ScheduleRepository().model.participants.update_or_create()
+
         return ticket

@@ -18,6 +18,7 @@ from lessons.app.http.requests.lesson_requests import (
 )
 from lessons.app.http.resources.lesson_resources import LessonResource
 from lessons.app.repositories.lesson_repository import LessonRepository
+from lessons.app.repositories.schedule_repository import ScheduleRepository
 from lessons.app.services.lesson_service import (
     LessonCreator,
     FavoriteLessonsWork,
@@ -25,6 +26,7 @@ from lessons.app.services.lesson_service import (
 )
 from lessons.app.repositories.lesson_repository import LessonRepository, TicketRepository
 from lessons.app.services.lesson_service import LessonCreator, FavoriteLessonsWork, TicketService
+from lessons.seeders.lesson_seeder import LessonSeeder
 
 
 class LessonsFilterHandler(GenericAPIView):
@@ -116,10 +118,8 @@ class LessonTicketBuyHandler(GenericAPIView):
         data = self.serializer_class(data=self.request.data)
         data.is_valid(raise_exception=True)
 
-        lesson = TicketRepository().find_lesson_by_id(id_=data.validated_data["lesson_id"])
-
-        ticket = TicketService(lesson=lesson,
-                               amount=data.validated_data["amount"], user=self.request.user).buy_ticket()
+        ticket = TicketService().buy_ticket(lesson_id=data.validated_data["lesson_id"], user=self.request.user,
+                                            amount=data.validated_data["amount"])
 
         return Response("ticket obtained")
 
@@ -132,8 +132,6 @@ class LessonTicketUseHandler(GenericAPIView):
         data = self.serializer_class(data=self.request.data)
         data.is_valid(raise_exception=True)
 
-        lesson = TicketRepository().find_lesson_by_id(id_=data.validated_data["lesson_id"])
-
-        ticket = TicketService(lesson=lesson, amount=None, user=self.request.user).use_ticket()
+        ticket = TicketService().participant(schedule_id=data.validated_data["schedule_id"], user=self.request.user)
 
         return Response({"data": {"lesson_link": ticket.lesson.link}})

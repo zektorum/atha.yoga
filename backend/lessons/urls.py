@@ -31,6 +31,6 @@ urlpatterns = [
         FavoriteLessonRemoveHandler.as_view(),
         name="favorite_lesson_remove",
     ),
-    path("ticket_buy/", LessonTicketBuyHandler.as_view()),
-    path("ticket_use/", LessonTicketUseHandler.as_view()),
+    path("ticket/buy/", LessonTicketBuyHandler.as_view()),
+    path("ticket/use/", LessonTicketUseHandler.as_view()),
 ]
