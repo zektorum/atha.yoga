@@ -1,10 +1,10 @@
 from rest_framework.serializers import ModelSerializer
 
 from core.models import User
-from lessons.models import LessonComment
+from lessons.models import LessonReview
 
 
-class LessonCommentUserResource(ModelSerializer):
+class LessonReviewUserResource(ModelSerializer):
     class Meta:
         model = User
         fields = [
@@ -17,14 +17,15 @@ class LessonCommentUserResource(ModelSerializer):
         ]
 
 
-class LessonCommentResource(ModelSerializer):
-    user = LessonCommentUserResource()
+class LessonReviewResource(ModelSerializer):
+    user = LessonReviewUserResource()
 
     class Meta:
-        model = LessonComment
+        model = LessonReview
         fields = [
             "id",
             "text",
+            "star_rating",
             "user",
             "created_at",
         ]

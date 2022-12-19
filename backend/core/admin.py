@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from .models import User
 
 
@@ -10,7 +11,6 @@ class UserAdmin(admin.ModelAdmin):
         "email",
         "first_name",
         "last_name",
-        "is_teacher",
         "roles",
         "is_active",
         "is_staff",
@@ -18,7 +18,6 @@ class UserAdmin(admin.ModelAdmin):
     )
     list_display_links = ("id", "username", "email")
     list_filter = (
-        "is_teacher",
         "last_login",
         "date_joined",
         "is_active",
