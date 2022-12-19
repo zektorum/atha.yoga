@@ -7,10 +7,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from core.app.http.requests.teachers_questuonnaire_requests import (
+from core.app.http.requests.teachers_questionnaire_requests import (
     QuestionnaireTeacherRequest,
 )
-from core.app.http.resources.teachers_questuonnaire_resources import (
+from core.app.http.resources.teachers_questionnaire_resources import (
     QuestionnaireTeacherResource,
 )
 from core.app.services.teachers_questuonnaire_services import (

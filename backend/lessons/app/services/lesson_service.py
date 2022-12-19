@@ -1,12 +1,20 @@
+import datetime
+from collections import defaultdict
 from functools import cached_property
+from typing import List, Dict
 
+from django.utils.timezone import now
 from rest_framework.exceptions import NotFound, ValidationError, PermissionDenied
 
 from core.app.utils.util import setup_resource_attributes
 from core.models import User, UserRoles
 from lessons.app.repositories.lesson_repository import LessonRepository
 from lessons.app.repositories.schedule_repository import ScheduleRepository
-from lessons.app.services.types import LessonCreateData, LessonUpdateData
+from lessons.app.services.types import (
+    LessonCreateData,
+    LessonUpdateData,
+    ScheduleCreateData,
+)
 from lessons.models import Lesson, Schedule
 
 
@@ -37,16 +45,32 @@ class LessonCreator:
         lesson.teacher = self._user
         return lesson
 
+    @cached_property
+    def mapped_schedule(self) -> Dict[int, List[ScheduleCreateData]]:
+        mapped_schedule = defaultdict(list)
+        for item in self._data["schedule"]:
+            mapped_schedule[item["weekday"]].append(item)
+        return mapped_schedule
+
     def _create_schedule(self) -> None:
         if not self._data["schedule"]:
             return
         schedule_to_create = []
-        for item in self._data["schedule"]:
-            schedule = Schedule()
-            schedule.lesson = self.lesson
-            schedule.weekday = item["weekday"]
-            schedule.start_time = item["start_time"]
-            schedule_to_create.append(schedule)
+        cur_date = self.lesson.start_datetime.date()
+        while cur_date <= (
+            self.lesson.deadline_datetime.date() + datetime.timedelta(days=1)
+        ):
+            if cur_date.weekday() in self.mapped_schedule:
+                for lesson_info in self.mapped_schedule[cur_date.weekday()]:
+                    lesson_datetime = datetime.datetime.combine(
+                        date=cur_date, time=lesson_info["start_time"]
+                    )
+                    if self.lesson.deadline_datetime < lesson_datetime < now():
+                        continue
+                    schedule = Schedule()
+                    schedule.lesson = self.lesson
+                    schedule.start_at = lesson_datetime
+                    schedule_to_create.append(schedule)
         self.schedule_repos.bulk_create(objs=schedule_to_create)
 
     def create(self) -> Lesson:
