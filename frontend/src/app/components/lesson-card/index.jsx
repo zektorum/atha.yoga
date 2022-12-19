@@ -1,5 +1,4 @@
 /* eslint-disable react/prop-types */
-/* eslint-disable react/destructuring-assignment */
 /* eslint-disable linebreak-style */
 import React from 'react';
 import { Typography, Box, Grid } from '@mui/material';
@@ -7,7 +6,7 @@ import SchoolIcon from '@mui/icons-material/School';
 import DateRangeOutlinedIcon from '@mui/icons-material/DateRangeOutlined';
 import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
 
-const LessonCard = props => (
+const LessonCard = ({ title, description }) => (
   <Box
     width="385px"
     m="16px"
@@ -23,7 +22,7 @@ const LessonCard = props => (
         <Grid item xs container direction="column" sx={{ py: '16px' }}>
           <Grid item>
             <Typography sx={{ fontSize: '18px', mb: '12px' }}>
-              {props.title}
+              {title}
             </Typography>
           </Grid>
           <Grid item>
@@ -33,7 +32,7 @@ const LessonCard = props => (
                 width: '252px', fontSize: '14px', mb: '8px', lineHeight: '120%',
               }}
             >
-              {props.description}
+              {description}
             </Typography>
           </Grid>
           <Grid item display="flex">
