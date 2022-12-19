@@ -24,13 +24,14 @@ const PasswordRecovery = () => {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
+    <Container sx={{height: '100%'}} component="main" maxWidth="xs">
       <Box
         sx={{
-          marginTop: 8,
+          height: '100%',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
+          justifyContent: 'center',
         }}
       >
         <Typography component="h1" variant="h4" sx={{ mb: 4 }}>

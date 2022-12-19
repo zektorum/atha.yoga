@@ -9,7 +9,12 @@ const WelcomePage = () => {
     setTimeout(() => setIsLogo(false), 2000);
   }, []);
 
-  return isLogo ? <Logo /> : <SplashScreens />;
+  return (
+    <>
+      <Logo shown={isLogo} />
+      <SplashScreens />
+    </>
+  );
 };
 
 export default WelcomePage;
