@@ -1,3 +1,4 @@
+import uuid
 from typing import List, Union
 
 from django.contrib.auth.models import AbstractUser
@@ -21,9 +22,6 @@ class Attachment(PolymorphicModel):
     created_at = models.DateTimeField(auto_now_add=True, db_index=False)
     updated_at = models.DateTimeField(auto_now=True, db_index=False)
 
-    class Meta(object):
-        abstract = True
-
 
 class UserRoles(models.TextChoices):
     STUDENT = "STUDENT"
@@ -42,7 +40,6 @@ class User(AbstractUser):
 
     about = models.CharField(max_length=100, blank=True)
     avatar = models.ImageField(upload_to="user_avatars/", blank=True)
-    is_teacher = models.BooleanField(default=False)
     roles = models.JSONField(default=user_default_roles)
     pwd_reset_token = models.CharField(_("pwd reset token"), max_length=300)
 
@@ -62,6 +59,14 @@ class User(AbstractUser):
         verbose_name_plural = "Пользователи"
 
 
+class Transaction(TimeStampedModel):
+    id = models.UUIDField(
+        primary_key=True, unique=True, default=uuid.uuid4, editable=False
+    )
+    amount = models.PositiveIntegerField()
+    payment_id = models.CharField(max_length=40)
+
+
 class GenderTypes(models.TextChoices):
     MALE = "MALE"
     FEMALE = "FEMALE"
@@ -74,7 +79,9 @@ class QuestionnaireTeacherStatuses(models.TextChoices):
 
 
 class QuestionnaireTeacher(TimeStampedModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="teacher_profiles"
+    )
     name = models.CharField(_("name"), max_length=30)
     surname = models.CharField(_("surname"), max_length=30)
     date_of_birth = models.DateField(_("date of birth"))
@@ -97,15 +104,12 @@ class QuestionnaireTeacher(TimeStampedModel):
 
 
 class QuestionnaireTeacherCertificatePhoto(Attachment):
-    image = models.ImageField(upload_to="user_certificate/")
     questionnaire = models.ForeignKey(QuestionnaireTeacher, on_delete=models.CASCADE)
 
 
 class QuestionnaireTeacherPassportPhoto(Attachment):
-    image = models.ImageField(upload_to="user_passport/")
     questionnaire = models.ForeignKey(QuestionnaireTeacher, on_delete=models.CASCADE)
 
 
 class QuestionnaireTeacherUserPhoto(Attachment):
-    image = models.ImageField(upload_to="user_avatars/")
     questionnaire = models.ForeignKey(QuestionnaireTeacher, on_delete=models.CASCADE)

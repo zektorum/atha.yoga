@@ -10,9 +10,9 @@ from lessons.models import (
 )
 
 
-class CommentCreateData(TypedDict):
+class LessonReviewCreateData(TypedDict):
+    star_rating: int
     text: str
-    lesson_id: int
 
 
 class ScheduleCreateData(TypedDict):

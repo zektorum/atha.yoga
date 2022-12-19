@@ -5,8 +5,17 @@
   margin: 0;
 }
 
+html {
+  height: 100%;
+}
+
 body {
   background-color: $body-color;
+  height: 100%;
+}
+
+#root {
+  height: 100%;
 }
 
 .welcome__description {
@@ -23,6 +32,7 @@ body {
 }
 
 .logo__container {
+  position: absolute;
   width: 100vw;
   height: 100vh;
   display: flex;
