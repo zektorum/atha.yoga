@@ -8,9 +8,12 @@ from lessons.app.handlers.comment_handlers import (
 from lessons.app.handlers.lesson_handlers import (
     LessonsFilterHandler,
     LessonCreateHandler,
+    LessonUpdateHandler,
     FavoriteLessonAddHandler,
     FavoriteLessonRemoveHandler,
-    FavoriteLessonListHandler, LessonTicketBuyHandler, LessonTicketUseHandler, LessonUpdateHandler,
+    FavoriteLessonListHandler,
+    LessonTicketBuyHandler,
+    LessonTicketUseHandler,
 )
 from lessons.app.handlers.review_handlers import (
     LessonReviewListHandler,
