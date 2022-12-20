@@ -41,7 +41,7 @@ class LessonCreateRequest(UnimplementedSerializer):
     duration = serializers.DurationField()
     repeat_editing = serializers.BooleanField(default=False)
     start_datetime = serializers.DateTimeField()
-    deadline_date = serializers.DateField(allow_null=True)
+    deadline_datetime = serializers.DateTimeField(allow_null=True)
     payment = serializers.ChoiceField(choices=LessonPaymentTypes.choices)
     price = serializers.IntegerField(min_value=0)
     schedule = ScheduleCreateRequest(many=True, allow_null=True)

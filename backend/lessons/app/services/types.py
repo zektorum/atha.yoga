@@ -30,7 +30,7 @@ class LessonCreateData(TypedDict):
     duration: str
     repeat_editing: bool
     start_datetime: datetime.datetime
-    deadline_date: Optional[datetime.date]
+    deadline_datetime: Optional[datetime.datetime]
     payment: LessonPaymentTypes
     price: int
     complexity: LessonComplexities
