@@ -70,7 +70,6 @@ const SearchLessonsPage = () => {
         }}
         >
           {lessons && lessons.data?.map(lesson => (
-
             <LessonCard
               key={lesson.id}
               title={lesson.name}
@@ -79,7 +78,6 @@ const SearchLessonsPage = () => {
           ))}
         </Box>
       </Container>
-      {/* {lessons && console.log(lessons.data)} */}
     </Box>
   );
 };
