@@ -17,7 +17,7 @@ pipeline {
     stages {
         stage('Build') {
             environment {
-                BRANCH_NAME='${env.BRANCH_NAME}'
+                BRANCH_NAME="${env.BRANCH_NAME}"
                 MASTER_ENV_LINK=credentials('MASTER_ENV_LINK')
                 DEVELOP_ENV_LINK=credentials('DEVELOP_ENV_LINK')
                 STAGE_ENV_LINK=credentials('STAGE_ENV_LINK')
