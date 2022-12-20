@@ -34,7 +34,14 @@ const SignUp = () => {
   }, []);
 
   const handleFocus = el => {
-    dispatch(setMessage({ ...message, [el]: '' }));
+    dispatch(setMessage({
+      ...message,
+      authentication_failed: '',
+      invalid: {
+        ...(message.invalid || {}),
+        [el]: '',
+      },
+    }));
   };
 
   const handleClickShowPassword = () => {
@@ -64,13 +71,14 @@ const SignUp = () => {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
+    <Container sx={{ height: '100%' }} component="main" maxWidth="xs">
       <Box
         sx={{
-          marginTop: 8,
+          height: '100%',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
+          justifyContent: 'center',
         }}
       >
         <Typography component="h1" variant="h4" fontWeight="500" sx={{ mb: 3 }}>
@@ -86,38 +94,37 @@ const SignUp = () => {
             placeholder="E-mail"
             name="email"
             autoComplete="email"
-            error={!!message?.email}
-            helperText={message?.email}
+            error={!!message?.invalid?.email}
+            helperText={message?.invalid?.email}
             onFocus={() => handleFocus('email')}
             autoFocus
           />
-          <FormControl fullWidth variant="outlined" sx={{ mb: 2 }}>
-            <InputLabel>Пароль</InputLabel>
-            <OutlinedInput
-              fullWidth
-              label="Пароль"
-              name="password"
-              placeholder="Пароль"
-              id="password"
-              autoComplete="current-password"
-              type={values.showPassword ? 'text' : 'password'}
-              error={!!message?.password}
-              helperText={message?.password}
-              onFocus={() => handleFocus('password')}
-              endAdornment={(
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleClickShowPassword}
-                    edge="end"
-                  >
-                    {values.showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-        )}
-            />
-            <MyFormHelperText />
-          </FormControl>
+          <TextField
+            sx={{ mb: 2 }}
+            fullWidth
+            label="Пароль"
+            name="password"
+            placeholder="Пароль"
+            id="password"
+            autoComplete="current-password"
+            type={values.showPassword ? 'text' : 'password'}
+            error={!!message?.invalid?.password || !!message?.authentication_failed}
+            helperText={message?.invalid?.password}
+            onFocus={() => handleFocus('password')}
+            InputProps={{
+              endAdornment:
+                (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                    >
+                      {values.showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+            }}
+          />
           <Button
             type="submit"
             size="large"

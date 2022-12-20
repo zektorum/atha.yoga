@@ -38,7 +38,14 @@ const LogIn = () => {
   };
 
   const handleFocus = el => {
-    dispatch(setMessage({ ...message, [el]: '', detail: '' }));
+    dispatch(setMessage({
+      ...message,
+      authentication_failed: '',
+      invalid: {
+        ...(message.invalid || {}),
+        [el]: '',
+      },
+    }));
   };
 
   const handleSubmit = event => {
@@ -48,13 +55,14 @@ const LogIn = () => {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
+    <Container sx={{ height: '100%' }} component="main" maxWidth="xs">
       <Box
         sx={{
-          marginTop: 8,
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
+          height: '100%',
+          justifyContent: 'center',
         }}
       >
         <Typography component="h1" variant="h4" fontWeight="500" sx={{ mb: 3 }}>
@@ -70,8 +78,8 @@ const LogIn = () => {
             placeholder="E-mail"
             name="email"
             autoComplete="email"
-            error={!!message?.email || !!message?.detail}
-            helperText={message?.email}
+            error={!!message?.invalid?.email || !!message?.authentication_failed}
+            helperText={message?.invalid?.email}
             onFocus={() => handleFocus('email')}
           />
           <TextField
@@ -83,8 +91,8 @@ const LogIn = () => {
             id="password"
             autoComplete="current-password"
             type={values.showPassword ? 'text' : 'password'}
-            error={!!message?.password || !!message?.detail}
-            helperText={message?.password}
+            error={!!message?.invalid?.password || !!message?.authentication_failed}
+            helperText={message?.invalid?.password}
             onFocus={() => handleFocus('password')}
             InputProps={{
               endAdornment:
@@ -105,8 +113,8 @@ const LogIn = () => {
               Забыли пароль?
             </Typography>
           </div>
-          {message?.detail && (
-            <Typography sx={{ mt: 2 }} color="error.main">{message?.detail}</Typography>
+          {message?.authentication_failed && (
+            <Typography sx={{ mt: 2 }} color="error.main">{message?.authentication_failed}</Typography>
           )}
           <Button
             type="submit"

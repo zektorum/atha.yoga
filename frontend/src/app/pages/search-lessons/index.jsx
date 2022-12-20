@@ -4,7 +4,6 @@ import {
   Box, InputBase, Paper, Typography, Container,
 } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
-import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 import filterSlice from '../../core/slices/lessons/filter';
 import useDebounce from '../../utils/hooks/useDebounce';
@@ -13,9 +12,13 @@ import LessonCard from '../../components/lesson-card';
 const SearchLessonsPage = () => {
   const dispatch = useDispatch();
   const [query, setQuery] = useState('');
-  const { lessons, isSearching, errorMessage } = useSelector(state => state.lessons);
+  const { lessons, errorMessage } = useSelector(state => state.lessons);
 
   const searchQuery = useDebounce(query, 500);
+
+  useEffect(() => {
+    dispatch(filterSlice());
+  }, []);
 
   useEffect(() => {
     dispatch(filterSlice(query));
@@ -43,19 +46,22 @@ const SearchLessonsPage = () => {
       <Paper
         component="form"
         sx={{
-          p: '2px 4px', display: 'flex', alignItems: 'center', width: 400,
+          p: '8px 4px',
+          display: 'flex',
+          alignItems: 'center',
+          width: '100%',
+          maxWidth: '800px',
+          margin: '32px auto',
         }}
       >
-        <IconButton type="button" sx={{ p: '10px' }}>
-          <SearchIcon />
-        </IconButton>
+        <SearchIcon sx={{ margin: '4px' }} color="disabled" />
         <InputBase
           sx={{ ml: 1, flex: 1 }}
           value={query}
+          placeholder="Поиск"
           onChange={e => updateSearch(e)}
         />
       </Paper>
-      {isSearching && <Typography>Searching...</Typography>}
       {errorMessage && (
         <Typography color="error.main">
           Error:
@@ -66,7 +72,10 @@ const SearchLessonsPage = () => {
         <Box sx={{
           display: 'flex',
           flexWrap: 'wrap',
-          justifyContent: 'center',
+          justifyContent: 'flex-start',
+          width: '800px',
+          gap: '20px',
+          margin: '0 auto',
         }}
         >
           {lessons && lessons.data?.map(lesson => (

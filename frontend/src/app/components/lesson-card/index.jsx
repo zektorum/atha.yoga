@@ -8,24 +8,23 @@ import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
 
 const LessonCard = ({ title, description }) => (
   <Box
-    width="385px"
-    m="16px"
+    width="calc(50% - 10px)"
     sx={{ borderRadius: '8px', boxShadow: '0px 8px 16px rgba(46, 60, 80, 0.1)' }}
   >
-    <Grid container alignItems="flex-start" justifyContent="center">
+    <Grid container alignItems="flex-start" justifyContent="center" height="100%">
       <Grid item>
         <Typography>
           <SchoolIcon color="primary" fontSize="large" sx={{ m: '16px' }} />
         </Typography>
       </Grid>
-      <Grid item xs container>
+      <Grid item xs container height="100%">
         <Grid item xs container direction="column" sx={{ py: '16px' }}>
           <Grid item>
             <Typography sx={{ fontSize: '18px', mb: '12px' }}>
               {title}
             </Typography>
           </Grid>
-          <Grid item>
+          <Grid item sx={{ flex: '1 0 auto' }}>
             <Typography
               color="text.secondary"
               sx={{

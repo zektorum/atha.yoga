@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -8,17 +8,18 @@ import ListItemText from '@mui/material/ListItemText';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
+import { NavLink } from 'react-router-dom';
+import Box from '@mui/material/Box';
 import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
-import { Link } from 'react-router-dom';
 import menuLogo from '../../../assets/public/menu_logo.svg';
 
 const Menu = ({ auth }) => {
   const menuItemStyle = {
     minHeight: '36px',
     '& .MuiTypography-root': {
-       color: 'text.secondary',
+      color: 'text.secondary',
     },
-    '&:hover': {
+    '&:hover, &.active': {
       backgroundColor: 'primary.main',
       borderRadius: '5px',
       '& .MuiSvgIcon-root, & .MuiTypography-root': {
@@ -27,7 +28,7 @@ const Menu = ({ auth }) => {
     },
   };
   return (
-    <Grid container>
+    <Box sx={{ width: '100%' }}>
       <MenuList
         sx={{
           height: '100vh',
@@ -35,7 +36,8 @@ const Menu = ({ auth }) => {
           flexDirection: 'column',
           justifyContent: 'start',
           p: 2,
-          backgroundColor: '#F5F5F5'
+          backgroundColor: '#F5F5F5',
+          gap: '6px'
         }}
       >
         <button onClick={auth.logout}>Logout</button>
@@ -43,7 +45,7 @@ const Menu = ({ auth }) => {
           <img src={menuLogo} alt="atha yoga logo" style={{ width: '103px', height: '26px' }} />
         </div>
         <MenuItem
-          component={Link}
+          component={NavLink}
           to="search-lessons"
           sx={{ ...menuItemStyle }}
         >
@@ -60,7 +62,7 @@ const Menu = ({ auth }) => {
               )}
           />
         </MenuItem>
-        <MenuItem component={Link} to="" sx={{ ...menuItemStyle }}>
+        <MenuItem component={NavLink} to="/favorites" sx={{ ...menuItemStyle }}>
           <ListItemIcon>
             <FavoriteBorderIcon color="disabled" fontSize="medium" />
           </ListItemIcon>
@@ -74,7 +76,7 @@ const Menu = ({ auth }) => {
               )}
           />
         </MenuItem>
-        <MenuItem component={Link} to="/my-lessons" sx={{ ...menuItemStyle }}>
+        <MenuItem component={NavLink} to="/my-lessons" sx={{ ...menuItemStyle }}>
           <ListItemIcon>
             <SchoolOutlinedIcon color="disabled" fontSize="medium" />
           </ListItemIcon>
@@ -88,7 +90,7 @@ const Menu = ({ auth }) => {
                 )}
           />
         </MenuItem>
-        <MenuItem component={Link} to="/calendar" sx={{ ...menuItemStyle }}>
+        <MenuItem component={NavLink} to="/calendar" sx={{ ...menuItemStyle }}>
           <ListItemIcon>
             <CalendarMonthOutlinedIcon color="disabled" fontSize="medium" />
           </ListItemIcon>
@@ -102,7 +104,7 @@ const Menu = ({ auth }) => {
                 )}
           />
         </MenuItem>
-        <MenuItem component={Link} to="/profile" sx={{ ...menuItemStyle }}>
+        <MenuItem component={NavLink} to="/profile" sx={{ ...menuItemStyle }}>
           <ListItemIcon>
             <AccountCircleOutlinedIcon color="disabled" fontSize="medium" />
           </ListItemIcon>
@@ -117,7 +119,7 @@ const Menu = ({ auth }) => {
           />
         </MenuItem>
       </MenuList>
-    </Grid>
+    </Box>
   );
 };
 
