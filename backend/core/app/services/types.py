@@ -2,9 +2,8 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import TypedDict, NamedTuple, List
 
-from django.core.files.uploadedfile import InMemoryUploadedFile
-
 from dacite import from_dict, Config
+from django.core.files.uploadedfile import InMemoryUploadedFile
 
 
 class UserRegisterData(TypedDict):
@@ -84,5 +83,6 @@ class QuestionnaireTeacherData(TypedDict):
     vk_link: str
     telegram_link: str
     certificate_photos: List[InMemoryUploadedFile]
-    passport_photos: List[InMemoryUploadedFile]
-    user_photos: List[InMemoryUploadedFile]
+    passport_photo: InMemoryUploadedFile
+    user_photo: InMemoryUploadedFile
+    user_with_passport_photo: InMemoryUploadedFile

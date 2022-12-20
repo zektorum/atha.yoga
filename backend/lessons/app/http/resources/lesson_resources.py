@@ -9,8 +9,7 @@ class ScheduleResource(ModelSerializer):
         fields = [
             "id",
             "lesson",
-            "weekday",
-            "start_time",
+            "start_at",
         ]
 
 

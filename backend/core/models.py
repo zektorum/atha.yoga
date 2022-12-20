@@ -108,15 +108,3 @@ class QuestionnaireTeacher(TimeStampedModel):
     class Meta:
         verbose_name = "Анкета преподавателя"
         verbose_name_plural = "Анкета преподавателя"
-
-
-class QuestionnaireTeacherCertificatePhoto(Attachment):
-    questionnaire = models.ForeignKey(QuestionnaireTeacher, on_delete=models.CASCADE)
-
-
-class QuestionnaireTeacherPassportPhoto(Attachment):
-    questionnaire = models.ForeignKey(QuestionnaireTeacher, on_delete=models.CASCADE)
-
-
-class QuestionnaireTeacherUserPhoto(Attachment):
-    questionnaire = models.ForeignKey(QuestionnaireTeacher, on_delete=models.CASCADE)
