@@ -56,11 +56,11 @@ const theme = createTheme({
     },
     modal: {
       fontFamily: 'Roboto',
-      fontWeight: 500,
-      fontSize: '16px',
+      fontWeight: 400,
+      fontSize: '14px',
       lineHeight: '120%',
       fontStyle: 'normal',
-      color: '#212121',
+      color: '#616161',
     },
   },
 });
