@@ -7,8 +7,8 @@ import SearchIcon from '@mui/icons-material/Search';
 import ListItemText from '@mui/material/ListItemText';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
-import ConfirmationNumberOutlinedIcon from '@mui/icons-material/ConfirmationNumberOutlined';
 import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
+import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
 import { Link } from 'react-router-dom';
 import menuLogo from '../../../assets/public/menu_logo.svg';
 
@@ -74,16 +74,16 @@ const Menu = ({ auth }) => {
               )}
           />
         </MenuItem>
-        <MenuItem component={Link} to="" sx={{ ...menuItemStyle }}>
+        <MenuItem component={Link} to="/my-lessons" sx={{ ...menuItemStyle }}>
           <ListItemIcon>
-            <ConfirmationNumberOutlinedIcon color="disabled" fontSize="medium" />
+            <SchoolOutlinedIcon color="disabled" fontSize="medium" />
           </ListItemIcon>
           <ListItemText
             primary={(
               <Typography
                 variant="body2"
               >
-                Абонементы
+                Мои занятия
               </Typography>
                 )}
           />
