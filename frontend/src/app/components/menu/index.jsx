@@ -36,7 +36,8 @@ const Menu = ({ auth }) => {
           flexDirection: 'column',
           justifyContent: 'start',
           p: 2,
-          backgroundColor: '#F5F5F5'
+          backgroundColor: '#F5F5F5',
+          gap: '6px'
         }}
       >
         <button onClick={auth.logout}>Logout</button>
@@ -61,7 +62,7 @@ const Menu = ({ auth }) => {
               )}
           />
         </MenuItem>
-        <MenuItem component={NavLink} to="/" sx={{ ...menuItemStyle }}>
+        <MenuItem component={NavLink} to="/favorites" sx={{ ...menuItemStyle }}>
           <ListItemIcon>
             <FavoriteBorderIcon color="disabled" fontSize="medium" />
           </ListItemIcon>
