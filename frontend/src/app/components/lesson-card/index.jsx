@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable linebreak-style */
 import React from 'react';
 import { Typography, Box, Grid } from '@mui/material';
@@ -5,8 +6,12 @@ import SchoolIcon from '@mui/icons-material/School';
 import DateRangeOutlinedIcon from '@mui/icons-material/DateRangeOutlined';
 import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
 
-const LessonCard = () => (
-  <Box width="385px" m="16px" sx={{ border: '1px solid #E0E0E0', borderRadius: '8px' }}>
+const LessonCard = ({ title, description }) => (
+  <Box
+    width="385px"
+    m="16px"
+    sx={{ borderRadius: '8px', boxShadow: '0px 8px 16px rgba(46, 60, 80, 0.1)' }}
+  >
     <Grid container alignItems="flex-start" justifyContent="center">
       <Grid item>
         <Typography>
@@ -17,13 +22,17 @@ const LessonCard = () => (
         <Grid item xs container direction="column" sx={{ py: '16px' }}>
           <Grid item>
             <Typography sx={{ fontSize: '18px', mb: '12px' }}>
-              Медитация
+              {title}
             </Typography>
           </Grid>
           <Grid item>
-            <Typography color="text.secondary" sx={{ width: '252px', fontSize: '14px', mb: '8px' }}>
-              Управление праной с помощью дыхательных упражнений в йоге.
-              Упражнения пранаямы применяются
+            <Typography
+              color="text.secondary"
+              sx={{
+                width: '252px', fontSize: '14px', mb: '8px', lineHeight: '120%',
+              }}
+            >
+              {description}
             </Typography>
           </Grid>
           <Grid item display="flex">
