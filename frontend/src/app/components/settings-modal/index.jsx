@@ -1,55 +1,36 @@
 import React, { useState } from 'react';
-import { LocalizationProvider } from '@mui/x-date-pickers';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ru';
 import {
-  Button,
   Grid,
   Container,
   Typography,
+  Switch,
   TextField,
   MenuItem,
   Select,
   Radio,
+  Button,
   InputLabel,
   FormControl,
-  Tooltip,
   FormControlLabel,
-  FormLabel,
   RadioGroup,
-  ClickAwayListener,
   Checkbox,
+  OutlinedInput,
+  ListItemText,
   Divider,
-  InputAdornment,
-  Box,
 } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import CurrencyRubleIcon from '@mui/icons-material/CurrencyRuble';
-import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 
 const Modal = () => {
-  const [typeOfLesson, setTypeOfLesson] = useState('video');
-  const [skillLevel, setSkillLevel] = useState('beginner');
-  const [costOfLesson, setCostOfLesson] = useState('paid');
-  const [selectedDurationBtn, setSelectedDurationBtn] = useState(3);
-  const [selectedRepeatBtn, setSelectedRepeatBtn] = useState(1);
+  const [personName, setPersonName] = useState([]);
   const [selectedDate, setSelectedDate] = useState(dayjs());
   const [selectedTime, setSelectedTime] = useState(dayjs());
-  const [startLessonDate, setStartLessonDate] = useState(dayjs());
-  const [endLessonDate, setEndLessonDate] = useState(dayjs());
 
-  const [openToolTip, setOpenToolTip] = React.useState(false);
-
-  const handleTooltipClose = () => {
-    setOpenToolTip(false);
-  };
-
-  const handleTooltipOpen = () => {
-    setOpenToolTip(true);
-  };
+  const [value, setValue] = React.useState(null);
 
   const [lessonData, setLessonData] = useState({
     name: '',
@@ -57,6 +38,16 @@ const Modal = () => {
     type: 'online',
     link: '',
     conferenceId: '',
+    level: [],
+    duration: '',
+    repeat: 'once',
+    date: selectedDate,
+    time: selectedTime,
+    date2: '',
+    time2: '',
+    payment: 'paid',
+    donation: true,
+    cost: '',
   });
 
   const submit = e => {
@@ -71,8 +62,43 @@ const Modal = () => {
     });
   };
 
+  const changeDonation = e => {
+    const value = !(e.target.value === 'on');
+    setLessonData({
+      ...lessonData,
+      [e.target.name]: value,
+    });
+  };
+
+  const changeLessonLevel = event => {
+    const {
+      target: { value },
+    } = event;
+    setPersonName(
+      // On autofill we get a stringified value.
+      typeof value === 'string' ? value.split(',') : value,
+      update(event),
+    );
+  };
+
+  const lessonLevels = ['Начинающий', 'Средний', 'Продвинутый'];
+
+  const dateNormalize = date => {
+    const string = String(date);
+    const array = string.split(' ');
+    const newDate = `${array[2]} ${array[1]} ${array[3]}`;
+    return newDate;
+  };
+
+  const timeNormalize = date => {
+    const string = String(date);
+    const array = string.split(' ');
+    const newDate = `${array[2]} ${array[1]} ${array[3]}`;
+    return newDate;
+  };
+
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ru" localeText={{ start: 'Дата начала', end: 'Дата окончания' }}>
+    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ru">
       <form onSubmit={submit}>
         <Container sx={{ display: 'flex', justifyContent: 'center' }}>
           <Grid
@@ -103,6 +129,7 @@ const Modal = () => {
                 id="lesson_description"
                 label="Описание"
                 name="description"
+                placeholder="Первые N символов будут показаны в карточке занятия при поиске"
                 onChange={update}
                 value={lessonData.description}
                 multiline
@@ -141,6 +168,7 @@ const Modal = () => {
               <TextField
                 id="lesson_link"
                 label="Ссылка на занятие"
+                name="link"
                 value={lessonData.link}
                 onChange={update}
                 sx={{ width: '49%' }}
@@ -150,152 +178,49 @@ const Modal = () => {
               <TextField
                 id="lesson_link"
                 label="Данные для доступа"
+                name="conferenceId"
                 value={lessonData.conferenceId}
                 onChange={update}
+                placeholder="Идентификатор конференции"
                 sx={{ width: '49%' }}
-                InputProps={{
-                  endAdornment:
-  <InputAdornment position="end">
-    <ClickAwayListener onClickAway={handleTooltipClose}>
-      <div>
-        <Tooltip
-          PopperProps={{
-            disablePortal: true,
-          }}
-          onClose={handleTooltipClose}
-          open={openToolTip}
-          disableFocusListener
-          disableHoverListener
-          disableTouchListener
-          arrow
-          title={<Box>Идентификатор<br />конференции</Box>}
-          placement="right-end"
-          sx = {{ lineHeight: 'initial' }}
-        >
-          <ErrorOutlineOutlinedIcon onClick={handleTooltipOpen} sx={{ cursor: 'pointer' }} />
-        </Tooltip>
-      </div>
-    </ClickAwayListener>
-  </InputAdornment>,
-                }}
               />
             </Grid>
 
             <Grid item>
-              <FormControl sx={{ width: '100%' }}>
-                <InputLabel id="skill_level">Уровень подготовки</InputLabel>
+              <FormControl fullWidth>
+                <InputLabel id="lesson-level-label">Уровень подготовки</InputLabel>
                 <Select
-                  labelId="skill_level"
-                  id="skill_level"
-                  value={skillLevel}
-                  label="Уровень подготовки"
+                  labelId="lesson-level-label"
+                  id="lesson-level-checkbox"
+                  multiple
+                  required
                   fullWidth
-                  onChange={e => setSkillLevel(e.target.value)}
+                  name="level"
+                  value={personName}
+                  onChange={changeLessonLevel}
+                  input={<OutlinedInput label="Уровень подготовки" />}
+                  renderValue={selected => selected.join(', ')}
                 >
-                  <MenuItem value="beginner">Начинающий</MenuItem>
-                  <MenuItem value="middle">Средний</MenuItem>
-                  <MenuItem value="pro">Продвинутый</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-
-            <Grid item>
-              <Divider variant="middle" />
-            </Grid>
-
-            <Grid item>
-              <Typography variant="modal">Продолжительность</Typography>
-            </Grid>
-
-            <Grid item>
-              <Grid container sx={{ justifyContent: 'space-between', width: '100%', height: 'auto' }}>
-                <Button sx={{ width: '24%' }} variant={selectedDurationBtn === 1 ? 'contained' : 'outlined'} onClick={() => setSelectedDurationBtn(1)}>30 мин</Button>
-                <Button sx={{ width: '24%' }} variant={selectedDurationBtn === 2 ? 'contained' : 'outlined'} onClick={() => setSelectedDurationBtn(2)}>45 мин</Button>
-                <Button sx={{ width: '24%' }} variant={selectedDurationBtn === 3 ? 'contained' : 'outlined'} onClick={() => setSelectedDurationBtn(3)}>60 мин</Button>
-                <Button sx={{ width: '24%' }} variant={selectedDurationBtn === 4 ? 'contained' : 'outlined'} onClick={() => setSelectedDurationBtn(4)}>Другое</Button>
-              </Grid>
-            </Grid>
-
-            <Grid item sx={{ paddingTop: '0 !important' }}>
-              <Typography variant="modal">Повторение</Typography>
-            </Grid>
-
-            <Grid item>
-              <Grid container sx={{ justifyContent: 'space-between', width: '100%' }}>
-                <Button sx={{ width: '49.5%' }} variant={selectedRepeatBtn === 1 ? 'contained' : 'outlined'} onClick={() => setSelectedRepeatBtn(1)}>Разовое</Button>
-                <Button sx={{ width: '49.5%' }} variant={selectedRepeatBtn === 2 ? 'contained' : 'outlined'} onClick={() => setSelectedRepeatBtn(2)}>Повторяющееся</Button>
-              </Grid>
-            </Grid>
-
-            <Grid item>
-              <Grid container sx={{ justifyContent: 'space-between', width: '100%' }}>
-                <DatePicker
-                  value={selectedDate}
-                  onChange={newValue => setSelectedDate(newValue)}
-                  renderInput={params => <TextField {...params} sx={{ width: '49.5%' }} />}
-                  id="date"
-                  label="Выберите дату"
-                  type="date"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                />
-                <TimePicker
-                  value={selectedTime}
-                  onChange={newValue => setSelectedTime(newValue)}
-                  renderInput={params => <TextField {...params} sx={{ width: '49.5%' }} />}
-                  id="time"
-                  label="Выберите время"
-                  type="time"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  inputProps={{
-                    step: 300, // 5 min
-                  }}
-                />
-              </Grid>
-            </Grid>
-
-            <Grid item>
-              <Divider variant="middle" />
-            </Grid>
-
-            <Grid item>
-              <Typography variant="modal">Оплата</Typography>
-            </Grid>
-
-            <Grid item>
-              <FormControl sx={{ width: '100%' }}>
-                <InputLabel id="lesson_cost">Тип оплаты</InputLabel>
-                <Select
-                  labelId="lesson_cost"
-                  id="lesson_cost"
-                  value={costOfLesson}
-                  label="Тип занятия"
-                  onChange={e => setCostOfLesson(e.target.value)}
-                  fullWidth
-                >
-                  <MenuItem value="paid">Платное</MenuItem>
-                  <MenuItem value="free">Бесплатное</MenuItem>
+                  {lessonLevels.map(level => (
+                    <MenuItem key={level} value={level}>
+                      <Checkbox checked={personName.indexOf(level) > -1} />
+                      <ListItemText primary={level} />
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
             </Grid>
 
             <Grid item>
               <TextField
-                id="cost"
-                label="Стоимость"
-                defaultValue="0,00"
-                fullWidth
-                disabled={costOfLesson === 'free'}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <CurrencyRubleIcon />
-                    </InputAdornment>
-                  ),
-                }}
+                id="lesson_duration"
+                label="Длительность занятия, мин"
+                name="duration"
+                type="number"
+                onChange={update}
+                required
+                value={lessonData.duration}
+                sx={{ width: '49%' }}
               />
             </Grid>
 
@@ -304,66 +229,156 @@ const Modal = () => {
             </Grid>
 
             <Grid item>
-              <Typography variant="modal">Расписание</Typography>
-
+              <FormControl>
+                <RadioGroup
+                  row
+                  aria-labelledby="lesson-repeat-label"
+                  name="lesson-repeat-radio-buttons-group"
+                  defaultValue="once"
+                >
+                  <FormControlLabel
+                    onChange={update}
+                    value="once"
+                    name="repeat"
+                    control={<Radio />}
+                    label="Разовое"
+                  />
+                  <FormControlLabel
+                    onChange={update}
+                    name="repeat"
+                    value="regular"
+                    control={<Radio />}
+                    label="Регулярное"
+                  />
+                </RadioGroup>
+              </FormControl>
             </Grid>
 
-            <Grid item>
+            <Grid item container sx={{ justifyContent: 'start', columnGap: '1%' }}>
+            <DatePicker
+        label="Basic example"
+        value={value}
+        onChange={(newValue) => {
+          setValue(newValue);
+        }}
+        renderInput={(params) => <TextField {...params} />}
+      />
+              
+              
+              
+              
               <DatePicker
-                value={startLessonDate}
-                onChange={newValue => setStartLessonDate(newValue)}
-                renderInput={params => <TextField {...params} sx={{ width: '100%' }} />}
+                value={selectedDate}
+                onChange={newValue => setSelectedDate(newValue)}
+                renderInput={params => <TextField {...params} sx={{ width: '40%' }} />}
                 id="date"
-                label="Выберите дату"
+                label="Дата"
                 type="date"
+                name="date"
+                required
                 InputLabelProps={{
                   shrink: true,
                 }}
               />
-            </Grid>
-
-            <Grid item>
-              <DatePicker
-                value={endLessonDate}
-                onChange={newValue => setEndLessonDate(newValue)}
-                renderInput={params => <TextField {...params} sx={{ width: '100%' }} />}
-                id="date"
-                label="Выберите дату"
-                type="date"
+              <TimePicker
+                value={selectedTime}
+                onChange={newValue => {
+                  setSelectedTime((newValue));
+                  update();
+                }}
+                renderInput={params => <TextField {...params} sx={{ width: '40%' }} />}
+                id="lesson_time"
+                name="time"
+                label="Время"
+                type="time"
+                required
                 InputLabelProps={{
                   shrink: true,
                 }}
+                inputProps={{
+                  step: 300, // 5 min
+                }}
               />
+            </Grid>
+
+
+
+            <Grid item>
+              <Divider variant="middle" />
             </Grid>
 
             <Grid item>
               <FormControl>
-                <FormLabel id="lesson_day">
-                  <Typography variant="modal">Дни недели</Typography>
-                </FormLabel>
                 <RadioGroup
-                  aria-labelledby="lesson_day"
-                  name="radio-buttons-group"
+                  row
+                  aria-labelledby="lesson-cost-label"
+                  name="lesson-cost-radio-buttons-group"
+                  defaultValue="paid"
                 >
-                  <FormControlLabel control={<Checkbox />} label="Понедельник" />
-                  <FormControlLabel control={<Checkbox />} label="Вторник" />
-                  <FormControlLabel control={<Checkbox />} label="Среда" />
-                  <FormControlLabel control={<Checkbox />} label="Четверг" />
-                  <FormControlLabel control={<Checkbox />} label="Пятница" />
-                  <FormControlLabel control={<Checkbox />} label="Суббота" />
-                  <FormControlLabel control={<Checkbox />} label="Воскресенье" />
+                  <FormControlLabel
+                    onChange={update}
+                    value="paid"
+                    name="payment"
+                    control={<Radio />}
+                    label="Платно"
+                  />
+                  <FormControlLabel
+                    onChange={update}
+                    name="payment"
+                    value="free"
+                    control={<Radio />}
+                    label="Бесплатно"
+                  />
+                  <Divider orientation="vertical" variant="middle" flexItem />
                 </RadioGroup>
               </FormControl>
+
+              <FormControlLabel
+                label="Принимать чаевые"
+                control={(
+                  <Switch
+                    defaultChecked
+                    onChange={changeDonation}
+                    name="donation"
+                  />
+                )}
+              />
             </Grid>
+
             <Grid item>
+              <TextField
+                id="lesson_cost"
+                label="Стоимость, руб"
+                name="cost"
+                type="number"
+                onChange={update}
+                required
+                value={lessonData.cost}
+                sx={{ width: '40%' }}
+              />
+            </Grid>
+
+            <Grid item container sx={{ justifyContent: 'end', columnGap: '5%' }}>
               <Button
-                fullWidth
+                variant="text"
+                onClick={(e) => {
+                  e.preventDefault()
+                  console.log(lessonData.date)
+                  console.log(value)
+                  console.log(dateNormalize(value.$d))
+                  console.log(value.$d)
+                }}
+              >
+                Сохранить черновик
+              </Button>
+              <Button
                 variant="contained"
                 type="submit"
               >
-                Создать занятие
+                Опубликовать
               </Button>
             </Grid>
+
           </Grid>
         </Container>
       </form>
