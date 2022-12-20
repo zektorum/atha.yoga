@@ -62,6 +62,7 @@ class LessonCreator:
             return
         schedule_to_create = []
         cur_date = self.lesson.start_datetime.date()
+
         while cur_date <= (
                 self.lesson.deadline_datetime.date() + datetime.timedelta(days=1)
         ):
