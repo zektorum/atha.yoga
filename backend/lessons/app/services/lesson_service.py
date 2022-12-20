@@ -38,7 +38,7 @@ class LessonCreator:
         lesson.duration = self._data["duration"]
         lesson.repeat_editing = self._data["repeat_editing"]
         lesson.start_datetime = self._data["start_datetime"]
-        lesson.deadline_date = self._data["deadline_date"]
+        lesson.deadline_datetime = self._data["deadline_datetime"]
         lesson.payment = self._data["payment"]
         lesson.price = self._data["price"]
         lesson.complexity = self._data["complexity"]
@@ -71,6 +71,7 @@ class LessonCreator:
                     schedule.lesson = self.lesson
                     schedule.start_at = lesson_datetime
                     schedule_to_create.append(schedule)
+            cur_date += datetime.timedelta(days=1)
         self.schedule_repos.bulk_create(objs=schedule_to_create)
 
     def create(self) -> Lesson:
