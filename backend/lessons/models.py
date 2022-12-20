@@ -88,8 +88,8 @@ class Schedule(TimeStampedModel):
     lesson = models.ForeignKey(
         Lesson, on_delete=models.CASCADE, related_name="schedules"
     )
-    participants = models.ManyToManyField(User)
     start_at = models.DateTimeField()
+    participants = models.ManyToManyField(User)
 
     class Meta:
         verbose_name = "Расписание"

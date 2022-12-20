@@ -62,8 +62,7 @@ class LessonCreator:
             return
         schedule_to_create = []
         cur_date = self.lesson.start_datetime.date()
-        while cur_date <= (
-                self.lesson.deadline_datetime.date() + datetime.timedelta(days=1)
+        while cur_date <= (self.lesson.deadline_datetime.date() + datetime.timedelta(days=1)
         ):
             if cur_date.weekday() in self.mapped_schedule:
                 for lesson_info in self.mapped_schedule[cur_date.weekday()]:
