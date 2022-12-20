@@ -1,5 +1,7 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import {
+  Routes, Route, Navigate, Outlet,
+} from 'react-router-dom';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
 import WelcomePage from './pages/welcome';
@@ -12,8 +14,9 @@ import AuthProvider from './utils/providers/auth';
 import BaseLayout from './layouts';
 import ProfileLayout from './layouts/profile';
 import useAuth from './utils/hooks/useAuth';
-import CalendarPage from './pages/calendar';
+import MyLessonsPage from './pages/my-lessons';
 import SearchLessonsPage from './pages/search-lessons';
+import CalendarPage from './pages/calendar';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
@@ -60,11 +63,14 @@ const App = () => {
           <Route index element={!auth.isLoggedIn ? <WelcomePage /> : <Navigate replace to="profile" />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
-          <Route path="profile" element={<ProfilePage auth={auth} />} />
           <Route path="recovery-password" element={<PasswordRecoveryPage />} />
           <Route path="*" element={<ErrorPage />} />
-          <Route path="search-lessons" element={<SearchLessonsPage />} />
-          <Route path="calendar" element={<CalendarPage />} />
+          <Route element={auth.isLoggedIn ? <Outlet /> : <Navigate replace to="/" />}>
+            <Route path="search-lessons" element={<SearchLessonsPage />} />
+            <Route path="my-lessons" element={<MyLessonsPage />} />
+            <Route path="calendar" element={<CalendarPage />} />
+            <Route path="profile" element={<ProfilePage auth={auth} />} />
+          </Route>
         </Route>
       </Routes>
     </ThemeProvider>

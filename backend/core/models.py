@@ -97,19 +97,14 @@ class QuestionnaireTeacher(TimeStampedModel):
         choices=QuestionnaireTeacherStatuses.choices,
         default=QuestionnaireTeacherStatuses.MODERATION,
     )
+    certificate_photos = models.ManyToManyField(Attachment)
+    user_photo = models.ImageField()
+    passport_photo = models.ImageField()
+    user_with_passport_photo = models.ImageField()
+
+    def setup_certificate_photos(self, photos: List[Attachment]) -> None:
+        self.certificate_photos.set(photos)
 
     class Meta:
         verbose_name = "Анкета преподавателя"
         verbose_name_plural = "Анкета преподавателя"
-
-
-class QuestionnaireTeacherCertificatePhoto(Attachment):
-    questionnaire = models.ForeignKey(QuestionnaireTeacher, on_delete=models.CASCADE)
-
-
-class QuestionnaireTeacherPassportPhoto(Attachment):
-    questionnaire = models.ForeignKey(QuestionnaireTeacher, on_delete=models.CASCADE)
-
-
-class QuestionnaireTeacherUserPhoto(Attachment):
-    questionnaire = models.ForeignKey(QuestionnaireTeacher, on_delete=models.CASCADE)

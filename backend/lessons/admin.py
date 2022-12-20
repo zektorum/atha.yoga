@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from .models import Lesson, Schedule, LessonComment, LessonReview
 
 
@@ -40,8 +41,7 @@ class ScheduleAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "lesson",
-        "weekday",
-        "start_time",
+        "start_at",
         "created_at",
     )
     list_filter = ("created_at",)
