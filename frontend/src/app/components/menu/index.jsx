@@ -11,7 +11,6 @@ import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined
 import { NavLink } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
-import { Link } from 'react-router-dom';
 import menuLogo from '../../../assets/public/menu_logo.svg';
 
 const Menu = ({ auth }) => {
