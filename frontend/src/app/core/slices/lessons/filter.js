@@ -5,7 +5,7 @@ const filterSlice = createAsyncThunk(
   'lessons/filter',
   async (query, thunkAPI) => {
     try {
-      const result = await LessonsService.filter({});
+      const result = await LessonsService.filter(query ? { query } : {});
 
       return result.data;
     } catch (error) {

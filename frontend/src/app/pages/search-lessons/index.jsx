@@ -12,7 +12,7 @@ import LessonCard from '../../components/lesson-card';
 const SearchLessonsPage = () => {
   const dispatch = useDispatch();
   const [query, setQuery] = useState('');
-  const { lessons, isSearching, errorMessage } = useSelector(state => state.lessons);
+  const { lessons, errorMessage } = useSelector(state => state.lessons);
 
   const searchQuery = useDebounce(query, 500);
 
