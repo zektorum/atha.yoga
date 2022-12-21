@@ -15,7 +15,7 @@ urlpatterns = (
             name="swagger-ui",
         ),
         path("core/", include("core.urls")),
-        path("lessons/", include("lessons.urls")),
+        path("courses/", include("courses.urls")),
     ]
     + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
