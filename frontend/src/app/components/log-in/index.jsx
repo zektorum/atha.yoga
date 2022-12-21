@@ -13,6 +13,7 @@ import IconButton from '@mui/material/IconButton';
 import Container from '@mui/material/Container';
 import { AuthContext } from '../../utils/providers/auth';
 import { clearMessage, setMessage } from '../../core/slices/message';
+import menuLogo from '../../../assets/public/menu_logo.svg';
 
 const LogIn = () => {
   const [values, setValues] = useState({
@@ -56,6 +57,10 @@ const LogIn = () => {
 
   return (
     <Container sx={{ height: '100%' }} component="main" maxWidth="xs">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', position: 'absolute', right: '30px', top: '30px' }}>
+        <img src={menuLogo} alt="athayoga logo" />
+        <Button id="addToHomeScreenBtn">Add to home screen</Button>
+      </div>
       <Box
         sx={{
           display: 'flex',
