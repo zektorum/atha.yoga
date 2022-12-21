@@ -14,6 +14,7 @@ from lessons.app.handlers.lesson_handlers import (
     FavoriteLessonListHandler,
     LessonTicketBuyHandler,
     LessonTicketUseHandler,
+    LessonRetrieveHandler,
 )
 from lessons.app.handlers.review_handlers import (
     LessonReviewListHandler,
@@ -23,6 +24,7 @@ from lessons.app.handlers.review_handlers import (
 
 urlpatterns = [
     path("", LessonCreateHandler.as_view(), name="lesson_create"),
+    path("<int:pk>/", LessonRetrieveHandler.as_view(), name="lesson_retrieve"),
     path("<int:pk>/", LessonUpdateHandler.as_view(), name="lesson_update"),
     path("filter/", LessonsFilterHandler.as_view(), name="lessons_filter"),
     path(
