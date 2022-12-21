@@ -32,7 +32,7 @@ class CourseDocument(Document):
     description = fields.TextField(analyzer=ru_analyzer)
 
     class Index:
-        name = "lessons"
+        name = "courses"
         settings = {"number_of_shards": 1, "number_of_replicas": 0}
 
     class Django:

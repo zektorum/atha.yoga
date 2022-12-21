@@ -80,20 +80,18 @@ class CourseReview(Review):
     course = models.ForeignKey(Course, related_name="reviews", on_delete=models.CASCADE)
 
     class Meta:
-        verbose_name = "Отзыв о занятии"
-        verbose_name_plural = "Отзывы о занятии"
+        verbose_name = "Отзыв о курсе"
+        verbose_name_plural = "Отзывы о курсе"
 
 
-class Schedule(TimeStampedModel):
-    course = models.ForeignKey(
-        Course, on_delete=models.CASCADE, related_name="schedules"
-    )
+class Lesson(TimeStampedModel):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="lessons")
     start_at = models.DateTimeField()
     participants = models.ManyToManyField(User)
 
     class Meta:
-        verbose_name = "Расписание"
-        verbose_name_plural = "Расписания"
+        verbose_name = "Урок"
+        verbose_name_plural = "уроки"
 
 
 class Comment(PolymorphicModel):

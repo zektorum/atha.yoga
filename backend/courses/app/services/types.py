@@ -15,7 +15,7 @@ class CourseReviewCreateData(TypedDict):
     text: str
 
 
-class ScheduleCreateData(TypedDict):
+class LessonCreateData(TypedDict):
     weekday: RepetitionWeekdays
     start_time: datetime.time
 
@@ -34,7 +34,7 @@ class CourseCreateData(TypedDict):
     payment: CoursePaymentTypes
     price: int
     complexity: CourseComplexities
-    schedule: Optional[List[ScheduleCreateData]]
+    lessons: Optional[List[LessonCreateData]]
 
 
 class CourseUpdateData(TypedDict):
