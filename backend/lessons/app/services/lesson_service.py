@@ -3,24 +3,24 @@ from collections import defaultdict
 from functools import cached_property
 from typing import List, Dict
 
+from django.db import transaction
 from django.utils.timezone import now
 from rest_framework.exceptions import NotFound, ValidationError, PermissionDenied
 
 from core.app.utils.util import setup_resource_attributes
-from core.models import User, UserRoles
-from lessons.app.repositories.lesson_repository import LessonRepository
 from core.models import User
-from lessons.app.repositories.lesson_repository import LessonRepository, TicketRepository
+from core.models import UserRoles
+from lessons.app.repositories.lesson_repository import (
+    LessonRepository,
+    TicketRepository,
+)
 from lessons.app.repositories.schedule_repository import ScheduleRepository
+from lessons.app.services.types import LessonCreateData
 from lessons.app.services.types import (
-    LessonCreateData,
     LessonUpdateData,
     ScheduleCreateData,
 )
-from lessons.models import Lesson, Schedule
-from lessons.app.services.types import LessonCreateData
 from lessons.models import Lesson, Schedule, Ticket
-from lessons.seeders.lesson_seeder import LessonSeeder
 
 
 class LessonCreator:
@@ -131,18 +131,19 @@ class FavoriteLessonsWork:
 
     def remove(self) -> Lesson:
         if self.lesson not in self.repository.find_user_favorite_lessons(
-                user=self.user
+            user=self.user
         ):
             raise NotFound(f"Undefined lesson with id {self.lesson_id} in favorites")
         self.repository.remove_user_favorite_lesson(user=self.user, lesson=self.lesson)
         return self.lesson
 
 
-class TicketService:
-    repositories = TicketRepository()
+class TicketWorkService:
+    repository = TicketRepository()
+    lesson_repository = LessonRepository()
 
-    def create_ticket(self, lesson_id: int, user: User, amount: int):
-        lesson = LessonRepository().find_by_id(id_=lesson_id)
+    def _init_ticket(self, lesson_id: int, user: User, amount: int) -> Ticket:
+        lesson = self.lesson_repository.find_by_id(id_=lesson_id)
         if not lesson:
             raise NotFound(f"Undefined lesson with id {lesson_id}")
         ticket = Ticket()
@@ -151,36 +152,51 @@ class TicketService:
         ticket.amount = amount
         return ticket
 
-    def buy_ticket(self, lesson_id: int, user: User, amount: int) -> Ticket:
-        ticket = self.repositories.ticket_for_lesson(lesson_id=lesson_id, user=user)
+    def buy(self, lesson_id: int, user: User, amount: int) -> Ticket:
+        ticket = self.repository.ticket_for_lesson(lesson_id=lesson_id, user=user)
         if not ticket:
-            ticket = self.create_ticket(lesson_id=lesson_id, user=user, amount=amount)
-            self.repositories.store(ticket=ticket)
+            ticket = self._init_ticket(lesson_id=lesson_id, user=user, amount=amount)
+            self.repository.store(ticket=ticket)
             return ticket
 
         ticket.amount = int(ticket.amount) + int(amount)
-        self.repositories.store(ticket=ticket)
+        self.repository.store(ticket=ticket)
         return ticket
 
-    def participate(self, schedule_id: int, user: User) -> str:
-        scheduled_lesson = ScheduleRepository().find(id_=schedule_id)
+
+class LessonParticipateService:
+    repository = TicketRepository()
+    schedule_repository = ScheduleRepository()
+
+    def __init__(self, schedule_id: int, user: User):
+        self._schedule_id = schedule_id
+        self._user = user
+
+    @cached_property
+    def scheduled_lesson(self) -> Schedule:
+        scheduled_lesson = self.schedule_repository.find_by_id(id_=self._schedule_id)
         if not scheduled_lesson:
-            raise NotFound(f"Undefined scheduled_lesson with id {schedule_id}")
+            raise NotFound(f"Undefined scheduled_lesson with id {self._schedule_id}")
+        return scheduled_lesson
 
-        participant = ScheduleRepository().is_participant(scheduled_lesson=scheduled_lesson, user=user)
+    def participate(self) -> str:
+        participant = self.schedule_repository.is_participant(
+            scheduled_lesson=self.scheduled_lesson, user=self._user
+        )
         if participant:
-            return scheduled_lesson.lesson.link
+            return self.scheduled_lesson.lesson.link
 
-        ticket = self.repositories.ticket_for_lesson(lesson_id=scheduled_lesson.lesson.id, user=user)
-        if not ticket:
-            raise NotFound("You dont have ticket for this lesson")
-        ticket.amount = int(ticket.amount) - 1
+        with transaction.atomic():
+            ticket = self.repository.ticket_for_lesson_to_update(
+                lesson_id=self.scheduled_lesson.lesson.id, user=self._user
+            )
+            if not ticket or ticket.amount < 1:
+                raise NotFound("You dont have ticket for this lesson")
+            ticket.amount = int(ticket.amount) - 1
 
-        ScheduleRepository().add_participant(scheduled_lesson=scheduled_lesson, user=user)
+            self.schedule_repository.add_participant(
+                scheduled_lesson=self.scheduled_lesson, user=self._user
+            )
 
-        if ticket.amount == 0:
-            self.repositories.destroy(ticket=ticket)
-            return ticket.lesson.link
-
-        self.repositories.store(ticket=ticket)
+            self.repository.store(ticket=ticket)
         return ticket.lesson.link

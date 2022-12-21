@@ -119,7 +119,7 @@ class LessonComment(Comment):
 class Ticket(models.Model):
     lesson = models.ForeignKey(Lesson, on_delete=models.DO_NOTHING)
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
-    amount = models.CharField(max_length=8)
+    amount = models.IntegerField()
 
     class Meta:
         verbose_name = "Билет"

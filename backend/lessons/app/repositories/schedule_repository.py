@@ -11,10 +11,12 @@ class ScheduleRepository(BaseRepository):
     def bulk_create(self, objs: List[Schedule]) -> None:
         self.model.objects.bulk_create(objs)
 
-    def find(self, id_: int) -> Optional[Schedule]:
+    def find_by_id(self, id_: int) -> Optional[Schedule]:
         return self.model.objects.filter(pk=id_).first()
 
-    def is_participant(self, scheduled_lesson: Schedule, user: User) -> Optional[Schedule]:
+    def is_participant(
+        self, scheduled_lesson: Schedule, user: User
+    ) -> Optional[Schedule]:
         return scheduled_lesson.participants.filter(id=user.id)
 
     def add_participant(self, scheduled_lesson: Schedule, user: User) -> None:

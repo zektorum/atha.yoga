@@ -78,3 +78,12 @@ class TicketRepository(BaseRepository):
 
     def ticket_for_lesson(self, lesson_id: int, user: User) -> Optional[Ticket]:
         return self.model.objects.filter(lesson_id=lesson_id, user=user.id).first()
+
+    def ticket_for_lesson_to_update(
+        self, lesson_id: int, user: User
+    ) -> Optional[Ticket]:
+        return (
+            self.model.objects.select_for_update()
+            .filter(lesson_id=lesson_id, user=user.id)
+            .first()
+        )
