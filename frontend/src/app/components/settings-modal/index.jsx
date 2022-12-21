@@ -1,9 +1,9 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React, { useState } from 'react';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import dayjs from 'dayjs';
 import 'dayjs/locale/ru';
 import {
   Grid,
@@ -22,15 +22,59 @@ import {
   Checkbox,
   OutlinedInput,
   ListItemText,
+  Box,
   Divider,
 } from '@mui/material';
 
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
+/*
+const ExitModal = () => {
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  return (
+    <>
+      <Button
+        variant="text"
+        onClick={handleOpen}
+      >
+        Сохранить черновик
+      </Button>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="modal">
+            Данные не были сохранены
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            Сохранить, как черновик?
+          </Typography>
+          <Button variant="text">Не сохранять</Button>
+          <Button variant="text">Сохранить</Button>
+        </Box>
+      </Modal>
+    </>
+  );
+};
+*/
+
 const Modal = () => {
   const [personName, setPersonName] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(dayjs());
-  const [selectedTime, setSelectedTime] = useState(dayjs());
-
-  const [value, setValue] = React.useState(null);
 
   const [lessonData, setLessonData] = useState({
     name: '',
@@ -41,10 +85,11 @@ const Modal = () => {
     level: [],
     duration: '',
     repeat: 'once',
-    date: selectedDate,
-    time: selectedTime,
-    date2: '',
-    time2: '',
+    date: null,
+    time: null,
+    timeForRegularLesson: null,
+    dayForRegularLesson: '',
+    regularLessonInfo: {},
     payment: 'paid',
     donation: true,
     cost: '',
@@ -75,7 +120,6 @@ const Modal = () => {
       target: { value },
     } = event;
     setPersonName(
-      // On autofill we get a stringified value.
       typeof value === 'string' ? value.split(',') : value,
       update(event),
     );
@@ -93,8 +137,29 @@ const Modal = () => {
   const timeNormalize = date => {
     const string = String(date);
     const array = string.split(' ');
-    const newDate = `${array[2]} ${array[1]} ${array[3]}`;
-    return newDate;
+    const newTime = array[4].split(':');
+    return `${newTime[0]}:${newTime[1]}`;
+  };
+
+  const changeDate = newValue => {
+    setLessonData({
+      ...lessonData,
+      date: dateNormalize(newValue.$d),
+    });
+  };
+
+  const changeTime = newValue => {
+    setLessonData({
+      ...lessonData,
+      time: timeNormalize(newValue.$d),
+    });
+  };
+
+  const changeRegularTime = newValue => {
+    setLessonData({
+      ...lessonData,
+      timeForRegularLesson: (newValue),
+    });
   };
 
   return (
@@ -255,54 +320,62 @@ const Modal = () => {
             </Grid>
 
             <Grid item container sx={{ justifyContent: 'start', columnGap: '1%' }}>
-            <DatePicker
-        label="Basic example"
-        value={value}
-        onChange={(newValue) => {
-          setValue(newValue);
-        }}
-        renderInput={(params) => <TextField {...params} />}
-      />
-              
-              
-              
-              
               <DatePicker
-                value={selectedDate}
-                onChange={newValue => setSelectedDate(newValue)}
-                renderInput={params => <TextField {...params} sx={{ width: '40%' }} />}
-                id="date"
                 label="Дата"
-                type="date"
-                name="date"
+                value={lessonData.date}
+                id="lesson_date"
                 required
-                InputLabelProps={{
-                  shrink: true,
-                }}
+                sx={{ width: '25%' }}
+                onChange={newValue => changeDate(newValue)}
+                renderInput={params => <TextField {...params} />}
               />
+
               <TimePicker
-                value={selectedTime}
-                onChange={newValue => {
-                  setSelectedTime((newValue));
-                  update();
-                }}
-                renderInput={params => <TextField {...params} sx={{ width: '40%' }} />}
-                id="lesson_time"
-                name="time"
                 label="Время"
-                type="time"
+                value={lessonData.time}
+                id="lesson_time"
                 required
-                InputLabelProps={{
-                  shrink: true,
-                }}
-                inputProps={{
-                  step: 300, // 5 min
-                }}
+                sx={{ width: '25%' }}
+                onChange={newValue => changeTime(newValue)}
+                renderInput={params => <TextField {...params} />}
+              />
+
+            </Grid>
+            {/*
+            <Grid item>
+              <FormControl sx={{ width: '30%' }}>
+                <InputLabel id="demo-simple-select-label">День</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={lessonData.dayForRegularLesson}
+                  name="dayForRegularLesson"
+                  required
+                  label="День"
+                  onChange={update}
+
+                >
+                  <MenuItem value="Monday">Понедельник</MenuItem>
+                  <MenuItem value="Tuesday">Вторник</MenuItem>
+                  <MenuItem value="Wednesday">Среда</MenuItem>
+                  <MenuItem value="Thursday">Четверг</MenuItem>
+                  <MenuItem value="Friday">Пятница</MenuItem>
+                  <MenuItem value="Saturday">Суббота</MenuItem>
+                  <MenuItem value="Sunday">Воскресенье</MenuItem>
+                </Select>
+              </FormControl>
+
+              <TimePicker
+                label="Время"
+                value={lessonData.timeForRegularLesson}
+                id="regular_lesson_time"
+                required
+                sx={{ width: '30%' }}
+                onChange={newValue => changeRegularTime(newValue)}
+                renderInput={params => <TextField {...params} />}
               />
             </Grid>
-
-
-
+                  */}
             <Grid item>
               <Divider variant="middle" />
             </Grid>
@@ -328,6 +401,7 @@ const Modal = () => {
                     value="free"
                     control={<Radio />}
                     label="Бесплатно"
+                    sx={{ marginRight: '44px' }}
                   />
                   <Divider orientation="vertical" variant="middle" flexItem />
                 </RadioGroup>
@@ -335,6 +409,7 @@ const Modal = () => {
 
               <FormControlLabel
                 label="Принимать чаевые"
+                sx={{ marginLeft: '44px' }}
                 control={(
                   <Switch
                     defaultChecked
@@ -352,7 +427,8 @@ const Modal = () => {
                 name="cost"
                 type="number"
                 onChange={update}
-                required
+                required={lessonData.payment !== 'free'}
+                disabled={lessonData.payment === 'free'}
                 value={lessonData.cost}
                 sx={{ width: '40%' }}
               />
@@ -361,22 +437,16 @@ const Modal = () => {
             <Grid item container sx={{ justifyContent: 'end', columnGap: '5%' }}>
               <Button
                 variant="text"
-                onClick={(e) => {
-                  e.preventDefault()
-                  console.log(lessonData.date)
-                  console.log(value)
-                  console.log(dateNormalize(value.$d))
-                  console.log(value.$d)
-                }}
               >
                 Сохранить черновик
               </Button>
+
               <Button
                 variant="contained"
-                type="submit"
               >
-                Опубликовать
+                Создать
               </Button>
+
             </Grid>
 
           </Grid>
