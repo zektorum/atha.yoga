@@ -52,7 +52,7 @@ class LessonRetrieveHandler(APIView):
         lesson = self.repository.find_by_id(id_=pk)
         if not lesson:
             raise NotFound(f"Undefined lesson with pk {pk}")
-        return Response({"data": LessonResource(lesson).data})
+        return Response({"data": LessonResource(lesson, context={"user": self.request.user.pk}).data})
 
 
 @permission_classes([IsTeacher])
@@ -67,7 +67,7 @@ class LessonCreateHandler(GenericAPIView):
             data=data.validated_data, user=self.request.user
         ).create()
 
-        return Response({"data": LessonResource(lesson).data})
+        return Response({"data": LessonResource(lesson, context={"user": self.request.user.pk}).data})
 
 
 @permission_classes([IsTeacher])
@@ -82,7 +82,7 @@ class LessonUpdateHandler(GenericAPIView):
             user=request.user, data=data.validated_data, pk=pk
         ).update()
 
-        return Response({"data": LessonResource(lesson).data})
+        return Response({"data": LessonResource(lesson, context={"user": self.request.user.pk}).data})
 
 
 @permission_classes([IsAuthenticated])
@@ -97,7 +97,7 @@ class FavoriteLessonAddHandler(GenericAPIView):
             user=self.request.user, lesson_id=data.validated_data["lesson_id"]
         ).add()
 
-        return Response({"data": LessonResource(lesson).data})
+        return Response({"data": LessonResource(lesson, context={"user": self.request.user.pk}).data})
 
 
 @permission_classes([IsAuthenticated])
@@ -112,14 +112,14 @@ class FavoriteLessonRemoveHandler(GenericAPIView):
             user=self.request.user, lesson_id=data.validated_data["lesson_id"]
         ).remove()
 
-        return Response({"data": LessonResource(lesson).data})
+        return Response({"data": LessonResource(lesson, context={"user": self.request.user.pk}).data})
 
 
 @permission_classes([IsAuthenticated])
 class FavoriteLessonListHandler(APIView):
     def get(self, *args: Any, **kwargs: Any) -> Response:
         lessons = LessonRepository().find_user_favorite_lessons(user=self.request.user)
-        return Response({"data": LessonResource(lessons, many=True).data})
+        return Response({"data": LessonResource(lessons, context={"user": self.request.user.pk}, many=True).data})
 
 
 @permission_classes([IsAuthenticated])
