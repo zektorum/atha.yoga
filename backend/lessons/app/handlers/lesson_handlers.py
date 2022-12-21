@@ -1,6 +1,7 @@
 from typing import Any
 
 from rest_framework.decorators import permission_classes
+from rest_framework.exceptions import NotFound
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
@@ -42,6 +43,16 @@ class LessonsFilterHandler(GenericAPIView):
         return Response(
             paginate(data=lessons, request=self.request, resource=LessonResource)
         )
+
+
+class LessonRetrieveHandler(APIView):
+    repository = LessonRepository()
+
+    def get(self, request: Request, pk: int, *args: Any, **kwargs: Any) -> Response:
+        lesson = self.repository.find_by_id(id_=pk)
+        if not lesson:
+            raise NotFound(f"Undefined lesson with pk {pk}")
+        return Response({"data": LessonResource(lesson).data})
 
 
 @permission_classes([IsTeacher])
