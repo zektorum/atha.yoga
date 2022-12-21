@@ -1,6 +1,6 @@
 from rest_framework.serializers import ModelSerializer
 
-from lessons.models import Lesson, Schedule
+from lessons.models import Course, Schedule
 
 
 class ScheduleResource(ModelSerializer):
@@ -8,30 +8,30 @@ class ScheduleResource(ModelSerializer):
         model = Schedule
         fields = [
             "id",
-            "lesson",
+            "course",
             "start_at",
         ]
 
 
-class LessonResource(ModelSerializer):
+class CourseResource(ModelSerializer):
     schedules = ScheduleResource(many=True)
 
-    def to_representation(self, instance):
+    def to_representation(self, instance: Course) -> dict:
         result = super().to_representation(instance=instance)
         teacher = result["teacher"]
-        current_user = self.context.get('user')
+        current_user = self.context.get("user")
         if current_user == teacher:
             result["link"] = instance.link
             result["link_info"] = instance.link_info
         return result
 
     class Meta:
-        model = Lesson
+        model = Course
         fields = [
             "id",
             "name",
             "description",
-            "lesson_type",
+            "course_type",
             "level",
             "single",
             "duration",
