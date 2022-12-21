@@ -89,6 +89,7 @@ class Schedule(TimeStampedModel):
         Lesson, on_delete=models.CASCADE, related_name="schedules"
     )
     start_at = models.DateTimeField()
+    participants = models.ManyToManyField(User)
 
     class Meta:
         verbose_name = "Расписание"
@@ -113,3 +114,13 @@ class LessonComment(Comment):
     class Meta:
         verbose_name = "Комментарий к уроку"
         verbose_name_plural = "Комментарии к уроку"
+
+
+class Ticket(models.Model):
+    lesson = models.ForeignKey(Lesson, on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    amount = models.IntegerField()
+
+    class Meta:
+        verbose_name = "Билет"
+        verbose_name_plural = "Билеты"

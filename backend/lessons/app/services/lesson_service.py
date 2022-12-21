@@ -3,19 +3,24 @@ from collections import defaultdict
 from functools import cached_property
 from typing import List, Dict
 
+from django.db import transaction
 from django.utils.timezone import now
 from rest_framework.exceptions import NotFound, ValidationError, PermissionDenied
 
 from core.app.utils.util import setup_resource_attributes
-from core.models import User, UserRoles
-from lessons.app.repositories.lesson_repository import LessonRepository
+from core.models import User
+from core.models import UserRoles
+from lessons.app.repositories.lesson_repository import (
+    LessonRepository,
+    TicketRepository,
+)
 from lessons.app.repositories.schedule_repository import ScheduleRepository
+from lessons.app.services.types import LessonCreateData
 from lessons.app.services.types import (
-    LessonCreateData,
     LessonUpdateData,
     ScheduleCreateData,
 )
-from lessons.models import Lesson, Schedule
+from lessons.models import Lesson, Schedule, Ticket
 
 
 class LessonCreator:
@@ -131,3 +136,67 @@ class FavoriteLessonsWork:
             raise NotFound(f"Undefined lesson with id {self.lesson_id} in favorites")
         self.repository.remove_user_favorite_lesson(user=self.user, lesson=self.lesson)
         return self.lesson
+
+
+class TicketWorkService:
+    repository = TicketRepository()
+    lesson_repository = LessonRepository()
+
+    def _init_ticket(self, lesson_id: int, user: User, amount: int) -> Ticket:
+        lesson = self.lesson_repository.find_by_id(id_=lesson_id)
+        if not lesson:
+            raise NotFound(f"Undefined lesson with id {lesson_id}")
+        ticket = Ticket()
+        ticket.lesson = lesson
+        ticket.user = user
+        ticket.amount = amount
+        return ticket
+
+    def buy(self, lesson_id: int, user: User, amount: int) -> Ticket:
+        ticket = self.repository.ticket_for_lesson(lesson_id=lesson_id, user=user)
+        if not ticket:
+            ticket = self._init_ticket(lesson_id=lesson_id, user=user, amount=amount)
+            self.repository.store(ticket=ticket)
+            return ticket
+
+        ticket.amount = int(ticket.amount) + int(amount)
+        self.repository.store(ticket=ticket)
+        return ticket
+
+
+class LessonParticipateService:
+    repository = TicketRepository()
+    schedule_repository = ScheduleRepository()
+
+    def __init__(self, schedule_id: int, user: User):
+        self._schedule_id = schedule_id
+        self._user = user
+
+    @cached_property
+    def scheduled_lesson(self) -> Schedule:
+        scheduled_lesson = self.schedule_repository.find_by_id(id_=self._schedule_id)
+        if not scheduled_lesson:
+            raise NotFound(f"Undefined scheduled_lesson with id {self._schedule_id}")
+        return scheduled_lesson
+
+    def participate(self) -> str:
+        participant = self.schedule_repository.is_participant(
+            scheduled_lesson=self.scheduled_lesson, user=self._user
+        )
+        if participant:
+            return self.scheduled_lesson.lesson.link
+
+        with transaction.atomic():
+            ticket = self.repository.ticket_for_lesson_to_update(
+                lesson_id=self.scheduled_lesson.lesson.id, user=self._user
+            )
+            if not ticket or ticket.amount < 1:
+                raise NotFound("You dont have ticket for this lesson")
+            ticket.amount = int(ticket.amount) - 1
+
+            self.schedule_repository.add_participant(
+                scheduled_lesson=self.scheduled_lesson, user=self._user
+            )
+
+            self.repository.store(ticket=ticket)
+        return ticket.lesson.link
