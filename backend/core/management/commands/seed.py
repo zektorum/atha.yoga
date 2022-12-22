@@ -12,8 +12,16 @@ DEFAULT_LESSONS_COUNT = DEFAULT_USERS_COUNT * 10
 
 class Command(BaseCommand):
     def handle(self, *args: Any, **options: Any) -> None:
+        self._init_superuser()
         self._seed_users()
         self._seed_courses()
+
+    def _init_superuser(self) -> None:
+        user = User()
+        user.username = user.email = "test@user.ru"
+        user.set_password("Dakk3YVnDakk3YVn")
+        user.is_staff = user.is_superuser = True
+        user.save()
 
     def _seed_users(self, count: int = DEFAULT_USERS_COUNT) -> None:
         for i in range(count):
