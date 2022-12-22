@@ -213,3 +213,5 @@ LOGGING = {
         },
     },
 }
+
+DEFAULT_SUPERUSER_PASSWORD = os.environ.get("POSTGRES_PASSWORD")

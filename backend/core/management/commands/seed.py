@@ -1,5 +1,6 @@
 from typing import Any
 
+from django.conf import settings
 from django.core.management import BaseCommand
 
 from core.models import User
@@ -19,7 +20,7 @@ class Command(BaseCommand):
     def _init_superuser(self) -> None:
         user = User()
         user.username = user.email = "test@user.ru"
-        user.set_password("Dakk3YVnDakk3YVn")
+        user.set_password(settings.DEFAULT_SUPERUSER_PASSWORD)
         user.is_staff = user.is_superuser = True
         user.save()
 
