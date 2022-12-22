@@ -13,7 +13,7 @@ from core.app.http.requests.teachers_questionnaire_requests import (
 from core.app.http.resources.teachers_questionnaire_resources import (
     QuestionnaireTeacherResource,
 )
-from core.app.services.teachers_questuonnaire_services import (
+from core.app.services.teachers_questionnaire_services import (
     QuestionnaireTeacherRegister,
 )
 
