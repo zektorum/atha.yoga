@@ -1,5 +1,5 @@
 [requires]
-python_version = "3.11"
+python_version = "3.10"
 
 [[source]]
 url = "https://pypi.python.org/simple"
@@ -20,6 +20,9 @@ djangorestframework-simplejwt = "*"
 django-extensions = "*"
 django-elasticsearch-dsl = "*"
 types-pytz = "*"
+django-recaptcha = "*"
+requests = "*"
+redis = "*"
 
 [dev-packages]
 isort = "*"
