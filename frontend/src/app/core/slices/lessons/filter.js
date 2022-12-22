@@ -2,7 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import LessonsService from '../../../services/lessons';
 
 const filterSlice = createAsyncThunk(
-  'lessons/filter',
+  'courses/filter',
   async (query, thunkAPI) => {
     try {
       const result = await LessonsService.filter(query ? { query } : {});
