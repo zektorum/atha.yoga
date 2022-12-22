@@ -32,7 +32,7 @@ class LessonCreateRequest(UnimplementedSerializer):
 
 class CourseCreateRequest(UnimplementedSerializer):
     name = serializers.CharField(max_length=40)
-    description = serializers.CharField(max_length=150, allow_blank=True)
+    description = serializers.CharField(max_length=150)
     course_type = serializers.ChoiceField(choices=CourseTypes.choices)
     complexity = serializers.ChoiceField(choices=CourseComplexities.choices)
     link = serializers.URLField()
@@ -48,7 +48,7 @@ class CourseCreateRequest(UnimplementedSerializer):
 
 
 class CourseUpdateRequest(UnimplementedSerializer):
-    description = serializers.CharField(max_length=150, allow_blank=True)
+    description = serializers.CharField(max_length=150)
     complexity = serializers.ChoiceField(choices=CourseComplexities.choices)
     level = serializers.ChoiceField(choices=CourseLevels.choices)
     duration = serializers.DurationField()
