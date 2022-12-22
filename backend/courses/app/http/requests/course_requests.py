@@ -44,7 +44,7 @@ class CourseCreateRequest(UnimplementedSerializer):
     deadline_datetime = serializers.DateTimeField(allow_null=True)
     payment = serializers.ChoiceField(choices=CoursePaymentTypes.choices)
     price = serializers.IntegerField(min_value=0)
-    lesson = LessonCreateRequest(many=True, allow_null=True)
+    lessons = LessonCreateRequest(many=True, allow_null=True)
 
 
 class CourseUpdateRequest(UnimplementedSerializer):
