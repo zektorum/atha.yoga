@@ -1,5 +1,6 @@
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+from polymorphic.models import PolymorphicModel
 
 from core.models import User, TimeStampedModel
 
@@ -27,14 +28,14 @@ class LessonComplexities(models.TextChoices):
     HARD = "HARD"
 
 
-class RepetitionWeekdays(models.TextChoices):
-    MONDAY = "MONDAY"
-    TUESDAY = "TUESDAY"
-    WEDNESDAY = "WEDNESDAY"
-    THURSDAY = "THURSDAY"
-    FRIDAY = "FRIDAY"
-    SATURDAY = "SATURDAY"
-    SUNDAY = "SUNDAY"
+class RepetitionWeekdays(models.IntegerChoices):
+    MONDAY = 0
+    TUESDAY = 1
+    WEDNESDAY = 2
+    THURSDAY = 3
+    FRIDAY = 4
+    SATURDAY = 5
+    SUNDAY = 6
 
 
 class Lesson(TimeStampedModel):
@@ -54,31 +55,72 @@ class Lesson(TimeStampedModel):
     payment = models.CharField(max_length=30, choices=LessonPaymentTypes.choices)
     price = models.FloatField(validators=(MinValueValidator(limit_value=0),))
 
+    favorites = models.ManyToManyField(
+        User, related_name="favorite_lessons", blank=True
+    )
+
     class Meta:
         verbose_name = "Занятие"
         verbose_name_plural = "Занятия"
+
+
+class Review(PolymorphicModel, TimeStampedModel):
+    text = models.TextField()
+    star_rating = models.IntegerField(
+        validators=(MinValueValidator(limit_value=1), MaxValueValidator(limit_value=5))
+    )
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+
+    class Meta:
+        verbose_name = "Отзыв"
+        verbose_name_plural = "Отзывы"
+
+
+class LessonReview(Review):
+    lesson = models.ForeignKey(Lesson, related_name="reviews", on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = "Отзыв о занятии"
+        verbose_name_plural = "Отзывы о занятии"
 
 
 class Schedule(TimeStampedModel):
     lesson = models.ForeignKey(
         Lesson, on_delete=models.CASCADE, related_name="schedules"
     )
-    weekday = models.CharField(max_length=40, choices=RepetitionWeekdays.choices)
-    start_time = models.TimeField()
+    start_at = models.DateTimeField()
+    participants = models.ManyToManyField(User)
 
     class Meta:
         verbose_name = "Расписание"
         verbose_name_plural = "Расписания"
 
 
-class Comment(TimeStampedModel):
+class Comment(PolymorphicModel):
     text = models.TextField(max_length=512)
     user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
-    lesson = models.ForeignKey(
-        Lesson, related_name="comments", on_delete=models.CASCADE
-    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = "Комментарий"
         verbose_name_plural = "Комментарии"
+
+
+class LessonComment(Comment):
+    lesson = models.ForeignKey(
+        Lesson, related_name="comments", on_delete=models.CASCADE
+    )
+
+    class Meta:
+        verbose_name = "Комментарий к уроку"
+        verbose_name_plural = "Комментарии к уроку"
+
+
+class Ticket(models.Model):
+    lesson = models.ForeignKey(Lesson, on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    amount = models.IntegerField()
+
+    class Meta:
+        verbose_name = "Билет"
+        verbose_name_plural = "Билеты"

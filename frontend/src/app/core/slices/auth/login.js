@@ -8,7 +8,7 @@ const loginSlice = createAsyncThunk(
     try {
       return await AuthService.login({ email, password });
     } catch (error) {
-      const message = error.response.data;
+      const message = error.response.data.errors;
       thunkAPI.dispatch(setMessage(message));
 
       return thunkAPI.rejectWithValue();

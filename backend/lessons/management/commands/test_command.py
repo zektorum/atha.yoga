@@ -10,6 +10,5 @@ class Command(BaseCommand):
     def handle(self, *args: Any, **options: Any) -> None:
         user = UserSeeder().seed()
         user.save()
-        for i in range(30):
-            lesson = LessonSeeder(user=user).seed()
-            lesson.save()
+
+        LessonSeeder(user=user).seed().save()

@@ -1,31 +1,27 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import { Grid } from '@mui/material';
+import Box from '@mui/material/Box';
 import Menu from '../../components/menu';
 
 const ProfileLayout = ({ auth }) => (
-  <Grid
-    container
-    justifyContent="flex-start"
-    alignItems="flex-start"
-    spacing={2}
-    sx={{ paddingTop: '20px' }}
-  >
-    <Grid
-      item
-      md={2.5}
-      sm={1}
-      sx={{
-        justifyContent: 'center', display: 'flex', borderRight: '1px solid #DCDCDC',
-      }}
-    >
+  <Box sx={{ display: 'flex', height: '100%' }}>
+    <Box sx={{ display: 'flex', maxWidth: '256px', flex: '1 0 256px' }}>
       <Menu auth={auth} />
-    </Grid>
+    </Box>
 
-    <Grid item md={6} sm={1} container>
+    <Box sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      minWidth: '0',
+      width: '100%',
+      height: 'auto',
+      overflow: 'auto',
+      paddingBottom: '32px',
+    }}
+    >
       <Outlet />
-    </Grid>
-  </Grid>
+    </Box>
+  </Box>
 );
 
 export default ProfileLayout;

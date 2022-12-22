@@ -13,7 +13,7 @@ const registerSlice = createAsyncThunk(
 
       return data;
     } catch (error) {
-      const message = error.response.data;
+      const message = error.response.data.errors;
       thunkAPI.dispatch(setMessage(message));
 
       return thunkAPI.rejectWithValue();

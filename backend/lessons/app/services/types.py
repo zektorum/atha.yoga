@@ -10,9 +10,9 @@ from lessons.models import (
 )
 
 
-class CommentCreateData(TypedDict):
+class LessonReviewCreateData(TypedDict):
+    star_rating: int
     text: str
-    lesson_id: int
 
 
 class ScheduleCreateData(TypedDict):
@@ -30,8 +30,15 @@ class LessonCreateData(TypedDict):
     duration: str
     repeat_editing: bool
     start_datetime: datetime.datetime
-    deadline_date: Optional[datetime.date]
+    deadline_datetime: Optional[datetime.datetime]
     payment: LessonPaymentTypes
     price: int
     complexity: LessonComplexities
     schedule: Optional[List[ScheduleCreateData]]
+
+
+class LessonUpdateData(TypedDict):
+    description: str
+    lesson_type: LessonTypes
+    level: LessonLevels
+    complexity: LessonComplexities

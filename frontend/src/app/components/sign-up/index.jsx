@@ -11,6 +11,9 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import IconButton from '@mui/material/IconButton';
 import Container from '@mui/material/Container';
 import { useDispatch, useSelector } from 'react-redux';
+import {
+  OutlinedInput, FormControl, InputLabel, useFormControl, FormHelperText,
+} from '@mui/material';
 import { AuthContext } from '../../utils/providers/auth';
 import { clearMessage, setMessage } from '../../core/slices/message';
 
@@ -31,7 +34,14 @@ const SignUp = () => {
   }, []);
 
   const handleFocus = el => {
-    dispatch(setMessage({ ...message, [el]: '' }));
+    dispatch(setMessage({
+      ...message,
+      authentication_failed: '',
+      invalid: {
+        ...(message.invalid || {}),
+        [el]: '',
+      },
+    }));
   };
 
   const handleClickShowPassword = () => {
@@ -47,14 +57,28 @@ const SignUp = () => {
     context.register({ email: data.get('email'), password: data.get('password') });
   };
 
+  const MyFormHelperText = () => {
+    const { focused } = useFormControl() || {};
+
+    const helperText = React.useMemo(() => {
+      if (focused) {
+        return 'Не меньше 10 символов, знаки 3 из 4 категорий: 0-9, a-z, A-Z и специальные символы';
+      }
+      return '';
+    }, [focused]);
+
+    return <FormHelperText>{helperText}</FormHelperText>;
+  };
+
   return (
-    <Container component="main" maxWidth="xs">
+    <Container sx={{ height: '100%' }} component="main" maxWidth="xs">
       <Box
         sx={{
-          marginTop: 8,
+          height: '100%',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
+          justifyContent: 'center',
         }}
       >
         <Typography component="h1" variant="h4" fontWeight="500" sx={{ mb: 3 }}>
@@ -70,8 +94,8 @@ const SignUp = () => {
             placeholder="E-mail"
             name="email"
             autoComplete="email"
-            error={!!message?.email}
-            helperText={message?.email}
+            error={!!message?.invalid?.email}
+            helperText={message?.invalid?.email}
             onFocus={() => handleFocus('email')}
             autoFocus
           />
@@ -84,8 +108,8 @@ const SignUp = () => {
             id="password"
             autoComplete="current-password"
             type={values.showPassword ? 'text' : 'password'}
-            error={!!message?.password}
-            helperText={message?.password}
+            error={!!message?.invalid?.password || !!message?.authentication_failed}
+            helperText={message?.invalid?.password}
             onFocus={() => handleFocus('password')}
             InputProps={{
               endAdornment:
@@ -117,32 +141,48 @@ const SignUp = () => {
               </Typography>
             </Grid>
             <Grid item>
-              <Link to="/login" variant="body2" underline="none">
+              <Typography
+                component={Link}
+                to="/login"
+                variant="body2"
+                sx={{ textDecoration: 'none' }}
+              >
                 Войти
-              </Link>
+              </Typography>
             </Grid>
           </Grid>
         </Box>
-        <div style={{ position: 'absolute', bottom: 32 }}>
+        <div style={{
+          position: 'absolute',
+          bottom: '32px',
+          textAlign: 'center',
+          maxWidth: '668px',
+          lineHeight: 0.1,
+        }}
+        >
           <Typography variant="caption">
-            Нажимая на кнопку «Зарегистрироваться», я подтверждаю,
+            {'Нажимая на кнопку «Зарегистрироваться», вы принимаете условия '}
+            <Typography
+              component={Link}
+              variant="caption"
+              to="#"
+              sx={{ textDecoration: 'none' }}
+            >
+              Пользовательского соглашения
+            </Typography>
+            {' и '}
+            <Typography
+              component={Link}
+              variant="caption"
+              to="#"
+              sx={{ textDecoration: 'none' }}
+            >
+              Политики конфиденциальности
+            </Typography>
           </Typography>
-          <Grid container justifyContent="center" spacing={1}>
-            <Grid item>
-              <Typography variant="caption">
-                что ознакомлен(а) с
-              </Typography>
-            </Grid>
-            <Grid item>
-              <Link variant="caption" underline="none">
-                пользовательским соглашением
-              </Link>
-            </Grid>
-          </Grid>
         </div>
       </Box>
     </Container>
   );
 };
-
 export default SignUp;

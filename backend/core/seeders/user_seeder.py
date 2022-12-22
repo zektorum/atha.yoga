@@ -15,5 +15,4 @@ class UserSeeder:
             email=profile["mail"],
             password=make_password(self.faker.password()),
             about=" ".join(self.faker.words(self.faker.random_int(0, 20)))[:100],
-            is_teacher=self.faker.random_element((False, True)),
         )
