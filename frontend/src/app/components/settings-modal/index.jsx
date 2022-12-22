@@ -27,14 +27,18 @@ import {
 } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import DateRangeOutlinedIcon from '@mui/icons-material/DateRangeOutlined';
+import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
+import dayjs from 'dayjs';
 
 const LessonCreate = () => {
   const [lessonLevel, setLessonLevel] = useState([]);
-  const [startDate, setStartDate] = useState(null);
-  const [finishDate, setFinishDate] = useState(null);
+  const [startLessonDate, setStartLessonDate] = useState(null);
+  const [finishLessonDate, setFinishLessonDate] = useState(null);
   const [lessonDay, setLessonDay] = useState('');
   const [lessonTime, setLessonTime] = useState(null);
-
+  const [regularLessons, setRegularLessons] = useState([]);
 
   const [lessonData, setLessonData] = useState({
     name: '',
@@ -47,19 +51,11 @@ const LessonCreate = () => {
     repeat: 'once',
     date: null,
     time: null,
-    regularLessons: {
-      firstDate: null,
-      lastDate: null,
-    },
+    regularLessons: [],
     payment: 'paid',
     donation: true,
     cost: '',
   });
-
-  const submit = e => {
-    e.preventDefault();
-    console.log(lessonData);
-  };
 
   const update = e => {
     setLessonData({
@@ -102,6 +98,31 @@ const LessonCreate = () => {
     });
   };
 
+  const lessonsInfo = () => {
+    const time = dayjs(lessonTime).minute() > 9 ? `${dayjs(lessonTime).hour()}:${dayjs(lessonTime).minute()}` : `${dayjs(lessonTime).hour()}:0${dayjs(lessonTime).minute()}`;
+    const copyRegularLesson = Object.assign([], regularLessons);
+    copyRegularLesson.push([lessonDay, time]);
+    setRegularLessons(copyRegularLesson);
+    setLessonDay('');
+    setLessonTime(null);
+  };
+
+  const addLessonButtonDisabled = () => {
+    let result = '';
+    if (lessonDay.length === 0) {
+      result = true;
+    } else if (lessonTime === null) {
+      result = true;
+    } else {
+      result = false;
+    }
+    return result;
+  };
+
+  const deleteLesson = lesson => {
+    setRegularLessons(regularLessons.filter(p => p !== lesson));
+  };
+
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ru">
       <Grid
@@ -122,7 +143,12 @@ const LessonCreate = () => {
         }}
         />
       </Grid>
-      <form onSubmit={submit}>
+      <form onSubmit={e => {
+        e.preventDefault();
+        console.log(lessonData);
+        console.log(regularLessons);
+      }}
+      >
         <Container sx={{ display: 'flex', justifyContent: 'center' }}>
           <Grid
             container
@@ -279,93 +305,139 @@ const LessonCreate = () => {
                 </RadioGroup>
               </FormControl>
             </Grid>
+            {lessonData.repeat === 'once'
+              ? (
+                <Grid item container sx={{ justifyContent: 'start', columnGap: '4%' }}>
+                  <DatePicker
+                    label="Дата*"
+                    value={lessonData.date}
+                    id="lesson_date"
+                    minDate={dayjs(Date())}
+                    required
+                    onChange={newValue => setDate(newValue)}
+                    renderInput={params => <TextField {...params} sx={{ width: '35%' }} />}
+                  />
+                  <TimePicker
+                    label="Время*"
+                    value={lessonData.time}
+                    id="lesson_time"
+                    required
+                    onChange={newValue => setTime(newValue)}
+                    renderInput={params => <TextField {...params} sx={{ width: '35%' }} />}
+                  />
+                </Grid>
+              )
+              : (
+                <>
+                  <Grid item container sx={{ justifyContent: 'start', columnGap: '4%' }}>
+                    <Typography variant="modal" sx={{ fontSize: '18px', color: '#212121', paddingBottom: '20px' }}>
+                      Определите продолжительность серии занятий (не более 2-х месяцев)
+                    </Typography>
 
-            {/* <Grid item container sx={{ justifyContent: 'start', columnGap: '4%' }}>
-              <DatePicker
-                label="Дата*"
-                value={lessonData.date}
-                id="lesson_date"
-                required
-                onChange={newValue => setDate(newValue)}
-                renderInput={params => <TextField {...params} sx={{ width: '35%' }} />}
-              />
-              <TimePicker
-                label="Время*"
-                value={lessonData.time}
-                id="lesson_time"
-                required
-                onChange={newValue => setTime(newValue)}
-                renderInput={params => <TextField {...params} sx={{ width: '35%' }} />}
-              />
-            </Grid> */}
+                    <DatePicker
+                      label="Начало*"
+                      value={startLessonDate}
+                      required
+                      minDate={dayjs(Date())}
+                      onChange={newValue => setStartLessonDate(newValue)}
+                      renderInput={params => <TextField {...params} sx={{ width: '35%' }} />}
+                    />
+                    <DatePicker
+                      label="Окончание*"
+                      value={finishLessonDate}
+                      disabled={startLessonDate === null}
+                      minDate={startLessonDate}
+                      maxDate={dayjs(startLessonDate).add(2, 'month')}
+                      onChange={newValue => setFinishLessonDate(newValue)}
+                      renderInput={params => <TextField {...params} sx={{ width: '35%' }} />}
+                    />
 
-            <Grid item container sx={{ justifyContent: 'start', columnGap: '4%' }}>
-              <Typography variant="modal" sx={{ fontSize: '18px', color: '#212121', paddingBottom: '20px' }}>
-                Определите продолжительность серии занятий (не более 2-х месяцев)
-              </Typography>
+                    <Typography
+                      variant="modal"
+                      sx={{
+                        fontSize: '18px', color: '#212121', paddingTop: '30px', paddingBottom: '20px',
+                      }}
+                    >
+                      Задайте регулярное расписание занятий на неделю
+                    </Typography>
+                  </Grid>
 
-              <DatePicker
-                label="Начало*"
-                value={startDate}
-                required
-                onChange={newValue => setStartDate(newValue)}
-                renderInput={params => <TextField {...params} sx={{ width: '35%' }} />}
-              />
-              <DatePicker
-                label="Окончание*"
-                value={finishDate}
-                required
-                onChange={newValue => setFinishDate(newValue)}
-                renderInput={params => <TextField {...params} sx={{ width: '35%' }} />}
-              />
+                  <Grid
+                    item
+                    container
+                    sx={{
+                      border: '1px solid #E5E5E5',
+                      padding: '10px',
+                      minHeight: '150px',
+                      alignContent: 'flex-start',
+                      justifyContent: 'space-around',
+                      borderRadius: '10px',
+                    }}
+                  >
+                    <FormControl sx={{ width: '30%' }}>
+                      <InputLabel id="demo-simple-select-label">День недели</InputLabel>
+                      <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={lessonDay}
+                        name="dayForRegularLesson"
+                        label="День недели"
+                        onChange={e => setLessonDay(e.target.value)}
+                      >
+                        <MenuItem value="Понедельник">Понедельник</MenuItem>
+                        <MenuItem value="Вторник">Вторник</MenuItem>
+                        <MenuItem value="Среда">Среда</MenuItem>
+                        <MenuItem value="Четверг">Четверг</MenuItem>
+                        <MenuItem value="Пятница">Пятница</MenuItem>
+                        <MenuItem value="Суббота">Суббота</MenuItem>
+                        <MenuItem value="Воскресенье">Воскресенье</MenuItem>
+                      </Select>
+                    </FormControl>
 
-              <Typography variant="modal" sx={{ fontSize: '18px', color: '#212121', paddingTop: '30px', paddingBottom: '20px' }}>
-                Задайте регулярное расписание занятий на неделю
-              </Typography>
-            </Grid>
+                    <TimePicker
+                      label="Время"
+                      value={lessonTime}
+                      id="regular_lesson_time"
+                      required
+                      sx={{ width: '30%' }}
+                      onChange={newValue => setLessonTime(newValue)}
+                      renderInput={params => <TextField {...params} required />}
+                    />
 
-
-
-            <Grid item container sx={{ border: '1px solid #616161', padding: '10px', minHeight: '150px', alignContent: 'flex-start', justifyContent: 'space-around',
-          borderRadius: '10px' }}>
-              <FormControl sx={{ width: '30%' }}>
-                <InputLabel id="demo-simple-select-label">День недели</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={lessonDay}
-                  name="dayForRegularLesson"
-                  required
-                  label="День"
-                  onChange={setLessonDay}
-
-                >
-                  <MenuItem value="Monday">Понедельник</MenuItem>
-                  <MenuItem value="Tuesday">Вторник</MenuItem>
-                  <MenuItem value="Wednesday">Среда</MenuItem>
-                  <MenuItem value="Thursday">Четверг</MenuItem>
-                  <MenuItem value="Friday">Пятница</MenuItem>
-                  <MenuItem value="Saturday">Суббота</MenuItem>
-                  <MenuItem value="Sunday">Воскресенье</MenuItem>
-                </Select>
-              </FormControl>
-
-              <TimePicker
-                label="Время"
-                value={lessonTime}
-                id="regular_lesson_time"
-                required
-                sx={{ width: '30%' }}
-                onChange={newValue => setLessonTime(newValue)}
-                renderInput={params => <TextField {...params} />}
-              />
-
-              <Button
-                variant="text"
-              >
-                Добавить занятие
-              </Button>
-            </Grid>
+                    <Button
+                      variant="text"
+                      disabled={addLessonButtonDisabled()}
+                      onClick={lessonsInfo}
+                    >
+                      Добавить занятие
+                    </Button>
+                    {regularLessons.map(lesson => (
+                      <Box
+                        key={Math.random()}
+                        sx={{
+                          width: '100%', display: 'flex', columnGap: '10%', paddingTop: '5%', paddingLeft: '5%',
+                        }}
+                      >
+                        <Box sx={{
+                          width: '40%', display: 'flex', columnGap: '10%', borderBottom: '1px solid #E5E5E5', justifyContent: 'space-between', paddingBottom: '1%',
+                        }}
+                        >
+                          <Box sx={{ width: '10%', display: 'flex', justifyContent: 'space-around' }}>
+                            <DateRangeOutlinedIcon sx={{ color: '#0D6EFD', marginRight: '5px' }} />
+                            <Typography variant="modal" sx={{ fontSize: '16px' }}>{lesson[0]}</Typography>
+                            <AccessTimeIcon sx={{ color: '#0D6EFD', marginLeft: '15px', marginRight: '5px' }} />
+                            <Typography variant="modal" sx={{ fontSize: '16px' }}>{lesson[1]}</Typography>
+                          </Box>
+                          <CloseOutlinedIcon
+                            sx={{ color: '#616161', cursor: 'pointer' }}
+                            onClick={() => { deleteLesson(lesson); }}
+                          />
+                        </Box>
+                      </Box>
+                    ))}
+                  </Grid>
+                </>
+              )}
 
             <Grid item>
               <Divider variant="middle" sx={{ paddingTop: '20px' }} />
