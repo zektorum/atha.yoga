@@ -26,8 +26,6 @@ dacite = "*"
 types-requests = "*"
 django-recaptcha = "*"
 django-polymorphic = "*"
-django-recaptcha = "*"
-requests = "*"
 
 [dev-packages]
 isort = "*"
