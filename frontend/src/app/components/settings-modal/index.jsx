@@ -25,56 +25,16 @@ import {
   Box,
   Divider,
 } from '@mui/material';
+import SettingsIcon from '@mui/icons-material/Settings';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
-};
-/*
-const ExitModal = () => {
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+const LessonCreate = () => {
+  const [lessonLevel, setLessonLevel] = useState([]);
+  const [startDate, setStartDate] = useState(null);
+  const [finishDate, setFinishDate] = useState(null);
+  const [lessonDay, setLessonDay] = useState('');
+  const [lessonTime, setLessonTime] = useState(null);
 
-  return (
-    <>
-      <Button
-        variant="text"
-        onClick={handleOpen}
-      >
-        Сохранить черновик
-      </Button>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Typography id="modal-modal-title" variant="modal">
-            Данные не были сохранены
-          </Typography>
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            Сохранить, как черновик?
-          </Typography>
-          <Button variant="text">Не сохранять</Button>
-          <Button variant="text">Сохранить</Button>
-        </Box>
-      </Modal>
-    </>
-  );
-};
-*/
-
-const Modal = () => {
-  const [personName, setPersonName] = useState([]);
 
   const [lessonData, setLessonData] = useState({
     name: '',
@@ -87,9 +47,10 @@ const Modal = () => {
     repeat: 'once',
     date: null,
     time: null,
-    timeForRegularLesson: null,
-    dayForRegularLesson: '',
-    regularLessonInfo: {},
+    regularLessons: {
+      firstDate: null,
+      lastDate: null,
+    },
     payment: 'paid',
     donation: true,
     cost: '',
@@ -119,7 +80,7 @@ const Modal = () => {
     const {
       target: { value },
     } = event;
-    setPersonName(
+    setLessonLevel(
       typeof value === 'string' ? value.split(',') : value,
       update(event),
     );
@@ -127,50 +88,47 @@ const Modal = () => {
 
   const lessonLevels = ['Начинающий', 'Средний', 'Продвинутый'];
 
-  const dateNormalize = date => {
-    const string = String(date);
-    const array = string.split(' ');
-    const newDate = `${array[2]} ${array[1]} ${array[3]}`;
-    return newDate;
-  };
-
-  const timeNormalize = date => {
-    const string = String(date);
-    const array = string.split(' ');
-    const newTime = array[4].split(':');
-    return `${newTime[0]}:${newTime[1]}`;
-  };
-
-  const changeDate = newValue => {
+  const setDate = newValue => {
     setLessonData({
       ...lessonData,
-      date: dateNormalize(newValue.$d),
+      date: newValue.$d,
     });
   };
 
-  const changeTime = newValue => {
+  const setTime = newValue => {
     setLessonData({
       ...lessonData,
-      time: timeNormalize(newValue.$d),
-    });
-  };
-
-  const changeRegularTime = newValue => {
-    setLessonData({
-      ...lessonData,
-      timeForRegularLesson: (newValue),
+      time: newValue.$d,
     });
   };
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ru">
+      <Grid
+        container
+        sx={{
+          justifyContent: 'space-between', padding: '20px 24px', marginBottom: '20px', boxShadow: '0px -5px 20px 0px #2e3c50',
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <ArrowBackIcon sx={{
+            color: '#616161', width: '24px', height: '24px', cursor: 'pointer', marginRight: '14px',
+          }}
+          />
+          <Typography variant="modal" sx={{ fontWeigth: 500, fontSize: '24px', color: '#616161' }}>Создание занятия</Typography>
+        </Box>
+        <SettingsIcon sx={{
+          color: '#BDBDBD', width: '24px', height: '24px', cursor: 'pointer',
+        }}
+        />
+      </Grid>
       <form onSubmit={submit}>
         <Container sx={{ display: 'flex', justifyContent: 'center' }}>
           <Grid
             container
             direction="column"
             rowSpacing={3}
-            sx={{ width: '60%', padding: '16px' }}
+            sx={{ width: '70%', padding: '16px' }}
           >
 
             <Grid item>
@@ -203,27 +161,29 @@ const Modal = () => {
               />
             </Grid>
 
-            <Grid item>
-              <FormControl>
+            <Grid item sx={{ height: '6%' }}>
+              <FormControl fullWidth sx={{ paddingLeft: '2%' }}>
                 <RadioGroup
                   row
                   aria-labelledby="demo-row-radio-buttons-group-label"
                   name="row-radio-buttons-group"
                   defaultValue="online"
+                  sx={{ columnGap: '5%' }}
+
                 >
                   <FormControlLabel
                     onChange={update}
                     value="online"
                     name="type"
                     control={<Radio />}
-                    label="Онлайн"
+                    label={<Typography variant="modal" sx={{ fontSize: '16px', color: '#212121' }}>Онлайн</Typography>}
                   />
                   <FormControlLabel
                     onChange={update}
                     name="type"
                     value="video"
                     control={<Radio />}
-                    label="Видео"
+                    label={<Typography variant="modal" sx={{ fontSize: '16px', color: '#212121' }}>Видео</Typography>}
                   />
                 </RadioGroup>
               </FormControl>
@@ -236,7 +196,7 @@ const Modal = () => {
                 name="link"
                 value={lessonData.link}
                 onChange={update}
-                sx={{ width: '49%' }}
+                sx={{ width: '48%' }}
                 required
               />
 
@@ -247,7 +207,7 @@ const Modal = () => {
                 value={lessonData.conferenceId}
                 onChange={update}
                 placeholder="Идентификатор конференции"
-                sx={{ width: '49%' }}
+                sx={{ width: '48%' }}
               />
             </Grid>
 
@@ -261,14 +221,14 @@ const Modal = () => {
                   required
                   fullWidth
                   name="level"
-                  value={personName}
+                  value={lessonLevel}
                   onChange={changeLessonLevel}
                   input={<OutlinedInput label="Уровень подготовки" />}
                   renderValue={selected => selected.join(', ')}
                 >
                   {lessonLevels.map(level => (
                     <MenuItem key={level} value={level}>
-                      <Checkbox checked={personName.indexOf(level) > -1} />
+                      <Checkbox checked={lessonLevel.indexOf(level) > -1} />
                       <ListItemText primary={level} />
                     </MenuItem>
                   ))}
@@ -290,69 +250,94 @@ const Modal = () => {
             </Grid>
 
             <Grid item>
-              <Divider variant="middle" />
+              <Divider variant="middle" sx={{ paddingTop: '20px' }} />
             </Grid>
 
-            <Grid item>
-              <FormControl>
+            <Grid item sx={{ height: '6%' }}>
+              <FormControl fullWidth sx={{ paddingLeft: '2%' }}>
                 <RadioGroup
                   row
                   aria-labelledby="lesson-repeat-label"
                   name="lesson-repeat-radio-buttons-group"
                   defaultValue="once"
+                  sx={{ columnGap: '5%' }}
                 >
                   <FormControlLabel
                     onChange={update}
                     value="once"
                     name="repeat"
                     control={<Radio />}
-                    label="Разовое"
+                    label={<Typography variant="modal" sx={{ fontSize: '16px', color: '#212121' }}>Разовое</Typography>}
                   />
                   <FormControlLabel
                     onChange={update}
                     name="repeat"
                     value="regular"
                     control={<Radio />}
-                    label="Регулярное"
+                    label={<Typography variant="modal" sx={{ fontSize: '16px', color: '#212121' }}>Регулярное</Typography>}
                   />
                 </RadioGroup>
               </FormControl>
             </Grid>
 
-            <Grid item container sx={{ justifyContent: 'start', columnGap: '1%' }}>
+            {/* <Grid item container sx={{ justifyContent: 'start', columnGap: '4%' }}>
               <DatePicker
-                label="Дата"
+                label="Дата*"
                 value={lessonData.date}
                 id="lesson_date"
                 required
-                sx={{ width: '25%' }}
-                onChange={newValue => changeDate(newValue)}
-                renderInput={params => <TextField {...params} />}
+                onChange={newValue => setDate(newValue)}
+                renderInput={params => <TextField {...params} sx={{ width: '35%' }} />}
               />
-
               <TimePicker
-                label="Время"
+                label="Время*"
                 value={lessonData.time}
                 id="lesson_time"
                 required
-                sx={{ width: '25%' }}
-                onChange={newValue => changeTime(newValue)}
-                renderInput={params => <TextField {...params} />}
+                onChange={newValue => setTime(newValue)}
+                renderInput={params => <TextField {...params} sx={{ width: '35%' }} />}
+              />
+            </Grid> */}
+
+            <Grid item container sx={{ justifyContent: 'start', columnGap: '4%' }}>
+              <Typography variant="modal" sx={{ fontSize: '18px', color: '#212121', paddingBottom: '20px' }}>
+                Определите продолжительность серии занятий (не более 2-х месяцев)
+              </Typography>
+
+              <DatePicker
+                label="Начало*"
+                value={startDate}
+                required
+                onChange={newValue => setStartDate(newValue)}
+                renderInput={params => <TextField {...params} sx={{ width: '35%' }} />}
+              />
+              <DatePicker
+                label="Окончание*"
+                value={finishDate}
+                required
+                onChange={newValue => setFinishDate(newValue)}
+                renderInput={params => <TextField {...params} sx={{ width: '35%' }} />}
               />
 
+              <Typography variant="modal" sx={{ fontSize: '18px', color: '#212121', paddingTop: '30px', paddingBottom: '20px' }}>
+                Задайте регулярное расписание занятий на неделю
+              </Typography>
             </Grid>
-            {/*
-            <Grid item>
+
+
+
+            <Grid item container sx={{ border: '1px solid #616161', padding: '10px', minHeight: '150px', alignContent: 'flex-start', justifyContent: 'space-around',
+          borderRadius: '10px' }}>
               <FormControl sx={{ width: '30%' }}>
-                <InputLabel id="demo-simple-select-label">День</InputLabel>
+                <InputLabel id="demo-simple-select-label">День недели</InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
-                  value={lessonData.dayForRegularLesson}
+                  value={lessonDay}
                   name="dayForRegularLesson"
                   required
                   label="День"
-                  onChange={update}
+                  onChange={setLessonDay}
 
                 >
                   <MenuItem value="Monday">Понедельник</MenuItem>
@@ -367,57 +352,64 @@ const Modal = () => {
 
               <TimePicker
                 label="Время"
-                value={lessonData.timeForRegularLesson}
+                value={lessonTime}
                 id="regular_lesson_time"
                 required
                 sx={{ width: '30%' }}
-                onChange={newValue => changeRegularTime(newValue)}
+                onChange={newValue => setLessonTime(newValue)}
                 renderInput={params => <TextField {...params} />}
               />
-            </Grid>
-                  */}
-            <Grid item>
-              <Divider variant="middle" />
+
+              <Button
+                variant="text"
+              >
+                Добавить занятие
+              </Button>
             </Grid>
 
             <Grid item>
-              <FormControl>
+              <Divider variant="middle" sx={{ paddingTop: '20px' }} />
+            </Grid>
+
+            <Grid item sx={{ height: '6%' }}>
+              <FormControl fullWidth sx={{ paddingLeft: '2%' }}>
                 <RadioGroup
                   row
                   aria-labelledby="lesson-cost-label"
                   name="lesson-cost-radio-buttons-group"
                   defaultValue="paid"
+                  sx={{ columnGap: '5%' }}
                 >
                   <FormControlLabel
                     onChange={update}
                     value="paid"
                     name="payment"
                     control={<Radio />}
-                    label="Платно"
+                    label={<Typography variant="modal" sx={{ fontSize: '16px', color: '#212121' }}>Платно</Typography>}
                   />
                   <FormControlLabel
                     onChange={update}
                     name="payment"
                     value="free"
                     control={<Radio />}
-                    label="Бесплатно"
-                    sx={{ marginRight: '44px' }}
+                    label={<Typography variant="modal" sx={{ fontSize: '16px', color: '#212121' }}>Бесплатно</Typography>}
+                    sx={{ marginRight: '1%' }}
                   />
                   <Divider orientation="vertical" variant="middle" flexItem />
+                  <FormControlLabel
+                    label={<Typography variant="modal" sx={{ fontSize: '16px', color: '#212121' }}>Принимать чаевые</Typography>}
+                    sx={{ marginLeft: '2%' }}
+                    control={(
+                      <Switch
+                        defaultChecked
+                        onChange={changeDonation}
+                        name="donation"
+                      />
+                )}
+                  />
                 </RadioGroup>
               </FormControl>
 
-              <FormControlLabel
-                label="Принимать чаевые"
-                sx={{ marginLeft: '44px' }}
-                control={(
-                  <Switch
-                    defaultChecked
-                    onChange={changeDonation}
-                    name="donation"
-                  />
-                )}
-              />
             </Grid>
 
             <Grid item>
@@ -430,7 +422,7 @@ const Modal = () => {
                 required={lessonData.payment !== 'free'}
                 disabled={lessonData.payment === 'free'}
                 value={lessonData.cost}
-                sx={{ width: '40%' }}
+                sx={{ width: '35%' }}
               />
             </Grid>
 
@@ -443,10 +435,10 @@ const Modal = () => {
 
               <Button
                 variant="contained"
+                type="submit"
               >
                 Создать
               </Button>
-
             </Grid>
 
           </Grid>
@@ -456,4 +448,4 @@ const Modal = () => {
   );
 };
 
-export default Modal;
+export default LessonCreate;
