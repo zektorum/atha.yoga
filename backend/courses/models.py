@@ -85,13 +85,13 @@ class CourseReview(Review):
 
 
 class Lesson(TimeStampedModel):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="lessons")
+    course = models.ForeignKey(Course, related_name="lessons", on_delete=models.CASCADE)
     start_at = models.DateTimeField()
     participants = models.ManyToManyField(User)
 
     class Meta:
         verbose_name = "Урок"
-        verbose_name_plural = "уроки"
+        verbose_name_plural = "Уроки"
 
 
 class Comment(PolymorphicModel):

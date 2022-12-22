@@ -1,15 +1,19 @@
 from rest_framework.serializers import ModelSerializer
 
+from core.app.http.resources.user_resources import UserResource
 from courses.models import Course, Lesson
 
 
 class LessonResource(ModelSerializer):
+    participants = UserResource(many=True)
+
     class Meta:
         model = Lesson
         fields = [
             "id",
             "course",
             "start_at",
+            "participants",
         ]
 
 
