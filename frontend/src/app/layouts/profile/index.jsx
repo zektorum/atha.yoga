@@ -1,29 +1,27 @@
 import React from 'react';
-import { Link, Outlet } from 'react-router-dom';
-import { Box, Container } from '@mui/material';
+import { Outlet } from 'react-router-dom';
+import Box from '@mui/material/Box';
+import Menu from '../../components/menu';
 
 const ProfileLayout = ({ auth }) => (
-  <Container maxWidth="sm">
-    <Box sx={{ my: 4 }}>
-      <h1>Protected Profile layout</h1>
-      <div>
-        <nav>
-          <ul>
-            <li>
-              <Link to="/profile">Profile</Link>
-            </li>
-            <li>
-              <button onClick={auth.logout}>Logout</button>
-            </li>
-          </ul>
-        </nav>
-
-        <hr />
-
-        <Outlet />
-      </div>
+  <Box sx={{ display: 'flex', height: '100%' }}>
+    <Box sx={{ display: 'flex', maxWidth: '256px', flex: '1 0 256px' }}>
+      <Menu auth={auth} />
     </Box>
-  </Container>
+
+    <Box sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      minWidth: '0',
+      width: '100%',
+      height: 'auto',
+      overflow: 'auto',
+      paddingBottom: '32px',
+    }}
+    >
+      <Outlet />
+    </Box>
+  </Box>
 );
 
 export default ProfileLayout;

@@ -6,7 +6,7 @@ Base structure:
     │   ├── index.jsx
     │   └── style.(scoped).scss (optional)
     └── utils (optional)
-        ├── index.js
+        ├── index.jsx
         │   └── ...
         └── ...
 ```

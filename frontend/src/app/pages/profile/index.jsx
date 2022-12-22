@@ -1,5 +1,6 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
+import Profile from '../../components/profile';
 
 const ProfilePage = ({ auth: { user } }) => {
   if (!user) {
@@ -9,21 +10,7 @@ const ProfilePage = ({ auth: { user } }) => {
   }
 
   return (
-    <div>
-      <h2>Profile</h2>
-      <p>
-        <strong>Id: </strong>
-        {user.user.id}
-      </p>
-      <p>
-        <strong>Email: </strong>
-        {user.user.email}
-      </p>
-      <p>
-        <strong>Token: </strong>
-        {user.accessToken.substring(0, 20)}
-      </p>
-    </div>
+    <Profile user={user} />
   );
 };
 
