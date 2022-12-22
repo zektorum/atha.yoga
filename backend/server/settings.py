@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "django_extensions",
     "core",
-    "lessons",
+    "courses",
     "django_elasticsearch_dsl",
 ]
 
