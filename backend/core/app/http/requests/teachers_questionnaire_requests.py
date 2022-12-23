@@ -14,5 +14,6 @@ class QuestionnaireTeacherRequest(UnimplementedSerializer):
     vk_link = serializers.URLField()
     telegram_link = serializers.URLField()
     certificate_photos = serializers.ListField(child=serializers.ImageField())
-    passport_photos = serializers.ListField(child=serializers.ImageField())
-    user_photos = serializers.ListField(child=serializers.ImageField())
+    passport_photo = serializers.ImageField()
+    user_photo = serializers.ImageField()
+    user_with_passport_photo = serializers.ImageField()

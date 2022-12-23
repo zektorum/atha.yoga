@@ -40,7 +40,7 @@ class RepetitionWeekdays(models.IntegerChoices):
 
 class Course(TimeStampedModel):
     name = models.CharField(max_length=64)
-    description = models.TextField(blank=True)
+    description = models.TextField()
     course_type = models.CharField(max_length=30, choices=CourseTypes.choices)
     level = models.CharField(max_length=30, choices=CourseLevels.choices)
     single = models.BooleanField(default=False)
