@@ -5,11 +5,14 @@ import { Typography, Box, Grid } from '@mui/material';
 import SchoolIcon from '@mui/icons-material/School';
 import DateRangeOutlinedIcon from '@mui/icons-material/DateRangeOutlined';
 import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
+import { Link } from 'react-router-dom';
 
 const LessonCard = ({ title, description }) => (
   <Box
+    component={Link}
+    to="/lesson-details"
     width="calc(50% - 10px)"
-    sx={{ borderRadius: '8px', boxShadow: '0px 8px 16px rgba(46, 60, 80, 0.1)' }}
+    sx={{ textDecoration: 'none', borderRadius: '8px', boxShadow: '0px 8px 16px rgba(46, 60, 80, 0.1)' }}
   >
     <Grid container alignItems="flex-start" justifyContent="center" height="100%">
       <Grid item>
@@ -20,7 +23,7 @@ const LessonCard = ({ title, description }) => (
       <Grid item xs container height="100%">
         <Grid item xs container direction="column" sx={{ py: '16px' }}>
           <Grid item>
-            <Typography sx={{ fontSize: '18px', mb: '12px' }}>
+            <Typography color="text.primary" sx={{ fontSize: '18px', mb: '12px' }}>
               {title}
             </Typography>
           </Grid>
