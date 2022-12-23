@@ -1,4 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, {
+  useContext, useEffect, useRef, useState,
+} from 'react';
 import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Button from '@mui/material/Button';
@@ -26,10 +28,30 @@ const LogIn = () => {
   const context = useContext(AuthContext);
   const { message } = useSelector(state => state.message);
   const dispatch = useDispatch();
+  const prompt = useRef(null);
 
   useEffect(() => {
     dispatch(clearMessage());
   }, []);
+
+  useEffect(() => {
+    window.addEventListener('beforeinstallprompt', addButton);
+    return () => window.removeEventListener('beforeinstallprompt', addButton);
+  }, []);
+
+  const addButton = e => {
+    prompt.current = e;
+  };
+
+  const handleInstall = () => {
+    if (!prompt.current) {
+      return;
+    }
+    prompt.current.prompt();
+    prompt.current.userChoice.then(() => {
+      prompt.current = null;
+    });
+  };
 
   const handleClickShowPassword = () => {
     setValues({
@@ -57,9 +79,12 @@ const LogIn = () => {
 
   return (
     <Container sx={{ height: '100%' }} component="main" maxWidth="xs">
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', position: 'absolute', right: '30px', top: '30px' }}>
+      <div style={{
+        display: 'flex', flexDirection: 'column', gap: '5px', position: 'absolute', right: '30px', top: '30px',
+      }}
+      >
         <img src={menuLogo} alt="athayoga logo" />
-        <Button id="addToHomeScreenBtn">Add to home screen</Button>
+        <Button onClick={handleInstall}>Add to home screen</Button>
       </div>
       <Box
         sx={{
