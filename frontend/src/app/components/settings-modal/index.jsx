@@ -34,11 +34,12 @@ import dayjs from 'dayjs';
 
 const LessonCreate = () => {
   const [lessonLevel, setLessonLevel] = useState([]);
+
   const [startLessonDate, setStartLessonDate] = useState(null);
   const [finishLessonDate, setFinishLessonDate] = useState(null);
-  const [lessonDay, setLessonDay] = useState('');
+  
+  const [regularLlessonDay, setRegularLessonDay] = useState('');
   const [lessonTime, setLessonTime] = useState(null);
-  const [regularLessons, setRegularLessons] = useState([]);
 
   const [lessonData, setLessonData] = useState({
     name: '',
@@ -100,16 +101,19 @@ const LessonCreate = () => {
 
   const lessonsInfo = () => {
     const time = dayjs(lessonTime).minute() > 9 ? `${dayjs(lessonTime).hour()}:${dayjs(lessonTime).minute()}` : `${dayjs(lessonTime).hour()}:0${dayjs(lessonTime).minute()}`;
-    const copyRegularLesson = Object.assign([], regularLessons);
-    copyRegularLesson.push([lessonDay, time]);
-    setRegularLessons(copyRegularLesson);
-    setLessonDay('');
+    const copyRegularLesson = Object.assign([], lessonData.regularLessons);
+    copyRegularLesson.push([regularLlessonDay, time]);
+    setLessonData({
+      ...lessonData,
+      regularLessons: copyRegularLesson,
+    });
+    setRegularLessonDay('');
     setLessonTime(null);
   };
 
   const addLessonButtonDisabled = () => {
     let result = '';
-    if (lessonDay.length === 0) {
+    if (regularLlessonDay.length === 0) {
       result = true;
     } else if (lessonTime === null) {
       result = true;
@@ -120,7 +124,7 @@ const LessonCreate = () => {
   };
 
   const deleteLesson = lesson => {
-    setRegularLessons(regularLessons.filter(p => p !== lesson));
+    setLessonData(lessonData.regularLessons.filter(p => p !== lesson));
   };
 
   return (
@@ -146,7 +150,6 @@ const LessonCreate = () => {
       <form onSubmit={e => {
         e.preventDefault();
         console.log(lessonData);
-        console.log(regularLessons);
       }}
       >
         <Container sx={{ display: 'flex', justifyContent: 'center' }}>
@@ -379,10 +382,10 @@ const LessonCreate = () => {
                       <Select
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
-                        value={lessonDay}
+                        value={regularLlessonDay}
                         name="dayForRegularLesson"
                         label="День недели"
-                        onChange={e => setLessonDay(e.target.value)}
+                        onChange={e => setRegularLessonDay(e.target.value)}
                       >
                         <MenuItem value="Понедельник">Понедельник</MenuItem>
                         <MenuItem value="Вторник">Вторник</MenuItem>
@@ -411,11 +414,11 @@ const LessonCreate = () => {
                     >
                       Добавить занятие
                     </Button>
-                    {regularLessons.map(lesson => (
+                    {lessonData.regularLessons.map(lesson => (
                       <Box
                         key={Math.random()}
                         sx={{
-                          width: '100%', display: 'flex', columnGap: '10%', paddingTop: '5%', paddingLeft: '5%',
+                          width: '100%', display: 'flex', columnGap: '10%', paddingTop: '5%', paddingLeft: '15%',
                         }}
                       >
                         <Box sx={{
@@ -425,7 +428,7 @@ const LessonCreate = () => {
                           <Box sx={{ width: '10%', display: 'flex', justifyContent: 'space-around' }}>
                             <DateRangeOutlinedIcon sx={{ color: '#0D6EFD', marginRight: '5px' }} />
                             <Typography variant="modal" sx={{ fontSize: '16px' }}>{lesson[0]}</Typography>
-                            <AccessTimeIcon sx={{ color: '#0D6EFD', marginLeft: '15px', marginRight: '5px' }} />
+                            <AccessTimeIcon sx={{ color: '#0D6EFD', marginLeft: '25px', marginRight: '5px' }} />
                             <Typography variant="modal" sx={{ fontSize: '16px' }}>{lesson[1]}</Typography>
                           </Box>
                           <CloseOutlinedIcon
@@ -501,6 +504,7 @@ const LessonCreate = () => {
             <Grid item container sx={{ justifyContent: 'end', columnGap: '5%' }}>
               <Button
                 variant="text"
+                onClick={() => console.log(lessonData.regularLessons)}
               >
                 Сохранить черновик
               </Button>
