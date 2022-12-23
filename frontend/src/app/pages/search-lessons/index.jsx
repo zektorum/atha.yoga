@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   Box, InputBase, Paper, Typography, Container,
 } from '@mui/material';
+import { Link } from 'react-router-dom';
 import SettingsIcon from '@mui/icons-material/Settings';
 import SearchIcon from '@mui/icons-material/Search';
 import filterSlice from '../../core/slices/lessons/filter';
@@ -80,6 +81,8 @@ const SearchLessonsPage = () => {
         >
           {lessons && lessons.data?.map(lesson => (
             <LessonCard
+              component={Link}
+              to="/lesson-details"
               key={lesson.id}
               title={lesson.name}
               description={lesson.description}
