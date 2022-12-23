@@ -1,0 +1,17 @@
+{
+  "theme_color": "#0D6EFD",
+  "background_color": "#0D6EFD",
+  "description": "Enjoy your yoga classes everywhere! Choose your favorite teacher!",
+  "display": "standalone",
+  "name": "ATHA.Yoga",
+  "short_name": "ATHA.Yoga",
+  "start_url": "/",
+  "id": "/",
+  "icons": [
+    {
+      "src": "./img.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
