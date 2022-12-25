@@ -37,7 +37,7 @@ const LessonCreate = () => {
 
   const [startLessonDate, setStartLessonDate] = useState(null);
   const [finishLessonDate, setFinishLessonDate] = useState(null);
-  
+
   const [regularLlessonDay, setRegularLessonDay] = useState('');
   const [lessonTime, setLessonTime] = useState(null);
 
@@ -101,11 +101,11 @@ const LessonCreate = () => {
 
   const lessonsInfo = () => {
     const time = dayjs(lessonTime).minute() > 9 ? `${dayjs(lessonTime).hour()}:${dayjs(lessonTime).minute()}` : `${dayjs(lessonTime).hour()}:0${dayjs(lessonTime).minute()}`;
-    const copyRegularLesson = Object.assign([], lessonData.regularLessons);
-    copyRegularLesson.push([regularLlessonDay, time]);
+    const copyRegularLessons = Object.assign([], lessonData.regularLessons);
+    copyRegularLessons.push({ day: regularLlessonDay, time });
     setLessonData({
       ...lessonData,
-      regularLessons: copyRegularLesson,
+      regularLessons: copyRegularLessons,
     });
     setRegularLessonDay('');
     setLessonTime(null);
@@ -316,17 +316,15 @@ const LessonCreate = () => {
                     value={lessonData.date}
                     id="lesson_date"
                     minDate={dayjs(Date())}
-                    required
                     onChange={newValue => setDate(newValue)}
-                    renderInput={params => <TextField {...params} sx={{ width: '35%' }} />}
+                    renderInput={params => <TextField {...params} sx={{ width: '35%' }} required />}
                   />
                   <TimePicker
                     label="Время*"
                     value={lessonData.time}
                     id="lesson_time"
-                    required
                     onChange={newValue => setTime(newValue)}
-                    renderInput={params => <TextField {...params} sx={{ width: '35%' }} />}
+                    renderInput={params => <TextField {...params} sx={{ width: '35%' }} required />}
                   />
                 </Grid>
               )
@@ -340,10 +338,9 @@ const LessonCreate = () => {
                     <DatePicker
                       label="Начало*"
                       value={startLessonDate}
-                      required
                       minDate={dayjs(Date())}
                       onChange={newValue => setStartLessonDate(newValue)}
-                      renderInput={params => <TextField {...params} sx={{ width: '35%' }} />}
+                      renderInput={params => <TextField {...params} sx={{ width: '35%' }} required />}
                     />
                     <DatePicker
                       label="Окончание*"
@@ -352,7 +349,7 @@ const LessonCreate = () => {
                       minDate={startLessonDate}
                       maxDate={dayjs(startLessonDate).add(2, 'month')}
                       onChange={newValue => setFinishLessonDate(newValue)}
-                      renderInput={params => <TextField {...params} sx={{ width: '35%' }} />}
+                      renderInput={params => <TextField {...params} sx={{ width: '35%' }} required />}
                     />
 
                     <Typography
@@ -401,10 +398,9 @@ const LessonCreate = () => {
                       label="Время"
                       value={lessonTime}
                       id="regular_lesson_time"
-                      required
                       sx={{ width: '30%' }}
                       onChange={newValue => setLessonTime(newValue)}
-                      renderInput={params => <TextField {...params} required />}
+                      renderInput={params => <TextField {...params} />}
                     />
 
                     <Button
@@ -427,9 +423,9 @@ const LessonCreate = () => {
                         >
                           <Box sx={{ width: '10%', display: 'flex', justifyContent: 'space-around' }}>
                             <DateRangeOutlinedIcon sx={{ color: '#0D6EFD', marginRight: '5px' }} />
-                            <Typography variant="modal" sx={{ fontSize: '16px' }}>{lesson[0]}</Typography>
+                            <Typography variant="modal" sx={{ fontSize: '16px' }}>{lesson.day}</Typography>
                             <AccessTimeIcon sx={{ color: '#0D6EFD', marginLeft: '25px', marginRight: '5px' }} />
-                            <Typography variant="modal" sx={{ fontSize: '16px' }}>{lesson[1]}</Typography>
+                            <Typography variant="modal" sx={{ fontSize: '16px' }}>{lesson.time}</Typography>
                           </Box>
                           <CloseOutlinedIcon
                             sx={{ color: '#616161', cursor: 'pointer' }}
