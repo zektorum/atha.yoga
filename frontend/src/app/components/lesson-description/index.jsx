@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from 'react';
 import {
   Box, Button, Typography, Avatar,
@@ -8,16 +9,11 @@ import StarOutlineIcon from '@mui/icons-material/StarOutline';
 import ModeCommentOutlinedIcon from '@mui/icons-material/ModeCommentOutlined';
 import avatar from '../../../assets/public/profile_avatar.jpg';
 
-const LessonDescription = () => (
-  <Box
-    display="flex"
-    margin="0 auto"
-    justifyContent="center"
-    flexDirection="column"
-  >
+const LessonDescription = ({ title, description, price }) => (
+  <>
     <Box display="flex" alignItems="start" gap="16px" mb="8px">
       <Typography width="827px" variant="h4" fontSize="24px">
-        Хатха-йога для начинающих, поддерживающая тело и дух в отличной форме
+        {title}
       </Typography>
       <Typography
         display="flex"
@@ -36,25 +32,20 @@ const LessonDescription = () => (
       Начинающий • Средний • Продвинутый
     </Typography>
     <Box display="flex" alignItems="center" flexWrap="wrap" gap="3px" mb="32px">
-      <Typography variant="h4" fontSize="24px" mr="16px">₽ 350</Typography>
+      <Typography variant="h4" fontSize="24px" mr="16px">
+        ₽
+        {' '}
+        {price}
+      </Typography>
       <StarOutlineIcon sx={{ color: '#FF9800' }} />
       <Typography variant="h4" fontSize="16px">4.8</Typography>
       <Typography variant="h4" fontSize="16px" color="#BDBDBD" mr="16px">(505) оценок</Typography>
       <ModeCommentOutlinedIcon sx={{ color: '#616161' }} />
       <Typography>505</Typography>
     </Box>
-    <Box width="982px" minHeight="176px" display="flex" flexDirection="column" mb="32px">
+    <Box width="982px" maxHeight="176px" display="flex" flexDirection="column" mb="32px">
       <Typography fontSize="16px" noWrap={false}>
-        Хатха йога идеальна для начинающих и практикующих.
-        Начав заниматься хатха йогой, вы полюбите этот стиль за простоту и эффективность.
-        Практикуя йогу, вы станете на путь обретения равновесия и духовного роста.
-        Асаны не только воздействуют на мышцы тела, но и стимулируют
-        выработку гормонов, массируют внутренние органы брюшной полости человека.
-        Контроль за дыханием в йоге — один из наиболее важных элементов практики.
-        Дыхательные упражнения (Пранаямы) учат управлять своими эмоциями,
-        контролировать состояние, помогают правильно функционировать сердечно-сосудистой
-        и другим системам организма. Ведь неправильное дыхание, спазмы, блоки и
-        зажимы - одна из главных причин многих болезней...
+        {description}
       </Typography>
       <Typography component={Link} fontSize="16px" color="primary" sx={{ textDecoration: 'none' }}>
         Показать еще
@@ -110,22 +101,19 @@ const LessonDescription = () => (
         Показать расписание
       </Button>
     </Box>
-    <Typography
-      display="flex"
-      alignItems="center"
-      justifyContent="flex-start"
-      gap="6px"
-      fontSize="16px"
-      mb="56px"
-    >
+    <Box display="flex" alignItems="center" flexWrap="wrap" gap="6px" mb="56px">
       <Avatar
         src={avatar}
         sx={{
           width: '40px', height: '40px',
         }}
       />
-      Иван Иванов
-    </Typography>
+      <Typography
+        fontSize="16px"
+      >
+        Иван Иванов
+      </Typography>
+    </Box>
     <Box display="flex" justifyContent="flex-end">
       <Button
         variant="contained"
@@ -136,7 +124,7 @@ const LessonDescription = () => (
         Записаться
       </Button>
     </Box>
-  </Box>
+  </>
 );
 
 export default LessonDescription;

@@ -1,8 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  Box, Typography,
-} from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Link, useParams } from 'react-router-dom';
@@ -36,15 +34,25 @@ const LessonDetailsPage = () => {
         </Typography>
         <SettingsIcon color="disabled" />
       </Box>
-      <Box width="100%">
+      <Box
+        display="flex"
+        margin="0 auto"
+        justifyContent="center"
+        flexDirection="column"
+      >
         {errorMessage && (
-          <Typography color="error.main">
-            Error:
-            {errorMessage}
-          </Typography>
+        <Typography color="error.main">
+          Error:
+          {errorMessage}
+        </Typography>
         )}
-        <LessonDescription />
-        {/* {lesson && console.log(lesson)} */}
+        {lesson && (
+        <LessonDescription
+          title={lesson.data.name}
+          description={lesson.data.description}
+          price={lesson.data.price}
+        />
+        )}
       </Box>
     </>
   );
