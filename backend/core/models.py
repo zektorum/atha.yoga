@@ -95,7 +95,7 @@ class QuestionnaireTeacher(TimeStampedModel):
         User, on_delete=models.CASCADE, related_name="teacher_profiles"
     )
     name = models.CharField(_("name"), max_length=30)
-    surname = models.CharField(_("surname"), max_length=30)
+    surname = models.CharField(_("surname"), max_length=50)
     date_of_birth = models.DateField(_("date of birth"))
     gender = models.CharField(
         _("gender"), max_length=10, choices=GenderTypes.choices, null=True
