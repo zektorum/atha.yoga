@@ -1,5 +1,7 @@
 from typing import Optional
 
+from django.core.exceptions import ValidationError
+from django.db import IntegrityError
 from django.db.models import QuerySet, Prefetch
 
 from core.app.repositories.base_repository import BaseRepository
@@ -14,7 +16,10 @@ class UserRepository(BaseRepository):
 
     def update_username(self, user: User, username: str) -> None:
         user.username = username
-        user.save()
+        try:
+            self.store(user)
+        except IntegrityError:
+            raise ValidationError(f"User with username {username} already exists")
 
     def find_by_email(self, email: str) -> Optional[User]:
         return User.objects.filter(email=email).first()
