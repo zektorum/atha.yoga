@@ -1,6 +1,5 @@
 from django.urls import path
 
-from core.app.handlers.payments_handlers import SuccessPaymentHandler
 from core.app.handlers.teachers_questionnaire_handlers import (
     QuestionnaireTeacherHandler,
 )
@@ -29,5 +28,4 @@ urlpatterns = [
     path("im/", LoggedUserProfileHandler.as_view(), name="im"),
     path("im/update/", UserProfileUpdateHandler.as_view(), name="im_update"),
     path("profile/<int:pk>/", UserProfileHandler.as_view(), name="im"),
-    path("success-payment/<str:transaction_id>/", SuccessPaymentHandler.as_view()),
 ]

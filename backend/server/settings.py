@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -215,3 +216,5 @@ LOGGING = {
 }
 
 DEFAULT_SUPERUSER_PASSWORD = os.environ.get("POSTGRES_PASSWORD")
+
+COURSE_LESSONS_CYCLE = timedelta(days=60)
