@@ -165,7 +165,7 @@ class FavoriteCourseListHandler(APIView):
 class CourseTicketBuyHandler(GenericAPIView):
     serializer_class = CourseTicketBuyRequest
 
-    def post(self, *args: Any, **kwargs: Any) -> HttpResponseRedirect:
+    def post(self, *args: Any, **kwargs: Any) -> Response:
         data = self.serializer_class(data=self.request.data)
         data.is_valid(raise_exception=True)
 
@@ -175,14 +175,15 @@ class CourseTicketBuyHandler(GenericAPIView):
             amount=data.validated_data["amount"],
         )
 
-        return redirect(payment_url)
+        return Response({"data": payment_url})
 
 
 class SuccessTicketPaymentHandler(APIView):
     repos = TicketTransactionRepository()
 
     def get(self, request: Request, transaction_id: str) -> HttpResponseRedirect:
-        return TicketBuy().confirm(transaction_id=transaction_id)
+        redirect_url = TicketBuy().confirm(transaction_id=transaction_id)
+        return redirect(redirect_url)
 
 
 @permission_classes([IsAuthenticated])

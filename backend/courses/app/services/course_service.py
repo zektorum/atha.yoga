@@ -6,8 +6,6 @@ from typing import List, Dict
 
 from django.conf import settings
 from django.db import transaction
-from django.http import HttpResponseRedirect
-from django.shortcuts import redirect
 from django.utils.timezone import now
 from furl import furl
 from rest_framework.exceptions import NotFound, ValidationError, PermissionDenied
@@ -15,7 +13,7 @@ from rest_framework.exceptions import NotFound, ValidationError, PermissionDenie
 from core.app.services.payment_service import TinkoffPaymentService
 from core.app.services.types import PaymentStatuses
 from core.app.utils.util import setup_resource_attributes
-from core.models import User
+from core.models import User, TransactionStatuses
 from core.models import UserRoles
 from courses.app.repositories.course_repository import (
     CourseRepository,
@@ -176,6 +174,7 @@ class TicketBuy:
         ticket_transaction.ticket = ticket
         ticket_transaction.ticket_amount = amount
         ticket_transaction.amount = ticket.course.price * amount
+        ticket_transaction.user = ticket.user
         return ticket_transaction
 
     def buy(self, course_id: int, user: User, amount: int) -> str:
@@ -188,7 +187,7 @@ class TicketBuy:
             transaction_id=ticket_transaction.id,
             description=ticket.course.name,
             success_url=furl(url=settings.BACKEND_URL)
-            .join(f"courses/success-payment/{ticket_transaction.id}/")
+            .join(f"api/courses/success-payment/{ticket_transaction.id}/")
             .url,
         )
         ticket_transaction.payment_id = pay_info.PaymentId
@@ -212,19 +211,25 @@ class TicketBuy:
             ticket.amount += ticket_transaction.ticket_amount
             self.repository.store(ticket=ticket)
 
-    def confirm(self, transaction_id: str) -> HttpResponseRedirect:
+    def confirm(self, transaction_id: str) -> str:
         try:
             ticket_transaction = self.ticket_transaction(transaction_id=transaction_id)
+            if ticket_transaction.status != TransactionStatuses.INITIAL:
+                raise TicketBuyConfirmError
             payment_status = TinkoffPaymentService().payment_status(
                 payment_id=ticket_transaction.payment_id
             )
             if payment_status != PaymentStatuses.CONFIRMED:
+                ticket_transaction.status = TransactionStatuses.DECLINED
+                self.transaction_repository.store(transaction=ticket_transaction)
                 raise TicketBuyConfirmError
             self.update_tickets_amount(ticket_transaction=ticket_transaction)
         except TicketBuyConfirmError:
-            return redirect(furl(settings.SITE_URL).join("failed-payment").url)
+            return furl(settings.SITE_URL).join("failed-payment").url
         else:
-            return redirect(furl(settings.SITE_URL).join("success-payment").url)
+            ticket_transaction.status = TransactionStatuses.CONFIRMED
+            self.transaction_repository.store(transaction=ticket_transaction)
+            return furl(settings.SITE_URL).join("success-payment").url
 
 
 class CourseParticipateService:

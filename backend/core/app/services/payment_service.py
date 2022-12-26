@@ -23,7 +23,7 @@ class TinkoffPaymentService:
         url = furl.furl(url=self.BASE_URL).join("Init")
         params = {
             "TerminalKey": settings.TERMINAL_KEY,
-            "Amount": amount,
+            "Amount": int(amount),
             "Description": description,
             "OrderId": transaction_id,
             "RedirectDueDate": (now() + timedelta(hours=1))
