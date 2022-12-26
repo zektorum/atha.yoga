@@ -15,6 +15,7 @@ from courses.app.handlers.course_handlers import (
     CourseTicketBuyHandler,
     CourseTicketUseHandler,
     CourseRetrieveHandler,
+    SuccessTicketPaymentHandler,
 )
 from courses.app.handlers.review_handlers import (
     CourseReviewListHandler,
@@ -65,5 +66,8 @@ urlpatterns = [
         "course-reviews/<int:pk>/remove/",
         CourseReviewRemoveHandler.as_view(),
         name="course_review_remove",
+    ),
+    path(
+        "success-payment/<str:transaction_id>/", SuccessTicketPaymentHandler.as_view()
     ),
 ]

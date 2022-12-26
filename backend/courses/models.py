@@ -2,7 +2,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from polymorphic.models import PolymorphicModel
 
-from core.models import User, TimeStampedModel
+from core.models import User, TimeStampedModel, Transaction
 
 
 class CourseTypes(models.TextChoices):
@@ -114,7 +114,7 @@ class CourseComment(Comment):
         verbose_name_plural = "Комментарии к курсу"
 
 
-class Ticket(models.Model):
+class Ticket(TimeStampedModel):
     course = models.ForeignKey(Course, on_delete=models.DO_NOTHING)
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     amount = models.IntegerField()
@@ -122,3 +122,8 @@ class Ticket(models.Model):
     class Meta:
         verbose_name = "Билет"
         verbose_name_plural = "Билеты"
+
+
+class TicketTransaction(Transaction):
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE)
+    ticket_amount = models.IntegerField()

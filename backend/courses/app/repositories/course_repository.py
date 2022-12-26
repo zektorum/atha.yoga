@@ -2,6 +2,7 @@ from typing import Optional
 
 from django.db.models import QuerySet, Q, F
 from elasticsearch_dsl import Q as EQ
+from rest_framework.exceptions import NotFound
 
 from core.app.repositories.base_repository import BaseRepository
 from core.models import User
@@ -16,8 +17,11 @@ class CourseRepository(BaseRepository):
     def store(self, course: Course) -> None:
         course.save()
 
-    def find_by_id(self, id_: int) -> Optional[Course]:
-        return self.model.objects.filter(pk=id_).first()
+    def find_by_id(self, id_: int, raise_exception: bool = False) -> Optional[Course]:
+        course = self.model.objects.filter(pk=id_).first()
+        if not course and raise_exception:
+            raise NotFound(f"Undefined course with id {id_}")
+        return course
 
     def find_by_id_teacher(self, id_: int, teacher_id: int) -> Optional[Course]:
         return self.model.objects.filter(pk=id_, teacher_id=teacher_id).first()
@@ -73,9 +77,6 @@ class TicketRepository(BaseRepository):
     def store(self, ticket: Ticket) -> None:
         ticket.save()
 
-    def destroy(self, ticket: Ticket) -> None:
-        ticket.delete()
-
     def ticket_for_course(self, course_id: int, user: User) -> Optional[Ticket]:
         return self.model.objects.filter(course_id=course_id, user=user.id).first()
 
@@ -86,4 +87,9 @@ class TicketRepository(BaseRepository):
             self.model.objects.select_for_update()
             .filter(course_id=course_id, user=user.id)
             .first()
+        )
+
+    def find_by_id_to_update(self, id_: int, user: User) -> Optional[Ticket]:
+        return (
+            self.model.objects.select_for_update().filter(pk=id_, user=user.id).first()
         )

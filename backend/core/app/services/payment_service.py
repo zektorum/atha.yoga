@@ -18,7 +18,7 @@ class TinkoffPaymentService:
     BASE_URL = "https://securepay.tinkoff.ru/v2"
 
     def init_pay(
-        self, amount: int, transaction_id: str, description: str
+        self, amount: int, transaction_id: str, description: str, success_url: str
     ) -> InitPaymentResponse:
         url = furl.furl(url=self.BASE_URL).join("Init")
         params = {
@@ -29,9 +29,7 @@ class TinkoffPaymentService:
             "RedirectDueDate": (now() + timedelta(hours=1))
             .replace(microsecond=0)
             .isoformat(),
-            "SuccessURL": furl.furl(url=settings.BACKEND_URL)
-            .join(f"core/success-payment/{transaction_id}/")
-            .url,
+            "SuccessURL": success_url,
         }
         res = requests.post(url=url.url, data=params).json()
         if not res.get("Success"):

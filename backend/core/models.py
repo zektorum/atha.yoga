@@ -59,12 +59,15 @@ class User(AbstractUser):
         verbose_name_plural = "Пользователи"
 
 
-class Transaction(TimeStampedModel):
+class Transaction(PolymorphicModel):
     id = models.UUIDField(
         primary_key=True, unique=True, default=uuid.uuid4, editable=False
     )
     amount = models.PositiveIntegerField()
-    payment_id = models.CharField(max_length=40)
+    payment_id = models.CharField(max_length=40, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=False)
+    updated_at = models.DateTimeField(auto_now=True, db_index=False)
 
 
 class GenderTypes(models.TextChoices):

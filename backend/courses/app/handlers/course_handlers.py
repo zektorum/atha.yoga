@@ -1,5 +1,7 @@
 from typing import Any
 
+from django.http import HttpResponseRedirect
+from django.shortcuts import redirect
 from rest_framework.decorators import permission_classes
 from rest_framework.exceptions import NotFound
 from rest_framework.generics import GenericAPIView
@@ -20,10 +22,11 @@ from courses.app.http.requests.course_requests import (
 )
 from courses.app.http.resources.course_resources import CourseResource
 from courses.app.repositories.course_repository import CourseRepository
+from courses.app.repositories.transaction_repository import TicketTransactionRepository
 from courses.app.services.course_service import (
     CourseCreator,
     FavoriteCoursesWork,
-    TicketWorkService,
+    TicketBuy,
 )
 from courses.app.services.course_service import (
     CourseUpdator,
@@ -162,17 +165,24 @@ class FavoriteCourseListHandler(APIView):
 class CourseTicketBuyHandler(GenericAPIView):
     serializer_class = CourseTicketBuyRequest
 
-    def post(self, *args: Any, **kwargs: Any) -> Response:
+    def post(self, *args: Any, **kwargs: Any) -> HttpResponseRedirect:
         data = self.serializer_class(data=self.request.data)
         data.is_valid(raise_exception=True)
 
-        TicketWorkService().buy(
+        payment_url = TicketBuy().buy(
             course_id=data.validated_data["course_id"],
             user=self.request.user,
             amount=data.validated_data["amount"],
         )
 
-        return Response("Ticket obtained")
+        return redirect(payment_url)
+
+
+class SuccessTicketPaymentHandler(APIView):
+    repos = TicketTransactionRepository()
+
+    def get(self, request: Request, transaction_id: str) -> HttpResponseRedirect:
+        return TicketBuy().confirm(transaction_id=transaction_id)
 
 
 @permission_classes([IsAuthenticated])
