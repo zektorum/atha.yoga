@@ -3,6 +3,7 @@ from functools import cached_property
 from typing import Tuple
 
 from django.conf import settings
+from django.db import IntegrityError
 from rest_framework.exceptions import (
     ValidationError,
     AuthenticationFailed,
@@ -124,10 +125,6 @@ class UserProfileUpdator:
         self.data = data
 
     def update(self) -> User:
-        if self.repository.find_by_username(self.data["username"]):
-            raise ValidationError(
-                f"User with username {self.data['username']} already exists"
-            )
         if "avatar" in self.data:
             self.data["avatar"] = ProfilePhotoCreator(
                 photo=self.data["avatar"]
@@ -135,5 +132,10 @@ class UserProfileUpdator:
         setup_resource_attributes(
             instance=self.user, validated_data=self.data, fields=list(self.data.keys())
         )
-        self.user.save()
+        try:
+            self.repository.store(self.user)
+        except IntegrityError:
+            raise ValidationError(
+                f"User with username {self.data['username']} already exists"
+            )
         return self.user
