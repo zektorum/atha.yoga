@@ -1,8 +1,8 @@
 from typing import Optional
 
-from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.db.models import QuerySet, Prefetch
+from rest_framework.exceptions import ValidationError
 
 from core.app.repositories.base_repository import BaseRepository
 from core.models import User, QuestionnaireTeacher, QuestionnaireTeacherStatuses
