@@ -108,6 +108,7 @@ class CourseUpdator:
         setup_resource_attributes(
             instance=course, validated_data=self._data, fields=list(self._data.keys())
         )
+        self.repository.store(course)
         return course
 
 
