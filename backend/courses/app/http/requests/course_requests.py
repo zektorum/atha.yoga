@@ -59,7 +59,10 @@ class CourseCreateRequest(CourseUpdateRequest):
         ):
             raise ValidationError({"price": "Price must be more then 0"})
         if attrs.get("deadline_datetime"):
-            if attrs["start_datetime"].timestamp() >= attrs["deadline_datetime"]:
+            if (
+                attrs["start_datetime"].timestamp()
+                >= attrs["deadline_datetime"].timestamp()
+            ):
                 raise ValidationError(
                     {
                         "start_date": "start_datetime attribute must be less then deadline_datetime"
