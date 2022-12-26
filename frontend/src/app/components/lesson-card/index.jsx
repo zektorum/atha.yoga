@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 const LessonCard = ({ title, description }) => (
   <Box
     component={Link}
+    // to=`/lesson-details/${id}`
     to="/lesson-details"
     width="calc(50% - 10px)"
     sx={{ textDecoration: 'none', borderRadius: '8px', boxShadow: '0px 8px 16px rgba(46, 60, 80, 0.1)' }}
