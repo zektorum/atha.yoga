@@ -11,15 +11,12 @@ const lessonSlice = createSlice({
   name: 'lesson',
   initialState,
   extraReducers: {
-    // [getLessonSlice.pending]: state => {
-    //   state.errorMessage = null;
-    // },
     [getLessonSlice.fulfilled]: (state, action) => {
-      state.lessons = action.payload;
+      state.lesson = action.payload;
       state.errorMessage = null;
     },
     [getLessonSlice.rejected]: (state, action) => {
-      state.lessons = null;
+      state.lesson = null;
       state.errorMessage = action.payload;
     },
   },

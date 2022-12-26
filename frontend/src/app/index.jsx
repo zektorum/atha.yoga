@@ -71,7 +71,7 @@ const App = () => {
             <Route path="my-lessons" element={<MyLessonsPage />} />
             <Route path="calendar" element={<CalendarPage />} />
             <Route path="profile" element={<ProfilePage auth={auth} />} />
-            <Route path="lesson-details" element={<LessonDetailsPage />} />
+            <Route path="lesson-details/:id" element={<LessonDetailsPage />} />
           </Route>
         </Route>
       </Routes>
