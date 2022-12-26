@@ -25,7 +25,7 @@ from courses.app.handlers.review_handlers import (
 urlpatterns = [
     path("", CourseCreateHandler.as_view(), name="course_create"),
     path("<int:pk>/", CourseRetrieveHandler.as_view(), name="course_retrieve"),
-    path("<int:pk>/", CourseUpdateHandler.as_view(), name="course_update"),
+    path("<int:pk>/update/", CourseUpdateHandler.as_view(), name="course_update"),
     path("filter/", CourseFilterHandler.as_view(), name="courses_filter"),
     path(
         "favorites/", FavoriteCourseListHandler.as_view(), name="favorite_course_list"
