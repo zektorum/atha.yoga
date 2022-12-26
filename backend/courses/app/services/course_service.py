@@ -104,6 +104,7 @@ class CourseUpdator:
         setup_resource_attributes(
             instance=course, validated_data=self._data, fields=list(self._data.keys())
         )
+        course.save()
         return course
 
 

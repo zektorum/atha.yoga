@@ -14,6 +14,7 @@ from core.app.http.requests.user_requests import (
     UserChangePassRequest,
     UserResetPassRequest,
     UserSendPwdResetMailRequest,
+    UserProfileUpdateRequest,
 )
 from core.app.http.resources.user_resources import UserResource
 from core.app.repositories.user_repository import UserRepository
@@ -22,6 +23,7 @@ from core.app.services.user_services import (
     UserLogin,
     UserChangePass,
     UserResetPass,
+    UserProfileUpdator,
 )
 
 
@@ -109,4 +111,17 @@ class UserProfileHandler(APIView):
         if not user:
             raise NotFound(f"Undefined user with pk {pk}")
 
+        return Response({"data": UserResource(user).data})
+
+
+@permission_classes([IsAuthenticated])
+class UserProfileUpdateHandler(GenericAPIView):
+    serializer_class = UserProfileUpdateRequest
+
+    def patch(self, *args: Any, **kwargs: Any) -> Response:
+        data = self.serializer_class(data=self.request.data, partial=True)
+        data.is_valid(raise_exception=True)
+        user = UserProfileUpdator(
+            user=self.request.user, data=data.validated_data
+        ).update()
         return Response({"data": UserResource(user).data})

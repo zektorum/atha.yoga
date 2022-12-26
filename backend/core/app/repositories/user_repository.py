@@ -12,8 +12,11 @@ class UserRepository(BaseRepository):
     def store(self, user: User) -> None:
         user.save()
 
-    def find_user_by_email(self, email: str) -> Optional[User]:
+    def find_by_email(self, email: str) -> Optional[User]:
         return User.objects.filter(email=email).first()
+
+    def find_by_username(self, username: str) -> Optional[User]:
+        return User.objects.filter(username=username).first()
 
     def find_by_id(self, id_: int, fetch_rels: bool = False) -> Optional[User]:
         query = self.model.objects.filter(pk=id_)
