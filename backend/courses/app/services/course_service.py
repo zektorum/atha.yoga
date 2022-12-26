@@ -76,7 +76,11 @@ class CourseCreator:
                     course_datetime = datetime.datetime.combine(
                         date=cur_date, time=course_info["start_time"]
                     )
-                    if self.course.deadline_datetime < course_datetime < now():
+                    if (
+                        self.course.deadline_datetime.timestamp()
+                        < course_datetime.timestamp()
+                        < now().timestamp()
+                    ):
                         continue
                     lesson = Lesson()
                     lesson.course = self.course
@@ -110,6 +114,7 @@ class CourseUpdator:
         setup_resource_attributes(
             instance=course, validated_data=self._data, fields=list(self._data.keys())
         )
+        self.repository.store(course)
         return course
 
 

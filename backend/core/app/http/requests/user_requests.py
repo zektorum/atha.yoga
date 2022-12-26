@@ -53,3 +53,11 @@ class UserResetPassRequest(UnimplementedSerializer):
     pwd_reset_token = serializers.CharField(max_length=128)
     email = serializers.EmailField()
     new_password = PasswordField()
+
+
+class UserProfileUpdateRequest(UnimplementedSerializer):
+    username = serializers.CharField(max_length=150)
+    first_name = serializers.CharField(max_length=100)
+    last_name = serializers.CharField(max_length=100)
+    about = serializers.CharField(max_length=100)
+    avatar = serializers.ImageField()
