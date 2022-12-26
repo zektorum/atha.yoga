@@ -12,6 +12,10 @@ class UserRepository(BaseRepository):
     def store(self, user: User) -> None:
         user.save()
 
+    def update_username(self, user: User, username: str) -> None:
+        user.username = username
+        user.save()
+
     def find_by_email(self, email: str) -> Optional[User]:
         return User.objects.filter(email=email).first()
 

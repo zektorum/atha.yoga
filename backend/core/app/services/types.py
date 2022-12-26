@@ -88,7 +88,7 @@ class QuestionnaireTeacherData(TypedDict):
     user_with_passport_photo: InMemoryUploadedFile
 
 
-class UserProfileUpdateData(TypedDict):
+class UserProfileUpdateData(TypedDict, total=False):
     username: str
     first_name: str
     last_name: str
