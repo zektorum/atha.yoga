@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import getLessonSlice from './getLesson';
 
 const initialState = {
-  lesson: [],
+  lesson: null,
   errorMessage: null,
 };
 
