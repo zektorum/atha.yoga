@@ -105,7 +105,7 @@ class UserProfileHandler(APIView):
     repository = UserRepository()
 
     def get(self, request: Request, pk: int, *args: Any, **kwargs: Any) -> Response:
-        user = self.repository.find_by_id(id_=self.request.user.id, fetch_rels=True)
+        user = self.repository.find_by_id(id_=pk, fetch_rels=True)
         if not user:
             raise NotFound(f"Undefined user with pk {pk}")
 
