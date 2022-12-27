@@ -14,10 +14,14 @@ class LessonRepository(BaseRepository):
         self.model.objects.bulk_create(objs)
 
     def find_by_id(self, id_: int) -> Optional[Lesson]:
-        return self.model.objects.filter(pk=id_).first()
+        return (
+            self.model.objects.prefetch_related("participants").filter(pk=id_).first()
+        )
 
     def find_by_course_id(self, course_id: int) -> QuerySet[Lesson]:
-        return self.model.objects.filter(course_id=course_id)
+        return self.model.objects.prefetch_related("participants").filter(
+            course_id=course_id
+        )
 
     def is_participant(self, lesson: Lesson, user: User) -> Optional[Lesson]:
         return lesson.participants.filter(id=user.id)
