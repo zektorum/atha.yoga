@@ -1,6 +1,8 @@
 from typing import Optional
 
+from django.db import IntegrityError
 from django.db.models import QuerySet, Prefetch
+from rest_framework.exceptions import ValidationError
 
 from core.app.repositories.base_repository import BaseRepository
 from core.models import User, QuestionnaireTeacher, QuestionnaireTeacherStatuses
@@ -12,8 +14,18 @@ class UserRepository(BaseRepository):
     def store(self, user: User) -> None:
         user.save()
 
-    def find_user_by_email(self, email: str) -> Optional[User]:
+    def update_username(self, user: User, username: str) -> None:
+        user.username = username
+        try:
+            self.store(user)
+        except IntegrityError:
+            raise ValidationError(f"User with username {username} already exists")
+
+    def find_by_email(self, email: str) -> Optional[User]:
         return User.objects.filter(email=email).first()
+
+    def find_by_username(self, username: str) -> Optional[User]:
+        return User.objects.filter(username=username).first()
 
     def find_by_id(self, id_: int, fetch_rels: bool = False) -> Optional[User]:
         query = self.model.objects.filter(pk=id_)
