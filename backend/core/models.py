@@ -34,14 +34,16 @@ def user_default_roles() -> List[Union[UserRoles, str]]:
 
 
 class User(AbstractUser):
-    first_name = models.CharField(_("first name"), max_length=100)
-    last_name = models.CharField(_("last name"), max_length=100)
+    first_name = models.CharField(_("first name"), max_length=100, blank=True)
+    last_name = models.CharField(_("last name"), max_length=100, blank=True)
     email = models.EmailField(_("email address"), unique=True)
 
     about = models.CharField(max_length=100, blank=True)
     avatar = models.ImageField(upload_to="user_avatars/", blank=True)
     roles = models.JSONField(default=user_default_roles)
-    pwd_reset_token = models.CharField(_("pwd reset token"), max_length=300)
+    pwd_reset_token = models.CharField(
+        _("pwd reset token"), max_length=300, blank=True, null=True
+    )
 
     def has_role(self, role: UserRoles) -> bool:
         return role in self.roles
@@ -59,12 +61,22 @@ class User(AbstractUser):
         verbose_name_plural = "Пользователи"
 
 
-class Transaction(TimeStampedModel):
+class TransactionStatuses(models.TextChoices):
+    INITIAL = "INITIAL"
+    CONFIRMED = "CONFIRMED"
+    DECLINED = "DECLINED"
+
+
+class Transaction(PolymorphicModel):
     id = models.UUIDField(
         primary_key=True, unique=True, default=uuid.uuid4, editable=False
     )
     amount = models.PositiveIntegerField()
-    payment_id = models.CharField(max_length=40)
+    payment_id = models.CharField(max_length=40, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    status = models.CharField(max_length=50, choices=TransactionStatuses.choices)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=False)
+    updated_at = models.DateTimeField(auto_now=True, db_index=False)
 
 
 class GenderTypes(models.TextChoices):
@@ -83,7 +95,7 @@ class QuestionnaireTeacher(TimeStampedModel):
         User, on_delete=models.CASCADE, related_name="teacher_profiles"
     )
     name = models.CharField(_("name"), max_length=30)
-    surname = models.CharField(_("surname"), max_length=30)
+    surname = models.CharField(_("surname"), max_length=50)
     date_of_birth = models.DateField(_("date of birth"))
     gender = models.CharField(
         _("gender"), max_length=10, choices=GenderTypes.choices, null=True
@@ -97,7 +109,7 @@ class QuestionnaireTeacher(TimeStampedModel):
         choices=QuestionnaireTeacherStatuses.choices,
         default=QuestionnaireTeacherStatuses.MODERATION,
     )
-    certificate_photos = models.ManyToManyField(Attachment)
+    certificate_photos = models.ManyToManyField(Attachment, blank=True)
     user_photo = models.ImageField()
     passport_photo = models.ImageField()
     user_with_passport_photo = models.ImageField()

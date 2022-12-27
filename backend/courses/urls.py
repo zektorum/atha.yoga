@@ -17,6 +17,7 @@ from courses.app.handlers.course_handlers import (
     CourseRetrieveHandler,
     LessonRetrieveHandler,
     LessonListHandler,
+    SuccessTicketPaymentHandler,
 )
 from courses.app.handlers.review_handlers import (
     CourseReviewListHandler,
@@ -27,7 +28,7 @@ from courses.app.handlers.review_handlers import (
 urlpatterns = [
     path("", CourseCreateHandler.as_view(), name="course_create"),
     path("<int:pk>/", CourseRetrieveHandler.as_view(), name="course_retrieve"),
-    path("<int:pk>/", CourseUpdateHandler.as_view(), name="course_update"),
+    path("<int:pk>/update/", CourseUpdateHandler.as_view(), name="course_update"),
     path("filter/", CourseFilterHandler.as_view(), name="courses_filter"),
     path("lessons/<int:pk>/", LessonRetrieveHandler.as_view(), name="lesson_retrieve"),
     path("<int:pk>/lessons/", LessonListHandler.as_view(), name="lesson_list"),
@@ -69,5 +70,8 @@ urlpatterns = [
         "course-reviews/<int:pk>/remove/",
         CourseReviewRemoveHandler.as_view(),
         name="course_review_remove",
+    ),
+    path(
+        "success-payment/<str:transaction_id>/", SuccessTicketPaymentHandler.as_view()
     ),
 ]

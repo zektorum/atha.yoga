@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -98,6 +99,11 @@ SPECTACULAR_SETTINGS = {
     "COMPONENT_SPLIT_REQUEST": True,
 }
 
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=7),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=8),
+}
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -146,8 +152,7 @@ EMAIL_HOST = os.getenv("EMAIL_HOST")
 EMAIL_PORT = os.getenv("EMAIL_PORT")
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
+EMAIL_USE_SSL = True
 
 ELASTICSEARCH_DSL = {
     "default": {
@@ -215,3 +220,5 @@ LOGGING = {
 }
 
 DEFAULT_SUPERUSER_PASSWORD = os.environ.get("POSTGRES_PASSWORD")
+
+COURSE_LESSONS_CYCLE = timedelta(days=60)
