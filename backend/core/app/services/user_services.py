@@ -1,0 +1,139 @@
+import uuid
+from functools import cached_property
+from typing import Tuple
+
+from django.conf import settings
+from rest_framework.exceptions import (
+    ValidationError,
+    AuthenticationFailed,
+    PermissionDenied,
+)
+
+from core.app.errors import ErrorsMessages
+from core.app.repositories.user_repository import UserRepository
+from core.app.services.email_services import SimpleEmailTextService
+from core.app.services.types import TextMailData, UserProfileUpdateData
+from core.app.services.types import (
+    UserRegisterData,
+    UserLoginData,
+    UserChangePassData,
+)
+from core.app.utils.jwt import UserToken, get_tokens_for_user
+from core.app.utils.profile_photo_creator import ProfilePhotoCreator
+from core.app.utils.util import setup_resource_attributes
+from core.models import User
+
+
+class UserRegister:
+    repository = UserRepository()
+
+    def __init__(self, data: UserRegisterData):
+        self.data = data
+
+    @cached_property
+    def user(self) -> User:
+        user = User()
+        if self.repository.find_by_email(self.data["email"]):
+            raise ValidationError("User with this email already exists")
+        user.username = user.email = self.data["email"]
+        user.set_password(self.data["password"])
+        return user
+
+    def register(self) -> Tuple[User, UserToken]:
+        self.repository.store(self.user)
+        token_data = get_tokens_for_user(user=self.user)
+        return self.user, token_data
+
+
+class UserLogin:
+    repository = UserRepository()
+
+    def __init__(self, data: UserLoginData):
+        self.data = data
+
+    @cached_property
+    def user(self) -> User:
+        user = self.repository.find_by_email(self.data["email"])
+        if not user or not user.check_password(self.data["password"]):
+            raise AuthenticationFailed(ErrorsMessages.AUTH_FAILED.value)
+        return user
+
+    def login(self) -> Tuple[User, UserToken]:
+        token_data = get_tokens_for_user(self.user)
+        return self.user, token_data
+
+
+class UserChangePass:
+    repository = UserRepository()
+
+    def __init__(self, data: UserChangePassData):
+        self.data = data
+
+    @cached_property
+    def user(self) -> User:
+        user = self.repository.find_by_email(self.data["email"])
+        if not user or not user.check_password(self.data["password"]):
+            raise AuthenticationFailed()
+        user.set_password(self.data["new_password"])
+        return user
+
+    def change(self) -> Tuple[User, UserToken]:
+        self.repository.store(self.user)
+        token_data = get_tokens_for_user(self.user)
+        return self.user, token_data
+
+
+class UserResetPass:
+    repository = UserRepository()
+
+    def reset(self, email: str) -> None:
+        user = self.repository.find_by_email(email)
+        if not user:
+            raise PermissionDenied("User with this email does not exist")
+        pwd_reset_token = str(uuid.uuid4())
+        SimpleEmailTextService(
+            data=TextMailData(
+                subject="Please reset your password",
+                message=f"""Reset your Atha.Yoga password
+            Click here: {settings.SITE_URL}/?token={pwd_reset_token}/""",
+                receivers=[email],
+            )
+        ).send()
+        user.pwd_reset_token = pwd_reset_token
+        self.repository.store(user=user)
+
+    def change(
+        self, new_password: str, email: str, pwd_reset_token: str
+    ) -> Tuple[User, UserToken]:
+        user = self.repository.find_by_email(email=email)
+        if not user:
+            raise PermissionDenied("User with this email does not exist")
+        if pwd_reset_token != user.pwd_reset_token:
+            raise AuthenticationFailed("Tokens don't match")
+        user.set_password(new_password)
+        self.repository.store(user=user)
+        token_data = get_tokens_for_user(user)
+        return user, token_data
+
+
+class UserProfileUpdator:
+    repository = UserRepository()
+
+    def __init__(self, user: User, data: UserProfileUpdateData):
+        self.user = user
+        self.data = data
+
+    def update(self) -> User:
+        if username := self.data.pop("username", None):
+            self.repository.update_username(self.user, username)
+
+        if "avatar" in self.data:
+            self.data["avatar"] = ProfilePhotoCreator(
+                photo=self.data["avatar"]
+            ).create()
+        setup_resource_attributes(
+            instance=self.user, validated_data=self.data, fields=list(self.data.keys())
+        )
+        self.repository.store(self.user)
+
+        return self.user

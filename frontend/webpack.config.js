@@ -5,6 +5,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerWebpackPlugin = require('css-minimizer-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const WorkboxPlugin = require('workbox-webpack-plugin');
 const config = require('./env.config');
 
 const { NODE_ENV: env } = process.env;
@@ -124,6 +125,7 @@ module.exports = {
   output: {
     filename: getFilename('js'),
     path: path.resolve(__dirname, 'dist'),
+    publicPath: '/',
   },
   mode: envConfig.mode,
   module: {
@@ -142,9 +144,17 @@ module.exports = {
     extractHtml(envConfig),
     extractCss,
     extractFiles,
+    new WorkboxPlugin.GenerateSW({
+      maximumFileSizeToCacheInBytes: 25_000_000,
+      clientsClaim: true,
+      skipWaiting: true,
+    }),
   ],
   resolve: {
     extensions: ['.js', '.jsx'],
   },
   ...envConfig.isDev && { devtool: 'source-map' },
+  devServer: {
+    historyApiFallback: true,
+  },
 };
