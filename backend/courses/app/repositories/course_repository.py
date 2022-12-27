@@ -62,7 +62,7 @@ class CourseRepository(BaseRepository):
         if "start_datetime" in data:
             filter_query &= Q(start_datetime__date=data["start_datetime"].date())
         if "day" in data:
-            filter_query &= Q(start_datetime__weekday=data["day"])
+            filter_query &= Q(start_datetime__week_day=data["day"])
         if "end_datetime" in data:
             base_query = base_query.annotate(
                 end_datetime=F("duration") + F("start_datetime")
