@@ -214,7 +214,7 @@ class LessonListHandler(APIView):
     repository = LessonRepository()
 
     def get(self, request: Request, pk: int, *args: Any, **kwargs: Any) -> Response:
-        lessons = self.repository.prefetch_related(
+        lessons = self.repository.fetch_relations(
             self.repository.find_by_course_id(course_id=pk)
         )
         return Response(
