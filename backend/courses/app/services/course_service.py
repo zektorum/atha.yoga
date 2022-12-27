@@ -26,7 +26,7 @@ from courses.app.services.types import (
     CourseUpdateData,
     LessonCreateData,
 )
-from courses.models import Course, Lesson, Ticket, TicketTransaction
+from courses.models import Course, Lesson, Ticket, TicketTransaction, CoursePaymentTypes
 
 
 class CourseCreator:
@@ -184,6 +184,8 @@ class TicketBuy:
 
     def buy(self, course_id: int, user: User, amount: int) -> str:
         course = self.course_repository.find_by_id(id_=course_id, raise_exception=True)
+        if course.payment != CoursePaymentTypes.PAYMENT:
+            raise ValidationError("The course does not require tickets")
         ticket = self.ticket(course=course, user=user)
         ticket_transaction = self._init_ticket_transaction(ticket=ticket, amount=amount)
         self.transaction_repository.store(transaction=ticket_transaction)
