@@ -9,7 +9,9 @@ import StarOutlineIcon from '@mui/icons-material/StarOutline';
 import ModeCommentOutlinedIcon from '@mui/icons-material/ModeCommentOutlined';
 import avatar from '../../../assets/public/profile_avatar.jpg';
 
-const LessonDescription = ({ title, description, price }) => (
+const LessonDescription = ({
+  title, description, price, level,
+}) => (
   <>
     <Box display="flex" alignItems="start" gap="16px" mb="8px">
       <Typography width="827px" variant="h4" fontSize="24px">
@@ -29,7 +31,7 @@ const LessonDescription = ({ title, description, price }) => (
       <FavoriteIcon sx={{ color: '#E91E63' }} />
     </Box>
     <Typography display="flex" alignItems="center" fontSize="14px" color="text.secondary" mb="32px">
-      Начинающий • Средний • Продвинутый
+      {level}
     </Typography>
     <Box display="flex" alignItems="center" flexWrap="wrap" gap="3px" mb="32px">
       <Typography variant="h4" fontSize="24px" mr="16px">

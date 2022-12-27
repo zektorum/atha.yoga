@@ -8,6 +8,12 @@ import LessonDescription from '../../components/lesson-description';
 import getLessonSlice from '../../core/slices/lesson/getLesson';
 
 const LessonDetailsPage = () => {
+  const levels = {
+    STARTING: 'Начинающий',
+    MEDIUM: 'Средний',
+    ADVANCED: 'Продвинутый',
+  };
+
   const { id } = useParams();
 
   const dispatch = useDispatch();
@@ -51,6 +57,7 @@ const LessonDetailsPage = () => {
           title={lesson.data.name}
           description={lesson.data.description}
           price={lesson.data.price}
+          level={levels[lesson.data.level]}
         />
         )}
       </Box>
