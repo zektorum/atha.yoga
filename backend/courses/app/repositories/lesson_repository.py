@@ -14,6 +14,9 @@ class LessonRepository(BaseRepository):
     def find_by_id(self, id_: int) -> Optional[Lesson]:
         return self.model.objects.filter(pk=id_).first()
 
+    def find_by_id_creator(self, id_: int, user_id: int) -> Optional[Lesson]:
+        return self.model.objects.filter(pk=id_, course__teacher_id=user_id).first()
+
     def is_participant(self, lesson: Lesson, user: User) -> Optional[Lesson]:
         return lesson.participants.filter(id=user.id)
 

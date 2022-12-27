@@ -44,6 +44,7 @@ class User(AbstractUser):
     pwd_reset_token = models.CharField(
         _("pwd reset token"), max_length=300, blank=True, null=True
     )
+    rate = models.IntegerField(default=100)
 
     def has_role(self, role: UserRoles) -> bool:
         return role in self.roles
