@@ -17,6 +17,10 @@ from courses.app.handlers.course_handlers import (
     CourseRetrieveHandler,
     SuccessTicketPaymentHandler,
 )
+from courses.app.handlers.lesson_handlers import (
+    LessonRescheduleHandler,
+    LessonCancelHandler,
+)
 from courses.app.handlers.review_handlers import (
     CourseReviewListHandler,
     CourseReviewCreateHandler,
@@ -70,4 +74,6 @@ urlpatterns = [
     path(
         "success-payment/<str:transaction_id>/", SuccessTicketPaymentHandler.as_view()
     ),
+    path("reschedule-lesson/<int:lesson_id>/", LessonRescheduleHandler.as_view()),
+    path("cancel-lesson/<int:lesson_id>/", LessonCancelHandler.as_view()),
 ]

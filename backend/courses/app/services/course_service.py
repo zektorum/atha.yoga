@@ -1,12 +1,8 @@
-import datetime
 import logging
-from collections import defaultdict
 from functools import cached_property
-from typing import List, Dict
 
 from django.conf import settings
 from django.db import transaction
-from django.utils.timezone import now
 from furl import furl
 from rest_framework.exceptions import NotFound, ValidationError, PermissionDenied
 
@@ -15,22 +11,31 @@ from core.app.services.types import PaymentStatuses
 from core.app.utils.util import setup_resource_attributes
 from core.models import User, TransactionStatuses
 from core.models import UserRoles
+from courses.app.repositories.course_cycle_repository import CourseCycleRepository
 from courses.app.repositories.course_repository import (
     CourseRepository,
-    TicketRepository,
 )
 from courses.app.repositories.lesson_repository import LessonRepository
+from courses.app.repositories.ticket_repository import TicketRepository
 from courses.app.repositories.transaction_repository import TicketTransactionRepository
 from courses.app.services.types import CourseCreateData
 from courses.app.services.types import (
     CourseUpdateData,
-    LessonCreateData,
 )
-from courses.models import Course, Lesson, Ticket, TicketTransaction, CoursePaymentTypes
+from courses.models import (
+    Course,
+    Lesson,
+    Ticket,
+    TicketTransaction,
+    CoursePaymentTypes,
+    CourseCycle,
+    CourseSchedule,
+)
 
 
 class CourseCreator:
     repos = CourseRepository()
+    course_cycle_repos = CourseCycleRepository()
     lesson_repos = LessonRepository()
 
     def __init__(self, data: CourseCreateData, user: User):
@@ -54,45 +59,44 @@ class CourseCreator:
         course.price = self._data["price"]
         course.complexity = self._data["complexity"]
         course.teacher = self._user
+        course.schedule = [
+            CourseSchedule(weekday=item["weekday"], start_time=item["start_time"])
+            for item in self._data["lessons"]
+        ]
         return course
 
-    @cached_property
-    def mapped_lessons(self) -> Dict[int, List[LessonCreateData]]:
-        mapped_lessons = defaultdict(list)
-        for item in self._data["lessons"]:
-            mapped_lessons[item["weekday"]].append(item)
-        return mapped_lessons
+    def _init_course_cycle(self) -> CourseCycle:
+        course_cycle = CourseCycle()
+        course_cycle.course = self.course
+        course_cycle.start_at = self.course.start_datetime
+        course_cycle.end_at = self.course.deadline_datetime
+        return course_cycle
 
     def _create_lessons(self) -> None:
         if not self._data["lessons"]:
             return
         lessons_to_create = []
-        cur_date = self.course.start_datetime.date()
-        while cur_date <= (
-            self.course.deadline_datetime.date() + datetime.timedelta(days=1)
-        ):
-            if cur_date.weekday() in self.mapped_lessons:
-                for course_info in self.mapped_lessons[cur_date.weekday()]:
-                    course_datetime = datetime.datetime.combine(
-                        date=cur_date, time=course_info["start_time"]
-                    )
-                    if (
-                        self.course.deadline_datetime.timestamp()
-                        < course_datetime.timestamp()
-                        < now().timestamp()
-                    ):
-                        continue
-                    lesson = Lesson()
-                    lesson.course = self.course
-                    lesson.start_at = course_datetime
-                    lessons_to_create.append(lesson)
-            cur_date += datetime.timedelta(days=1)
+        possible_lessons = self.course.lessons_in_range(
+            date_start=self.course.start_datetime,
+            date_end=self.course.deadline_datetime,
+        )
+        if not possible_lessons:
+            raise ValidationError("Undefined any lesson to create")
+
+        for lesson_datetime in possible_lessons:
+            lesson = Lesson()
+            lesson.course = self.course
+            lesson.start_at = lesson_datetime
+            lessons_to_create.append(lesson)
         self.lesson_repos.bulk_create(objs=lessons_to_create)
 
     def create(self) -> Course:
         if not self._user.has_role(UserRoles.TEACHER):
             raise PermissionDenied("User must be teacher for create courses")
         self.repos.store(course=self.course)
+        if self._data["lessons"]:
+            course_cycle = self._init_course_cycle()
+            self.course_cycle_repos.store(course_cycle)
         self._create_lessons()
         return self.course
 
