@@ -14,16 +14,14 @@ import AuthProvider from './utils/providers/auth';
 import BaseLayout from './layouts';
 import ProfileLayout from './layouts/profile';
 import useAuth from './utils/hooks/useAuth';
-import MyLessonsPage from './pages/my-lessons';
+import CreateLessonPage from './pages/create_lesson';
 import SearchLessonsPage from './pages/search-lessons';
 import CalendarPage from './pages/calendar';
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
-
 import './theme/style.scss';
-import LessonCreate from './components/settings-modal';
 
 const theme = createTheme({
   palette: {
@@ -87,7 +85,9 @@ const App = () => {
           <Route path="recovery-password" element={<PasswordRecoveryPage />} />
           <Route path="*" element={<ErrorPage />} />
           <Route path="calendar" element={<CalendarPage />} />
-          <Route path="my-lessons" element={<LessonCreate />} />
+          <Route path="my-lessons" element={<CreateLessonPage />} />
+          <Route path="search-lessons" element={<SearchLessonsPage />} />
+          <Route path="profile" element={<ProfilePage auth={auth} />} />
         </Route>
       </Routes>
     </ThemeProvider>
