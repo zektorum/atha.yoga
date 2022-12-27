@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Typography } from '@mui/material';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
@@ -28,15 +29,13 @@ const Menu = ({ auth }) => {
     },
   };
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: '100%', height: '100vh', backgroundColor: '#F5F5F5' }}>
       <MenuList
         sx={{
-          height: '100vh',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'start',
           p: 2,
-          backgroundColor: '#F5F5F5',
           gap: '6px'
         }}
       >
@@ -119,6 +118,15 @@ const Menu = ({ auth }) => {
           />
         </MenuItem>
       </MenuList>
+      <Typography
+        component={Link}
+        variant="body2"
+        color="primary"
+        to="/"
+        sx={{ textDecoration: 'none', position: 'absolute', bottom: '20px', left: '20px' }}
+      >
+          О проекте
+      </Typography>
     </Box>
   );
 };

@@ -26,7 +26,7 @@ const SearchLessonsPage = () => {
   function updateSearch(e) {
     setQuery(e.target.value);
   }
-
+  console.log(lessons);
   return (
     <Box sx={{ width: '100%' }}>
       <Box
@@ -83,6 +83,8 @@ const SearchLessonsPage = () => {
               key={lesson.id}
               title={lesson.name}
               description={lesson.description}
+              price={lesson.price}
+              level={lesson.level}
             />
           ))}
         </Box>
