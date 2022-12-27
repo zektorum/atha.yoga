@@ -69,6 +69,17 @@ class LessonRescheduleCancel(ABC):
 
 
 class LessonCancel(LessonRescheduleCancel):
+    def _send_cancel_message(self) -> None:
+        SimpleEmailTextService(
+            data=TextMailData(
+                subject="Отмена занятия",
+                message=f"Преподаватель отменил занятие на курсе `{self.lesson.course.name}` {self.lesson.start_at}",
+                receivers=self.lesson_repos.lesson_participants_emails(
+                    lesson=self.lesson
+                ),
+            )
+        ).send()
+
     def cancel(self) -> None:
         if self.lesson.status != LessonStatuses.ACTIVE:
             raise ValidationError("Lesson not active")
