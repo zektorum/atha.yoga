@@ -17,6 +17,7 @@ module.exports = {
     'react',
   ],
   rules: {
+    'linebreak-style': 'off',
     'react/require-default-props': 'off',
     'react/function-component-definition': [2, {
       namedComponents: 'arrow-function',
