@@ -32,7 +32,7 @@ const LessonDescription = ({
       <FavoriteIcon sx={{ color: '#E91E63' }} />
     </Box>
     <Typography display="flex" alignItems="center" fontSize="14px" color="text.secondary" mb="32px">
-      {!level[1] && level || level.join(' • ')}
+      {level.join(' • ')}
     </Typography>
     <Box display="flex" alignItems="center" flexWrap="wrap" gap="3px" mb="32px">
       <Typography variant="h4" fontSize="24px" mr="16px">
