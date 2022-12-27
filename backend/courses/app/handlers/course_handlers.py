@@ -20,8 +20,9 @@ from courses.app.http.requests.course_requests import (
     CourseTicketBuyRequest,
     CourseTicketUseRequest,
 )
-from courses.app.http.resources.course_resources import CourseResource
+from courses.app.http.resources.course_resources import CourseResource, LessonResource
 from courses.app.repositories.course_repository import CourseRepository
+from courses.app.repositories.lesson_repository import LessonRepository
 from courses.app.repositories.transaction_repository import TicketTransactionRepository
 from courses.app.services.course_service import (
     CourseCreator,
@@ -199,3 +200,23 @@ class CourseTicketUseHandler(GenericAPIView):
         ).participate()
 
         return Response({"data": {"course_link": link}})
+
+
+class LessonRetrieveHandler(APIView):
+    def get(self, request: Request, pk: int, *args: Any, **kwargs: Any) -> Response:
+        lesson = LessonRepository().find_by_id(id_=pk)
+        if not lesson:
+            raise NotFound(f"Undefined lesson with pk {pk}")
+        return Response({"data": LessonResource(lesson).data})
+
+
+class LessonListHandler(APIView):
+    repository = LessonRepository()
+
+    def get(self, request: Request, pk: int, *args: Any, **kwargs: Any) -> Response:
+        lessons = self.repository.prefetch_related(
+            self.repository.find_by_course_id(course_id=pk)
+        )
+        return Response(
+            paginate(data=lessons, request=self.request, resource=LessonResource)
+        )
