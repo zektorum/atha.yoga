@@ -57,7 +57,7 @@ const LessonDetailsPage = () => {
           title={lesson.data.name}
           description={lesson.data.description}
           price={lesson.data.price}
-          level={levels[lesson.data.level]}
+          level={(lesson.data.level).split().map(lvl => levels[lvl])} // убрать split
         />
         )}
       </Box>
