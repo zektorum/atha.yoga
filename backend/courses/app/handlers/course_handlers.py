@@ -211,8 +211,12 @@ class LessonRetrieveHandler(APIView):
 
 
 class LessonListHandler(APIView):
+    repository = LessonRepository()
+
     def get(self, request: Request, pk: int, *args: Any, **kwargs: Any) -> Response:
-        lessons = LessonRepository().find_by_course_id(course_id=pk)
+        lessons = self.repository.prefetch_related(
+            self.repository.find_by_course_id(course_id=pk)
+        )
         return Response(
             paginate(data=lessons, request=self.request, resource=LessonResource)
         )
