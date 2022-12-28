@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from django.db.models import QuerySet
+from django.db.models import QuerySet, F
 
 from core.app.repositories.base_repository import BaseRepository
 from core.models import User
@@ -11,7 +11,9 @@ class LessonRepository(BaseRepository):
     model = Lesson
 
     def fetch_relations(self, lessons: QuerySet[Lesson]) -> QuerySet[Lesson]:
-        return lessons.prefetch_related("participants")
+        return lessons.prefetch_related("participants").annotate(
+            end_at=F("start_at") + F("course__duration")
+        )
 
     def bulk_create(self, objs: List[Lesson]) -> None:
         self.model.objects.bulk_create(objs)

@@ -1,3 +1,4 @@
+from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
 from core.app.http.resources.user_resources import UserResource
@@ -6,6 +7,7 @@ from courses.models import Course, Lesson
 
 class LessonResource(ModelSerializer):
     participants = UserResource(many=True)
+    end_at = serializers.DateTimeField()
 
     class Meta:
         model = Lesson
@@ -13,6 +15,7 @@ class LessonResource(ModelSerializer):
             "id",
             "course",
             "start_at",
+            "end_at",
             "participants",
         ]
 
