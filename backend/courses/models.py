@@ -1,7 +1,16 @@
+import datetime
+from collections import defaultdict
+from dataclasses import dataclass
+from functools import cached_property
+from typing import List, Dict
+
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+from django.utils.timezone import now
 from polymorphic.models import PolymorphicModel
+from pytz import utc
 
+from core.app.utils.fields import JSONParsedField
 from core.models import User, TimeStampedModel, Transaction
 
 
@@ -38,6 +47,12 @@ class RepetitionWeekdays(models.IntegerChoices):
     SUNDAY = 6
 
 
+@dataclass
+class CourseSchedule:
+    weekday: int
+    start_time: datetime.time
+
+
 class Course(TimeStampedModel):
     name = models.CharField(max_length=64)
     description = models.TextField()
@@ -54,14 +69,49 @@ class Course(TimeStampedModel):
     repeat_editing = models.BooleanField(default=False)
     payment = models.CharField(max_length=30, choices=CoursePaymentTypes.choices)
     price = models.FloatField(validators=(MinValueValidator(limit_value=0),))
-
+    schedule: List[CourseSchedule] = JSONParsedField(
+        default=list, parse_to=CourseSchedule
+    )
     favorites = models.ManyToManyField(
         User, related_name="favorite_courses", blank=True
     )
+    rate = models.FloatField(default=5)
+
+    @cached_property
+    def mapped_schedule(self) -> Dict[int, List[CourseSchedule]]:
+        mapped_schedule = defaultdict(list)
+        for item in self.schedule:
+            mapped_schedule[item.weekday].append(item)
+        return mapped_schedule
+
+    def lessons_in_range(
+        self, date_start: datetime.datetime, date_end: datetime.datetime
+    ) -> List[datetime.datetime]:
+        cur_date = date_start
+        result = []
+        while cur_date <= date_end:
+            if cur_date.weekday() in self.mapped_schedule:
+                for course_info in self.mapped_schedule[cur_date.weekday()]:
+                    course_datetime = datetime.datetime.combine(
+                        date=cur_date, time=course_info.start_time, tzinfo=utc
+                    )
+                    if not (now() < course_datetime < date_end):
+                        continue
+                    result.append(course_datetime)
+            cur_date += datetime.timedelta(days=1)
+        return result
 
     class Meta:
         verbose_name = "Занятие"
         verbose_name_plural = "Занятия"
+
+
+class CourseCycle(TimeStampedModel):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    start_at = models.DateTimeField()
+    end_at = models.DateTimeField()
+    canceled_lessons_amount = models.IntegerField(default=0)
+    transferred_lessons_amount = models.IntegerField(default=0)
 
 
 class Review(PolymorphicModel, TimeStampedModel):
@@ -84,10 +134,18 @@ class CourseReview(Review):
         verbose_name_plural = "Отзывы о курсе"
 
 
+class LessonStatuses(models.TextChoices):
+    ACTIVE = "ACTIVE"
+    CANCELED = "CANCELED"
+
+
 class Lesson(TimeStampedModel):
     course = models.ForeignKey(Course, related_name="lessons", on_delete=models.CASCADE)
     start_at = models.DateTimeField()
     participants = models.ManyToManyField(User)
+    status = models.CharField(
+        max_length=30, choices=LessonStatuses.choices, default=LessonStatuses.ACTIVE
+    )
 
     class Meta:
         verbose_name = "Урок"
