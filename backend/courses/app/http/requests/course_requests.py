@@ -1,6 +1,7 @@
 import datetime
 
 from django.conf import settings
+from django.utils.timezone import now
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
@@ -37,7 +38,7 @@ class CourseUpdateRequest(UnimplementedSerializer):
     description = serializers.CharField(max_length=150)
     complexity = serializers.ChoiceField(choices=CourseComplexities.choices)
     level = serializers.ChoiceField(choices=CourseLevels.choices)
-    duration = serializers.DurationField(min_value=datetime.timedelta(minutes=30))
+    duration = serializers.DurationField(min_value=datetime.timedelta(minutes=1))
 
 
 class CourseCreateRequest(CourseUpdateRequest):
@@ -58,11 +59,12 @@ class CourseCreateRequest(CourseUpdateRequest):
             and attrs.get("price", 0) <= 0
         ):
             raise ValidationError({"price": "Price must be more then 0"})
+        if attrs["start_datetime"] <= now():
+            raise ValidationError(
+                {"start_date": f"start_datetime attribute must be greater then {now()}"}
+            )
         if attrs.get("deadline_datetime"):
-            if (
-                attrs["start_datetime"].timestamp()
-                >= attrs["deadline_datetime"].timestamp()
-            ):
+            if attrs["start_datetime"] >= attrs["deadline_datetime"]:
                 raise ValidationError(
                     {
                         "start_date": "start_datetime attribute must be less then deadline_datetime"

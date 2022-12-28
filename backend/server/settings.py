@@ -1,4 +1,5 @@
 import os
+from collections import OrderedDict
 from datetime import timedelta
 from pathlib import Path
 
@@ -222,3 +223,15 @@ LOGGING = {
 DEFAULT_SUPERUSER_PASSWORD = os.environ.get("POSTGRES_PASSWORD")
 
 COURSE_LESSONS_CYCLE = timedelta(days=60)
+
+RESCHEDULE_CANCEL_COUNT_PERCENT = 0.25
+
+MAX_FINE = 0.25
+RATE_FINES_MAPPING = OrderedDict(
+    {
+        0.025: timedelta(hours=24),
+        0.05: timedelta(hours=12),
+        0.1: timedelta(hours=6),
+        0.15: timedelta(hours=1),
+    }
+)
