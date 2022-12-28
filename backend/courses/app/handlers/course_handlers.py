@@ -2,6 +2,8 @@ from typing import Any
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema
 from rest_framework.decorators import permission_classes
 from rest_framework.exceptions import NotFound
 from rest_framework.generics import GenericAPIView
@@ -52,6 +54,7 @@ class CourseFilterHandler(GenericAPIView):
 class CourseRetrieveHandler(APIView):
     repository = CourseRepository()
 
+    @extend_schema(responses=OpenApiTypes.OBJECT)
     def get(self, request: Request, pk: int, *args: Any, **kwargs: Any) -> Response:
         course = self.repository.find_by_id(id_=pk)
         if not course:
@@ -151,6 +154,7 @@ class FavoriteCourseRemoveHandler(GenericAPIView):
 
 @permission_classes([IsAuthenticated])
 class FavoriteCourseListHandler(APIView):
+    @extend_schema(responses=OpenApiTypes.OBJECT)
     def get(self, *args: Any, **kwargs: Any) -> Response:
         courses = CourseRepository().find_user_favorite_courses(user=self.request.user)
         return Response(
@@ -182,6 +186,7 @@ class CourseTicketBuyHandler(GenericAPIView):
 class SuccessTicketPaymentHandler(APIView):
     repos = TicketTransactionRepository()
 
+    @extend_schema(responses=OpenApiTypes.OBJECT)
     def get(self, request: Request, transaction_id: str) -> HttpResponseRedirect:
         redirect_url = TicketBuy().confirm(transaction_id=transaction_id)
         return redirect(redirect_url)
@@ -203,6 +208,7 @@ class CourseTicketUseHandler(GenericAPIView):
 
 
 class LessonRetrieveHandler(APIView):
+    @extend_schema(responses=OpenApiTypes.OBJECT)
     def get(self, request: Request, pk: int, *args: Any, **kwargs: Any) -> Response:
         lesson = LessonRepository().find_by_id(id_=pk)
         if not lesson:
@@ -213,6 +219,7 @@ class LessonRetrieveHandler(APIView):
 class LessonListHandler(APIView):
     repository = LessonRepository()
 
+    @extend_schema(responses=OpenApiTypes.OBJECT)
     def get(self, request: Request, pk: int, *args: Any, **kwargs: Any) -> Response:
         lessons = self.repository.fetch_relations(
             self.repository.find_by_course_id(course_id=pk)

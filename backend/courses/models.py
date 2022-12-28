@@ -92,6 +92,7 @@ class Lesson(TimeStampedModel):
     class Meta:
         verbose_name = "Урок"
         verbose_name_plural = "Уроки"
+        ordering = ("id",)
 
 
 class Comment(PolymorphicModel):
