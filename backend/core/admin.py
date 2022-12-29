@@ -50,9 +50,9 @@ class QuestionnaireTeacherAdmin(admin.ModelAdmin):
         "created_at",
         "updated_at",
     )
-    list_filter = ("created_at", "updated_at", "user", "date_of_birth")
+    list_filter = ("gender", "date_of_birth", "created_at", "updated_at")
+    search_fields = ("name", "surname")
     raw_id_fields = ("certificate_photos",)
-    search_fields = ("name",)
     date_hierarchy = "created_at"
     actions = [accept_questionnaires, decline_questionnaires]
 
