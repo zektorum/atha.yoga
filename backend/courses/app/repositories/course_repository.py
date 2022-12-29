@@ -8,7 +8,7 @@ from core.app.repositories.base_repository import BaseRepository
 from core.models import User, QuestionnaireTeacher, QuestionnaireTeacherStatuses
 from courses.app.repositories.types import CourseFilterData
 from courses.documents import CourseDocument
-from courses.models import Course, Lesson
+from courses.models import Course, Lesson, BaseCourse
 
 
 class CourseRepository(BaseRepository):
@@ -31,21 +31,19 @@ class CourseRepository(BaseRepository):
             raise NotFound(f"Undefined course with id {id_}")
         return course
 
-    def find_by_id_teacher(self, id_: int, teacher_id: int) -> Optional[Course]:
-        return self.model.objects.filter(pk=id_, teacher_id=teacher_id).first()
-
     def find_user_favorite_courses(self, user: User) -> QuerySet[Course]:
         return user.favorite_courses.all()
 
     def add_user_favorite_course(self, user: User, course: Course) -> None:
-        course.favorites.add(user)
+        course.base_course.favorites.add(user)
 
     def remove_user_favorite_course(self, user: User, course: Course) -> None:
-        course.favorites.remove(user)
+        course.base_course.favorites.remove(user)
 
     def filter(self, data: CourseFilterData) -> QuerySet[Course]:
         base_query = self.model.objects.all()
         filter_query = Q()
+        # TODO need fix for BaseCourse
         if "query" in data:
             query = (
                 CourseDocument.search()
@@ -61,12 +59,12 @@ class CourseRepository(BaseRepository):
             )
             if not query.exists():
                 query = base_query.filter(
-                    Q(name__icontains=data["query"])
-                    | Q(description__icontains=data["query"])
+                    Q(base_course__name__icontains=data["query"])
+                    | Q(base_course__description__icontains=data["query"])
                 )
             base_query = query
         if "complexity" in data:
-            filter_query &= Q(complexity=data["complexity"])
+            filter_query &= Q(base_course__complexity=data["complexity"])
         if "start_datetime" in data:
             filter_query &= Q(start_datetime__date=data["start_datetime"].date())
         if "day" in data:
@@ -80,7 +78,7 @@ class CourseRepository(BaseRepository):
 
     def fetch_relations(self, queryset: QuerySet[Course]) -> QuerySet[Course]:
         queryset = (
-            queryset.select_related("teacher")
+            queryset.select_related("base_course__teacher")
             .prefetch_related(
                 Prefetch(
                     "lessons_set",
@@ -90,7 +88,7 @@ class CourseRepository(BaseRepository):
                     to_attr="lessons",
                 ),
                 Prefetch(
-                    "teacher",
+                    "base_course__teacher",
                     queryset=User.objects.filter(
                         pk=OuterRef("teacher_id")
                     ).prefetch_related(
@@ -118,8 +116,22 @@ class CourseRepository(BaseRepository):
                     )
                 ),
                 favorite=Exists(
-                    Course.objects.filter(pk=OuterRef("id"), favorites__id=self.user.id)
+                    Course.objects.filter(
+                        pk=OuterRef("id"), base_course__favorites__id=self.user.id
+                    )
                 ),
             )
 
         return queryset
+
+
+class BaseCourseRepository(BaseRepository):
+    model = BaseCourse
+
+    def store(self, base_course: BaseCourse) -> None:
+        base_course.save()
+
+    def find_by_id_teacher(self, id_: int, teacher_id: int) -> Optional[BaseCourse]:
+        return self.model.objects.filter(
+            pk=id_, base_course__teacher_id=teacher_id
+        ).first()

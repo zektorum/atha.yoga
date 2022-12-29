@@ -168,11 +168,13 @@ class UserProfileUpdator:
             self.repository.update_username(self.user, username)
 
         if "avatar" in self.data:
-            self.data["avatar"] = ProfilePhotoCreator(
-                photo=self.data["avatar"]
+            self.user.avatar = ProfilePhotoCreator(
+                photo=self.data.pop("avatar")
             ).create()
         setup_resource_attributes(
-            instance=self.user, validated_data=self.data, fields=list(self.data.keys())
+            instance=self.user,
+            validated_data=self.data,
+            fields=list(UserProfileUpdateData.__annotations__.keys()),
         )
         self.repository.store(self.user)
 

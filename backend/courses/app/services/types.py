@@ -28,7 +28,6 @@ class CourseCreateData(TypedDict):
     link_info: str
     level: CourseLevels
     duration: str
-    repeat_editing: bool
     start_datetime: datetime.datetime
     deadline_datetime: Optional[datetime.datetime]
     payment: CoursePaymentTypes

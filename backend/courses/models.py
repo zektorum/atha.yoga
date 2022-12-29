@@ -6,11 +6,12 @@ from typing import List, Dict
 
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+from django.db.models import QuerySet
 from django.utils.timezone import now
 from polymorphic.models import PolymorphicModel
 from pytz import utc
 
-from core.app.utils.fields import JSONParsedField
+from core.app.utils.fields import JSONParsedField, IsDataclass
 from core.models import User, TimeStampedModel, Transaction
 
 
@@ -48,34 +49,52 @@ class RepetitionWeekdays(models.IntegerChoices):
 
 
 @dataclass
-class CourseSchedule:
+class CourseSchedule(IsDataclass):
     weekday: int
     start_time: datetime.time
 
 
-class Course(TimeStampedModel):
+class BaseCourse(TimeStampedModel):
     name = models.CharField(max_length=64)
     description = models.TextField()
     course_type = models.CharField(max_length=30, choices=CourseTypes.choices)
     level = models.JSONField()
-    single = models.BooleanField(default=False)
+    complexity = models.CharField(max_length=30, choices=CourseComplexities.choices)
+    teacher = models.ForeignKey(User, on_delete=models.CASCADE)
+    favorites = models.ManyToManyField(
+        User, related_name="favorite_courses", blank=True
+    )
+
+
+class CourseStatuses(models.TextChoices):
+    CANCELED = "CANCELED"
+    DRAFT = "DRAFT"
+    PUBLISHED = "PUBLISHED"
+    ACCEPTED = "ACCEPTED"
+    DECLINED = "DECLINED"
+    COMPLETED = "COMPLETED"
+
+
+class CourseManager(models.Manager):
+    def get_queryset(self) -> QuerySet["Course"]:
+        return super().get_queryset().select_related("base_course")
+
+
+class Course(TimeStampedModel):
+    base_course = models.ForeignKey(
+        BaseCourse, on_delete=models.CASCADE, related_name="courses"
+    )
     duration = models.DurationField()
     start_datetime = models.DateTimeField()
     deadline_datetime = models.DateTimeField(null=True)
-    complexity = models.CharField(max_length=30, choices=CourseComplexities.choices)
-    teacher = models.ForeignKey(User, on_delete=models.CASCADE)
     link = models.URLField()
     link_info = models.CharField(max_length=100, blank=True)
-    repeat_editing = models.BooleanField(default=False)
     payment = models.CharField(max_length=30, choices=CoursePaymentTypes.choices)
     price = models.FloatField(validators=(MinValueValidator(limit_value=0),))
     schedule: List[CourseSchedule] = JSONParsedField(
         default=list, parse_to=CourseSchedule
     )
-    favorites = models.ManyToManyField(
-        User, related_name="favorite_courses", blank=True
-    )
-    rate = models.FloatField(default=5)
+    status = models.CharField(max_length=40, choices=CourseStatuses.choices)
 
     @cached_property
     def mapped_schedule(self) -> Dict[int, List[CourseSchedule]]:
