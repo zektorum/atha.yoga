@@ -59,19 +59,22 @@ class UserRegister:
         user.is_active = False
         return user
 
-    def register(self) -> None:
-        register_confirm_token = str(uuid.uuid4())
+    def send_confirmation_mail(self, token: str) -> None:
         SimpleEmailTextService(
             data=TextMailData(
                 subject="Регистрация в Atha.Yoga",
                 message=f"Дорогой пользователь, для завершения процедуры регистрации на платформе Atha.Yoga, "
                 f"пожалуйста, перейдите по следующей "
-                f"ссылке:\n{settings.SITE_URL}/verify-email/?token={register_confirm_token}/.\n"
+                f"ссылке:\n{settings.SITE_URL}/verify-email/?token={token}/.\n"
                 f"Если Вы не регистрировались на платформе, просто проигнорируйте это письмо."
                 f"\nС уважением и заботой,\nкоманда ATHAYOGA.",
                 receivers=[self.user.email],
             )
         ).send()
+
+    def register(self) -> None:
+        register_confirm_token = str(uuid.uuid4())
+        self.send_confirmation_mail(token=register_confirm_token)
         self.user.register_confirm_token = register_confirm_token
         self.repository.store(self.user)
 
@@ -117,22 +120,25 @@ class UserChangePass:
 class UserResetPass:
     repository = UserRepository()
 
-    def reset(self, email: str) -> None:
-        user = self.repository.find_by_email(email)
-        if not user:
-            raise PermissionDenied("User with this email does not exist")
-        pwd_reset_token = str(uuid.uuid4())
+    def send_confirmation_mail(self, email: str, token: str) -> None:
         SimpleEmailTextService(
             data=TextMailData(
                 subject="Восстановление пароля",
                 message=f"Дорогой пользователь, для восстановления доступа к Atha.Yoga, "
                 f"пожалуйста, перейдите по следующей "
-                f"ссылке:\n{settings.SITE_URL}/?token={pwd_reset_token}/.\n"
+                f"ссылке:\n{settings.SITE_URL}/?token={token}/.\n"
                 f"Если Вы не запрашивали восстановление пароля, просто проигнорируйте это письмо."
                 f"\nС уважением и заботой,\nкоманда ATHAYOGA.",
                 receivers=[email],
             )
         ).send()
+
+    def reset(self, email: str) -> None:
+        user = self.repository.find_by_email(email)
+        if not user:
+            raise PermissionDenied("User with this email does not exist")
+        pwd_reset_token = str(uuid.uuid4())
+        self.send_confirmation_mail(email=email, token=pwd_reset_token)
         user.pwd_reset_token = pwd_reset_token
         self.repository.store(user=user)
 
