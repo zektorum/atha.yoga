@@ -11,6 +11,11 @@ class UserRegisterData(TypedDict):
     password: str
 
 
+class UserRegisterConfirmData(TypedDict):
+    email: str
+    register_confirm_token: str
+
+
 class UserLoginData(TypedDict):
     email: str
     password: str

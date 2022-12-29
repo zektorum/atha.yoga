@@ -5,6 +5,7 @@ from core.app.handlers.teachers_questionnaire_handlers import (
 )
 from core.app.handlers.user_handlers import (
     UserRegisterHandler,
+    UserRegisterConfirmHandler,
     UserLoginHandler,
     UserChangePassHandler,
     UserSendPwdResetMailHandler,
@@ -16,6 +17,11 @@ from core.app.handlers.user_handlers import (
 
 urlpatterns = [
     path("register/", UserRegisterHandler.as_view(), name="registration"),
+    path(
+        "register/confirm/",
+        UserRegisterConfirmHandler.as_view(),
+        name="registration_confirm",
+    ),
     path("login/", UserLoginHandler.as_view(), name="login"),
     path("changepass/", UserChangePassHandler.as_view(), name="changepass"),
     path(

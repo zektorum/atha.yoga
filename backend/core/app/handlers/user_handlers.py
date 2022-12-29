@@ -12,6 +12,7 @@ from rest_framework.views import APIView
 
 from core.app.http.requests.user_requests import (
     UserRegisterRequest,
+    UserConfirmRegisterRequest,
     UserLoginRequest,
     UserChangePassRequest,
     UserResetPassRequest,
@@ -22,6 +23,7 @@ from core.app.http.resources.user_resources import UserResource
 from core.app.repositories.user_repository import UserRepository
 from core.app.services.user_services import (
     UserRegister,
+    UserRegisterConfirm,
     UserLogin,
     UserChangePass,
     UserResetPass,
@@ -36,7 +38,18 @@ class UserRegisterHandler(GenericAPIView):
         data = self.serializer_class(data=request.data)
         data.is_valid(raise_exception=True)
 
-        user, token = UserRegister(data=data.validated_data).register()
+        UserRegister(data=data.validated_data).register()
+        return Response("Success")
+
+
+class UserRegisterConfirmHandler(GenericAPIView):
+    serializer_class = UserConfirmRegisterRequest
+
+    def post(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        data = self.serializer_class(data=request.data)
+        data.is_valid(raise_exception=True)
+
+        user, token = UserRegisterConfirm(data=data.validated_data).confirm()
         return Response(
             {"data": {"user": UserResource(user).data, "tokens": token._asdict()}}
         )
