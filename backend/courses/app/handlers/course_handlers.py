@@ -17,7 +17,7 @@ from core.app.utils.permissions import IsTeacher
 from courses.app.http.requests.course_requests import (
     CourseFilterRequest,
     CourseCreateRequest,
-    CourseUpdateRequest,
+    BaseCourseUpdateRequest,
     FavoriteCourseAddRemoveRequest,
     CourseTicketBuyRequest,
     CourseTicketUseRequest,
@@ -32,13 +32,13 @@ from courses.app.repositories.course_repository import CourseRepository
 from courses.app.repositories.lesson_repository import LessonRepository
 from courses.app.repositories.transaction_repository import TicketTransactionRepository
 from courses.app.services.course_service import (
+    BaseCourseUpdator,
+    CourseParticipateService,
+)
+from courses.app.services.course_service import (
     CourseCreator,
     FavoriteCoursesWork,
     TicketBuy,
-)
-from courses.app.services.course_service import (
-    CourseUpdator,
-    CourseParticipateService,
 )
 
 
@@ -95,14 +95,14 @@ class CourseCreateHandler(GenericAPIView):
 
 
 @permission_classes([IsTeacher])
-class CourseUpdateHandler(GenericAPIView):
-    serializer_class = CourseUpdateRequest
+class BaseCourseUpdateHandler(GenericAPIView):
+    serializer_class = BaseCourseUpdateRequest
 
     def patch(self, request: Request, pk: int, *args: Any, **kwargs: Any) -> Response:
         data = self.serializer_class(data=request.data, partial=True)
         data.is_valid(raise_exception=True)
 
-        course = CourseUpdator(
+        course = BaseCourseUpdator(
             user=request.user, data=data.validated_data, pk=pk
         ).update()
 

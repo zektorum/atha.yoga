@@ -7,32 +7,19 @@ from .models import Course, Lesson, CourseComment, CourseReview
 class CourseAdmin(admin.ModelAdmin):
     list_display = (
         "id",
-        "name",
-        "teacher",
-        "course_type",
-        "level",
-        "complexity",
         "payment",
         "price",
-        "single",
         "start_datetime",
         "deadline_datetime",
-        "repeat_editing",
         "created_at",
     )
-    list_display_links = ("id", "name")
+    list_display_links = ("id",)
     list_filter = (
-        "course_type",
-        "level",
-        "complexity",
         "payment",
-        "single",
         "start_datetime",
         "deadline_datetime",
-        "repeat_editing",
         "created_at",
     )
-    search_fields = ("name",)
     date_hierarchy = "created_at"
 
 
@@ -53,7 +40,7 @@ class CourseCommentAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "user",
-        "course",
+        "base_course",
         "created_at",
     )
     search_fields = ("text",)
@@ -66,7 +53,7 @@ class CourseReviewAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "user",
-        "course",
+        "base_course",
         "star_rating",
         "created_at",
     )

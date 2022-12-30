@@ -8,7 +8,7 @@ from courses.app.handlers.comment_handlers import (
 from courses.app.handlers.course_handlers import (
     CourseFilterHandler,
     CourseCreateHandler,
-    CourseUpdateHandler,
+    BaseCourseUpdateHandler,
     FavoriteCourseAddHandler,
     FavoriteCourseRemoveHandler,
     FavoriteCourseListHandler,
@@ -32,7 +32,7 @@ from courses.app.handlers.review_handlers import (
 urlpatterns = [
     path("", CourseCreateHandler.as_view(), name="course_create"),
     path("<int:pk>/", CourseRetrieveHandler.as_view(), name="course_retrieve"),
-    path("<int:pk>/update/", CourseUpdateHandler.as_view(), name="course_update"),
+    path("<int:pk>/update/", BaseCourseUpdateHandler.as_view(), name="course_update"),
     path("filter/", CourseFilterHandler.as_view(), name="courses_filter"),
     path("lessons/<int:pk>/", LessonRetrieveHandler.as_view(), name="lesson_retrieve"),
     path("<int:pk>/lessons/", LessonListHandler.as_view(), name="lesson_list"),

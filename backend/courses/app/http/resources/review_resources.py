@@ -24,6 +24,7 @@ class CourseReviewResource(ModelSerializer):
         model = CourseReview
         fields = [
             "id",
+            "base_course",
             "text",
             "star_rating",
             "user",

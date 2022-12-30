@@ -15,7 +15,7 @@ from core.models import User
 from courses.app.repositories.course_cycle_repository import CourseCycleRepository
 from courses.app.repositories.course_repository import CourseRepository
 from courses.app.repositories.lesson_repository import LessonRepository
-from courses.models import Lesson, LessonStatuses, CourseCycle
+from courses.models import Lesson, LessonStatuses, CourseCycle, Course
 
 
 class LessonRescheduleCancel(ABC):
@@ -36,6 +36,12 @@ class LessonRescheduleCancel(ABC):
         if not lesson:
             raise NotFound(f"Undefined lesson with pk {self.lesson_id}")
         return lesson
+
+    @cached_property
+    def course(self) -> Course:
+        return self.course_repos.find_by_id(
+            id_=int(self.lesson.course_id), raise_exception=True
+        )
 
     @cached_property
     def current_course_cycle(self) -> CourseCycle:
@@ -63,9 +69,9 @@ class LessonRescheduleCancel(ABC):
                 return fine_coef
         return settings.MAX_FINE
 
-    def _reduce_course_coef(self) -> None:
-        self.lesson.course.rate = round(self.lesson.course.rate - self._fine_coef(), 4)
-        self.course_repos.store(course=self.lesson.course)
+    def _reduce_user_coef(self) -> None:
+        self.user.rate = round(self.user.rate - self._fine_coef(), 4)
+        self.user_repos.store(user=self.user)
 
 
 class LessonCancel(LessonRescheduleCancel):
@@ -73,7 +79,8 @@ class LessonCancel(LessonRescheduleCancel):
         SimpleEmailTextService(
             data=TextMailData(
                 subject="Отмена занятия",
-                message=f"Преподаватель отменил занятие на курсе `{self.lesson.course.name}` {self.lesson.start_at}",
+                message=f"Преподаватель отменил занятие на курсе `{self.course.base_course.name}` "
+                f"{self.lesson.start_at}",
                 receivers=self.lesson_repos.lesson_participants_emails(
                     lesson=self.lesson
                 ),
@@ -86,7 +93,7 @@ class LessonCancel(LessonRescheduleCancel):
         if not self._can_process():
             raise ValidationError("Cannot cancel lesson in current cycle")
         with transaction.atomic():
-            self._reduce_course_coef()
+            self._reduce_user_coef()
             self.lesson.status = LessonStatuses.CANCELED
             self.lesson_repos.store(lesson=self.lesson)
 
@@ -101,7 +108,7 @@ class LessonReschedule(LessonRescheduleCancel):
         SimpleEmailTextService(
             data=TextMailData(
                 subject="Перенос занятия",
-                message=f"Преподаватель перенес занятие на курсе `{self.lesson.course.name}` "
+                message=f"Преподаватель перенес занятие на курсе `{self.course.base_course.name}` "
                 f"c {self.old_lesson_datetime} на {self.reschedule_to}",
                 receivers=self.lesson_repos.lesson_participants_emails(
                     lesson=self.lesson
@@ -118,5 +125,5 @@ class LessonReschedule(LessonRescheduleCancel):
         ):
             raise ValidationError(f"User has lesson at {overlap_lesson.start_at}")
         with transaction.atomic():
-            self._reduce_course_coef()
+            self._reduce_user_coef()
             self._send_reschedule_message()

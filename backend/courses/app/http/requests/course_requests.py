@@ -34,19 +34,22 @@ class LessonCreateRequest(UnimplementedSerializer):
     start_time = serializers.TimeField()
 
 
-class CourseUpdateRequest(UnimplementedSerializer):
+class BaseCourseUpdateRequest(UnimplementedSerializer):
     description = serializers.CharField(max_length=150)
     complexity = serializers.ChoiceField(choices=CourseComplexities.choices)
     level = serializers.MultipleChoiceField(choices=CourseLevels.choices)
     duration = serializers.DurationField(min_value=datetime.timedelta(minutes=1))
 
 
-class CourseCreateRequest(CourseUpdateRequest):
+class CourseCreateRequest(UnimplementedSerializer):
     name = serializers.CharField(max_length=40)
+    description = serializers.CharField(max_length=150)
+    complexity = serializers.ChoiceField(choices=CourseComplexities.choices)
+    level = serializers.MultipleChoiceField(choices=CourseLevels.choices)
+    duration = serializers.DurationField(min_value=datetime.timedelta(minutes=1))
     course_type = serializers.ChoiceField(choices=CourseTypes.choices)
     link = serializers.URLField()
     link_info = serializers.CharField(max_length=100, allow_blank=True)
-    repeat_editing = serializers.BooleanField(default=False)
     start_datetime = serializers.DateTimeField()
     deadline_datetime = serializers.DateTimeField(allow_null=True)
     payment = serializers.ChoiceField(choices=CoursePaymentTypes.choices)

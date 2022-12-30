@@ -27,7 +27,7 @@ class CourseCommentCreate:
 
         comment = CourseComment()
         comment.user = self.user
-        comment.course = course
+        comment.base_course = course.base_course
         comment.text = self.text
 
         return comment

@@ -24,6 +24,7 @@ class CourseCommentResource(ModelSerializer):
         model = CourseComment
         fields = [
             "id",
+            "base_course",
             "text",
             "user",
             "created_at",
