@@ -77,7 +77,9 @@ class CourseCommentSeeder:
 
     def seed(self) -> CourseComment:
         return CourseComment(
-            text=self.faker.sentence(), user=self.user, course=self.course
+            text=self.faker.sentence(),
+            user=self.user,
+            base_course=self.course.base_course,
         )
 
 
@@ -92,7 +94,7 @@ class CourseReviewSeeder:
             text=self.faker.sentence(),
             star_rating=random.randint(1, 5),
             user=self.user,
-            course=self.course,
+            base_course=self.course.base_course,
         )
 
 

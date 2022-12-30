@@ -7,7 +7,7 @@ from rest_framework.exceptions import NotFound
 from core.app.repositories.base_repository import BaseRepository
 from core.models import User, QuestionnaireTeacher, QuestionnaireTeacherStatuses
 from courses.app.repositories.types import CourseFilterData
-from courses.documents import CourseDocument
+from courses.documents import BaseCourseDocument
 from courses.models import Course, Lesson, BaseCourse
 
 
@@ -43,10 +43,9 @@ class CourseRepository(BaseRepository):
     def filter(self, data: CourseFilterData) -> QuerySet[Course]:
         base_query = self.model.objects.all()
         filter_query = Q()
-        # TODO need fix for BaseCourse
         if "query" in data:
-            query = (
-                CourseDocument.search()
+            query = Course.objects.filter(
+                base_course_id__in=BaseCourseDocument.search()
                 .query(
                     EQ(
                         "multi_match",
@@ -56,6 +55,7 @@ class CourseRepository(BaseRepository):
                     )
                 )
                 .to_queryset()
+                .values("id")
             )
             if not query.exists():
                 query = base_query.filter(
@@ -103,9 +103,9 @@ class CourseRepository(BaseRepository):
                 ),
             )
             .annotate(
-                reviews_count=Count("reviews"),
-                comments_count=Count("comments"),
-                rate=Avg("reviews__star_rating"),
+                reviews_count=Count("base_course__reviews"),
+                comments_count=Count("base_course__comments"),
+                rate=Avg("base_course__reviews__star_rating"),
             )
         )
         if self.user and self.user.id:

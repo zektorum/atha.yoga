@@ -188,7 +188,7 @@ class Comment(PolymorphicModel):
 
 class CourseComment(Comment):
     base_course = models.ForeignKey(
-        Course, related_name="comments", on_delete=models.CASCADE
+        BaseCourse, related_name="comments", on_delete=models.CASCADE
     )
 
     class Meta:

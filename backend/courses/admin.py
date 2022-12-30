@@ -40,7 +40,7 @@ class CourseCommentAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "user",
-        "course",
+        "base_course",
         "created_at",
     )
     search_fields = ("text",)
@@ -53,7 +53,7 @@ class CourseReviewAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "user",
-        "course",
+        "base_course",
         "star_rating",
         "created_at",
     )
