@@ -146,7 +146,9 @@ class Review(PolymorphicModel, TimeStampedModel):
 
 
 class CourseReview(Review):
-    course = models.ForeignKey(Course, related_name="reviews", on_delete=models.CASCADE)
+    base_course = models.ForeignKey(
+        BaseCourse, related_name="reviews", on_delete=models.CASCADE
+    )
 
     class Meta:
         verbose_name = "Отзыв о курсе"
@@ -185,7 +187,7 @@ class Comment(PolymorphicModel):
 
 
 class CourseComment(Comment):
-    course = models.ForeignKey(
+    base_course = models.ForeignKey(
         Course, related_name="comments", on_delete=models.CASCADE
     )
 
