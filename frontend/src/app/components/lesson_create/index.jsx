@@ -24,8 +24,8 @@ import {
 } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import PaymentMethod from './PaymentMethod';
-import RepeatLessons from './RepeatLessons';
+import PaymentMethod from '../lesson_payment/index';
+import RepeatLessons from '../lesson_repeat/index';
 
 const LessonCreate = () => {
   const [lessonLevels, setLessonLevels] = useState([]);

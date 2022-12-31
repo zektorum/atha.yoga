@@ -1,5 +1,5 @@
 import React from 'react';
-import LessonCreate from '../../components/create_lesson/LessonCreate';
+import LessonCreate from '../../components/lesson_create/index';
 
 const CreateLessonPage = () => (
   <LessonCreate />

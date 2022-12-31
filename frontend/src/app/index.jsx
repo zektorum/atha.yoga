@@ -86,8 +86,6 @@ const App = () => {
           <Route path="*" element={<ErrorPage />} />
           <Route path="calendar" element={<CalendarPage />} />
           <Route path="my-lessons" element={<CreateLessonPage />} />
-          <Route path="search-lessons" element={<SearchLessonsPage />} />
-          <Route path="profile" element={<ProfilePage auth={auth} />} />
         </Route>
       </Routes>
     </ThemeProvider>
