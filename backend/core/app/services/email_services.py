@@ -1,6 +1,7 @@
-from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.conf import settings
+from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.template.loader import render_to_string
+
 from core.app.services.types import TextMailData, HtmlMailData
 
 

@@ -14,6 +14,7 @@ from core.models import (
     QuestionnaireTeacher,
     UserRoles,
     Attachment,
+    QuestionnaireTeacherStatuses,
 )
 
 
@@ -62,3 +63,25 @@ class QuestionnaireTeacherRegister:
             self.questionnaire_repository.store(questionnaire=self.questionnaire)
             self.create_questionnaire_certificate_photos(self.questionnaire)
         return self.questionnaire
+
+
+class QuestionnaireTeacherAccept:
+    repo = QuestionnaireTeacherRepository()
+    user_repo = UserRepository()
+
+    def __init__(self, questionnaire: QuestionnaireTeacher):
+        self._questionnaire = questionnaire
+
+    def _accept_questionnaire(self) -> None:
+        self._questionnaire.status = QuestionnaireTeacherStatuses.ACCEPTED
+        self.repo.store(questionnaire=self._questionnaire)
+
+    def _user_settings_update(self) -> None:
+        user = self._questionnaire.user
+        user.add_roles([UserRoles.TEACHER])
+        self.user_repo.store(user=user)
+
+    def accept(self) -> None:
+        with transaction.atomic():
+            self._accept_questionnaire()
+            self._user_settings_update()

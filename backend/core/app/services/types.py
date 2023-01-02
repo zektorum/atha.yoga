@@ -11,6 +11,11 @@ class UserRegisterData(TypedDict):
     password: str
 
 
+class UserRegisterConfirmData(TypedDict):
+    email: str
+    register_confirm_token: str
+
+
 class UserLoginData(TypedDict):
     email: str
     password: str
@@ -86,3 +91,11 @@ class QuestionnaireTeacherData(TypedDict):
     passport_photo: InMemoryUploadedFile
     user_photo: InMemoryUploadedFile
     user_with_passport_photo: InMemoryUploadedFile
+
+
+class UserProfileUpdateData(TypedDict, total=False):
+    username: str
+    first_name: str
+    last_name: str
+    about: str
+    avatar: InMemoryUploadedFile

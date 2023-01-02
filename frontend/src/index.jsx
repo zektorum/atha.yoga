@@ -5,6 +5,12 @@ import { Provider } from 'react-redux';
 import store from './app/core/store';
 import App from './app';
 
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js');
+  });
+}
+
 const container = document.getElementById('root');
 const root = createRoot(container);
 

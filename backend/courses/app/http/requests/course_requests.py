@@ -1,3 +1,7 @@
+import datetime
+
+from django.conf import settings
+from django.utils.timezone import now
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
@@ -30,28 +34,55 @@ class LessonCreateRequest(UnimplementedSerializer):
     start_time = serializers.TimeField()
 
 
+class BaseCourseUpdateRequest(UnimplementedSerializer):
+    description = serializers.CharField(max_length=150)
+    complexity = serializers.ChoiceField(choices=CourseComplexities.choices)
+    level = serializers.MultipleChoiceField(choices=CourseLevels.choices)
+    duration = serializers.DurationField(min_value=datetime.timedelta(minutes=1))
+
+
 class CourseCreateRequest(UnimplementedSerializer):
     name = serializers.CharField(max_length=40)
     description = serializers.CharField(max_length=150)
-    course_type = serializers.ChoiceField(choices=CourseTypes.choices)
     complexity = serializers.ChoiceField(choices=CourseComplexities.choices)
+    level = serializers.MultipleChoiceField(choices=CourseLevels.choices)
+    duration = serializers.DurationField(min_value=datetime.timedelta(minutes=1))
+    course_type = serializers.ChoiceField(choices=CourseTypes.choices)
     link = serializers.URLField()
     link_info = serializers.CharField(max_length=100, allow_blank=True)
-    level = serializers.ChoiceField(choices=CourseLevels.choices)
-    duration = serializers.DurationField()
-    repeat_editing = serializers.BooleanField(default=False)
     start_datetime = serializers.DateTimeField()
     deadline_datetime = serializers.DateTimeField(allow_null=True)
     payment = serializers.ChoiceField(choices=CoursePaymentTypes.choices)
     price = serializers.IntegerField(min_value=0)
     lessons = LessonCreateRequest(many=True, allow_null=True)
 
-
-class CourseUpdateRequest(UnimplementedSerializer):
-    description = serializers.CharField(max_length=150)
-    complexity = serializers.ChoiceField(choices=CourseComplexities.choices)
-    level = serializers.ChoiceField(choices=CourseLevels.choices)
-    duration = serializers.DurationField()
+    def validate(self, attrs: dict) -> dict:
+        if (
+            attrs.get("payment", None) == CoursePaymentTypes.PAYMENT
+            and attrs.get("price", 0) <= 0
+        ):
+            raise ValidationError({"price": "Price must be more then 0"})
+        if attrs["start_datetime"] <= now():
+            raise ValidationError(
+                {"start_date": f"start_datetime attribute must be greater then {now()}"}
+            )
+        if attrs.get("deadline_datetime"):
+            if attrs["start_datetime"] >= attrs["deadline_datetime"]:
+                raise ValidationError(
+                    {
+                        "start_date": "start_datetime attribute must be less then deadline_datetime"
+                    }
+                )
+            if (
+                attrs["start_datetime"] + settings.COURSE_LESSONS_CYCLE
+                <= attrs["deadline_datetime"]
+            ):
+                raise ValidationError(
+                    {
+                        "start_date": f"Max course lessons cycle = {settings.COURSE_LESSONS_CYCLE}"
+                    }
+                )
+        return attrs
 
 
 class FavoriteCourseAddRemoveRequest(UnimplementedSerializer):

@@ -20,17 +20,17 @@ class CourseReviewCreate:
 
     @cached_property
     def review(self) -> CourseReview:
-        course = self.course_repository.find_by_id(id_=self.course_id)
-        if not course:
-            raise NotFound(f"Undefined course with id {self.course_id}")
-        if course.teacher.id == self.user.id:
+        course = self.course_repository.find_by_id(
+            id_=self.course_id, raise_exception=True
+        )
+        if course.base_course.teacher.id == self.user.id:
             raise PermissionDenied("Teacher can't review own course")
         if self.repository.check_for_user_review(user_id=self.user.id, course=course):
             raise PermissionDenied("User can't review course twice")
 
         review = CourseReview()
         review.user = self.user
-        review.course = course
+        review.base_course = course.base_course
         review.text = self.data["text"]
         review.star_rating = self.data["star_rating"]
 

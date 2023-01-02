@@ -6,7 +6,7 @@ from core.models import GenderTypes
 
 class QuestionnaireTeacherRequest(UnimplementedSerializer):
     name = serializers.CharField(max_length=30)
-    surname = serializers.CharField(max_length=30)
+    surname = serializers.CharField(max_length=50)
     date_of_birth = serializers.DateField()
     gender = serializers.ChoiceField(choices=GenderTypes.choices)
     about_me = serializers.CharField(max_length=3000)
