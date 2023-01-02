@@ -37,7 +37,7 @@ class ReCaptcha(object):
             sender_info = self.sender_info(sender)
             time = datetime.now() - sender_info["time"]
             counter = sender_info["count"] + 1
-            if counter >= 500 and time < timedelta(days=1):
+            if counter >= 5 and time < timedelta(days=1):
                 captcha = self.check_recaptcha(request)
                 if not captcha:
                     raise Throttled
