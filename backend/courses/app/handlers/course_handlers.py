@@ -45,17 +45,20 @@ from courses.app.services.course_service import (
 class CourseFilterHandler(GenericAPIView):
     serializer_class = CourseFilterRequest
 
-    def post(self, *args: Any, **kwargs: Any) -> Response:
-        data = self.serializer_class(data=self.request.data, partial=True)
+    def post(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        data = self.serializer_class(data=request.data, partial=True)
         data.is_valid(raise_exception=True)
 
         repository = CourseRepository(user=self.request.user)
         courses = repository.fetch_relations(
-            queryset=repository.filter(data=data.validated_data)
+            queryset=repository.filter(
+                data=data.validated_data,
+                base_query=repository.find_public_all(user_id=self.request.user.id),
+            )
         )
 
         return Response(
-            paginate(data=courses, request=self.request, resource=CourseCardResource)
+            paginate(data=courses, request=request, resource=CourseCardResource)
         )
 
 
@@ -77,8 +80,8 @@ class CourseRetrieveHandler(APIView):
 class CourseCreateHandler(GenericAPIView):
     serializer_class = CourseCreateRequest
 
-    def post(self, *args: Any, **kwargs: Any) -> Response:
-        data = self.serializer_class(data=self.request.data)
+    def post(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        data = self.serializer_class(data=request.data)
         data.is_valid(raise_exception=True)
 
         course = CourseCreator(
@@ -119,12 +122,12 @@ class BaseCourseUpdateHandler(GenericAPIView):
 class FavoriteCourseAddHandler(GenericAPIView):
     serializer_class = FavoriteCourseAddRemoveRequest
 
-    def post(self, *args: Any, **kwargs: Any) -> Response:
-        data = self.serializer_class(data=self.request.data)
+    def post(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        data = self.serializer_class(data=request.data)
         data.is_valid(raise_exception=True)
 
         course = FavoriteCoursesWork(
-            user=self.request.user, course_id=data.validated_data["course_id"]
+            user=request.user, course_id=data.validated_data["course_id"]
         ).add()
 
         return Response(
@@ -140,8 +143,8 @@ class FavoriteCourseAddHandler(GenericAPIView):
 class FavoriteCourseRemoveHandler(GenericAPIView):
     serializer_class = FavoriteCourseAddRemoveRequest
 
-    def post(self, *args: Any, **kwargs: Any) -> Response:
-        data = self.serializer_class(data=self.request.data)
+    def post(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        data = self.serializer_class(data=request.data)
         data.is_valid(raise_exception=True)
 
         course = FavoriteCoursesWork(
@@ -177,8 +180,8 @@ class FavoriteCourseListHandler(APIView):
 class CourseTicketBuyHandler(GenericAPIView):
     serializer_class = CourseTicketBuyRequest
 
-    def post(self, *args: Any, **kwargs: Any) -> Response:
-        data = self.serializer_class(data=self.request.data)
+    def post(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        data = self.serializer_class(data=request.data)
         data.is_valid(raise_exception=True)
 
         payment_url = TicketBuy().buy(
@@ -203,8 +206,8 @@ class SuccessTicketPaymentHandler(APIView):
 class CourseTicketUseHandler(GenericAPIView):
     serializer_class = CourseTicketUseRequest
 
-    def put(self, *args: Any, **kwargs: Any) -> Response:
-        data = self.serializer_class(data=self.request.data)
+    def put(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        data = self.serializer_class(data=request.data)
         data.is_valid(raise_exception=True)
 
         link = CourseParticipateService(
@@ -232,5 +235,5 @@ class LessonListHandler(APIView):
             self.repository.find_by_course_id(course_id=pk)
         )
         return Response(
-            paginate(data=lessons, request=self.request, resource=LessonResource)
+            paginate(data=lessons, request=request, resource=LessonResource)
         )

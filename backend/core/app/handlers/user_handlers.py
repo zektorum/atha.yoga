@@ -136,8 +136,8 @@ class UserProfileUpdateHandler(GenericAPIView):
     serializer_class = UserProfileUpdateRequest
 
     @extend_schema(responses=OpenApiTypes.OBJECT)
-    def patch(self, *args: Any, **kwargs: Any) -> Response:
-        data = self.serializer_class(data=self.request.data, partial=True)
+    def patch(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        data = self.serializer_class(data=request.data, partial=True)
         data.is_valid(raise_exception=True)
         user = UserProfileUpdator(
             user=self.request.user, data=data.validated_data
