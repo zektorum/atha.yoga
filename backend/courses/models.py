@@ -70,7 +70,7 @@ class CourseStatuses(models.TextChoices):
     CANCELED = "CANCELED"
     DRAFT = "DRAFT"
     PUBLISHED = "PUBLISHED"
-    ACCEPTED = "ACCEPTED"
+    MODERATION = "MODERATION"
     DECLINED = "DECLINED"
     COMPLETED = "COMPLETED"
 
@@ -94,7 +94,9 @@ class Course(TimeStampedModel):
     schedule: List[CourseSchedule] = JSONParsedField(
         default=list, parse_to=CourseSchedule
     )
-    status = models.CharField(max_length=40, choices=CourseStatuses.choices)
+    status = models.CharField(
+        max_length=40, choices=CourseStatuses.choices, default=CourseStatuses.MODERATION
+    )
 
     @cached_property
     def mapped_schedule(self) -> Dict[int, List[CourseSchedule]]:

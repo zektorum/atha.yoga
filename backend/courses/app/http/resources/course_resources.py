@@ -71,6 +71,7 @@ class CourseResource(ModelSerializer):
             "deadline_datetime",
             "payment",
             "price",
+            "status",
         ]
 
 

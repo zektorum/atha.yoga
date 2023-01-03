@@ -28,6 +28,7 @@ from courses.app.handlers.review_handlers import (
     CourseReviewCreateHandler,
     CourseReviewRemoveHandler,
 )
+from courses.app.handlers.ticket_handlers import TicketListHandler
 
 urlpatterns = [
     path("", CourseCreateHandler.as_view(), name="course_create"),
@@ -80,4 +81,5 @@ urlpatterns = [
     ),
     path("reschedule-lesson/<int:lesson_id>/", LessonRescheduleHandler.as_view()),
     path("cancel-lesson/<int:lesson_id>/", LessonCancelHandler.as_view()),
+    path("tickets/", TicketListHandler.as_view()),
 ]
