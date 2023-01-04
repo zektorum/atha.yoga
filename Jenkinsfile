@@ -7,7 +7,7 @@ def setBuildStatus(state, message, context){
                 -H "Authorization: Bearer $TOKEN"\\
                 -H "X-GitHub-Api-Version: 2022-11-28" \\
                 https://api.github.com/repos/zektorum/atha.yoga/statuses/\$(git rev-parse HEAD) \\
-                -d \'{"state":${state},"description":${message},"context":${context}}\'
+                -d \'{"state":$state,"description":$message,"context":$context}\'
         '''
     }
 }
