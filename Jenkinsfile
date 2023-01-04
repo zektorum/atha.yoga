@@ -1,14 +1,6 @@
 def setBuildStatus(state, message, context){
     withCredentials([string(credentialsId: 'github-commit-status-token', variable: 'TOKEN')]) {
-        sh """
-            curl \\
-                -X POST \\
-                -H "Accept: application/vnd.github+json" \\
-                -H "Authorization: Bearer $TOKEN"\\
-                -H "X-GitHub-Api-Version: 2022-11-28" \\
-                https://api.github.com/repos/zektorum/atha.yoga/statuses/\$(git rev-parse HEAD) \\
-                -d \'{"state":"$success","description":"$message","context":"$context"}\'
-        """
+        sh 'curl -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $TOKEN"  -H "X-GitHub-Api-Version: 2022-11-28"  https://api.github.com/repos/zektorum/atha.yoga/statuses/\\$(git rev-parse HEAD) -d \'{"state":"$state","description":"$message"},"context":"$context"}\''
     }
 }
 
