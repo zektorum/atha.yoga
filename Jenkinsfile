@@ -71,8 +71,5 @@ pipeline {
         failure {
             sendEmail('Something went wrong.')
         }
-        always {
-//             publishReport()
-        }
     }
 }
