@@ -5,7 +5,7 @@ def setBuildStatus(String state, String context, String message) {
             $class: "GitHubCommitStatusSetter",
             reposSource: [
                 $class: "ManuallyEnteredRepositorySource",
-                url: "git@github.com:zektorum/atha.yoga.git"
+                url: "https://github.com/zektorum/atha.yoga.git"
             ],
             contextSource: [
                 $class: "ManuallyEnteredCommitContextSource",
