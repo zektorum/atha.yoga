@@ -29,7 +29,7 @@ pipeline {
             steps {
                 script {
                     try {
-                        publishChecks summary: 'Building started', status: 'in progress', name: 'Building', title: 'Jenkins CI/CD'
+                        publishChecks summary: 'Building started', status: 'IN_PROGRESS', name: 'Building', title: 'Jenkins CI/CD'
                         sh '''
                             wget -O backend/.env.master $MASTER_ENV_LINK
                             chmod g+w backend/.env.master
@@ -41,10 +41,10 @@ pipeline {
                             docker-compose --env-file backend/.env build
 
                         '''
-                        publishChecks summary: 'Building finished', status: 'success', name: 'Building', title: 'CI/CD'
+                        publishChecks conclusion: 'SUCCESS', summary: 'Building finished', status: 'COMPLETED', name: 'Building', title: 'CI/CD'
                     } catch (err) {
                         echo "Caught exception: ${err}"
-                        publishChecks summary: 'Building failed', status: 'failure', name: 'Building', title: 'CI/CD'
+                        publishChecks conclusion: 'FAILURE', summary: 'Building failed', status: 'COMPLETED', name: 'Building', title: 'CI/CD'
                         currentBuild.result = 'FAILURE'
                     }
                 }
@@ -54,12 +54,12 @@ pipeline {
             steps {
                 script {
                     try {
-                        publishChecks summary: 'Deployment started', status: 'in progress', name: 'Deployment', title: 'CI/CD'
+                        publishChecks summary: 'Deployment started', status: 'IN_PROGRESS', name: 'Deployment', title: 'CI/CD'
                         sh 'docker-compose --env-file backend/.env up -d'
-                        publishChecks summary: 'Deployment successful', status: 'success', name: 'Deployment', title: 'CI/CD'
+                        publishChecks conclusion: 'SUCCESS', summary: 'Deployment successful', status: 'COMPLETED', name: 'Deployment', title: 'CI/CD'
                     } catch (err) {
                         echo "Caught exception: ${err}"
-                        publishChecks summary: 'Deployment failed', status: 'failure', name: 'Deployment', title: 'CI/CD'
+                        publishChecks conclusion: 'FAILURE', summary: 'Deployment failed', status: 'COMPLETED', name: 'Deployment', title: 'CI/CD'
                         currentBuild.result = 'FAILURE'
                     }
                 }
