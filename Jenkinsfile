@@ -58,39 +58,35 @@ pipeline {
                 DEVELOP_ENV_LINK=credentials('DEVELOP_ENV_LINK')
                 STAGE_ENV_LINK=credentials('STAGE_ENV_LINK')
             }
-            steps {
-                try {
-                    setBuildStatus('PENDING', "build", 'building started')
-                    sh '''
-                        wget -O backend/.env.master $MASTER_ENV_LINK
-                        chmod g+w backend/.env.master
-                        wget -O backend/.env.develop $DEVELOP_ENV_LINK
-                        chmod g+w backend/.env.develop
-                        wget -O backend/.env.stage $STAGE_ENV_LINK
-                        chmod g+w backend/.env.stage
-                        cp backend/.env.$BRANCH_NAME backend/.env
-                        docker-compose --env-file backend/.env build
-                        
-                    '''
-                    setBuildStatus('SUCCESS', "build", 'building successful')
-                } catch (err) {
-                    echo "Caught exception: ${err}"
-                    setBuildStatus('FAILURE', "build", "build failed")
-                    currentBuild.result = 'FAILURE'
-                }
+            try {
+                setBuildStatus('PENDING', "build", 'building started')
+                sh '''
+                    wget -O backend/.env.master $MASTER_ENV_LINK
+                    chmod g+w backend/.env.master
+                    wget -O backend/.env.develop $DEVELOP_ENV_LINK
+                    chmod g+w backend/.env.develop
+                    wget -O backend/.env.stage $STAGE_ENV_LINK
+                    chmod g+w backend/.env.stage
+                    cp backend/.env.$BRANCH_NAME backend/.env
+                    docker-compose --env-file backend/.env build
+
+                '''
+                setBuildStatus('SUCCESS', "build", 'building successful')
+            } catch (err) {
+                echo "Caught exception: ${err}"
+                setBuildStatus('FAILURE', "build", "build failed")
+                currentBuild.result = 'FAILURE'
             }
         }
         stage('Deploy') {
-            steps {
-                try {
-                    setBuildStatus('PENDING', "deploy", 'deployment started')
-                    sh 'docker-compose --env-file backend/.env up -d'
-                    setBuildStatus('SUCCESS', "deploy", "deployment successful")
-                } catch (err) {
-                    echo "Caught exception: ${err}"
-                    setBuildStatus('FAILURE', "deploy", "deployment failed")
-                    currentBuild.result = 'FAILURE'
-                }
+            try {
+                setBuildStatus('PENDING', "deploy", 'deployment started')
+                sh 'docker-compose --env-file backend/.env up -d'
+                setBuildStatus('SUCCESS', "deploy", "deployment successful")
+            } catch (err) {
+                echo "Caught exception: ${err}"
+                setBuildStatus('FAILURE', "deploy", "deployment failed")
+                currentBuild.result = 'FAILURE'
             }
         }
     }
