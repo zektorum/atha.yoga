@@ -1,7 +1,33 @@
-def setBuildStatus(state, message, context){
-    withCredentials([string(credentialsId: 'github-commit-status-token', variable: 'TOKEN')]) {
-        sh 'curl -X POST -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $TOKEN"  -H "X-GitHub-Api-Version: 2022-11-28"  https://api.github.com/repos/zektorum/atha.yoga/statuses/\\$(git rev-parse HEAD) -d \'{"state":"success","description":"$message"},"context":"$context"}\''
-    }
+def setBuildStatus(String state, String context, String message) {
+    step([
+        $class: "GitHubCommitStatusSetter",
+        reposSource: [
+            $class: "ManuallyEnteredRepositorySource",
+            url: "https://github.com/zektorum/atha.yoga.git"
+        ],
+        contextSource: [
+            $class: "ManuallyEnteredCommitContextSource",
+            context: context
+        ],
+        errorHandlers: [[
+            $class: "ChangingBuildStatusErrorHandler",
+            result: "UNSTABLE"
+        ]],
+        commitShaSource: [
+            $class: "ManuallyEnteredShaSource",
+            sha: env.GIT_COMMIT_HASH
+        ],
+        statusResultSource: [
+            $class: 'ConditionalStatusResultSource',
+            results: [
+                [
+                    $class: 'AnyBuildResult',
+                    message: message,
+                    state: state
+                ]
+            ]
+        ]
+    ])
 }
 
 def sendEmail(message) {
@@ -33,26 +59,37 @@ pipeline {
                 STAGE_ENV_LINK=credentials('STAGE_ENV_LINK')
             }
             steps {
-                setBuildStatus('pending', 'Building started.', 'Jenkins CI/CD')
-                sh '''
-                    wget -O backend/.env.master $MASTER_ENV_LINK
-                    chmod g+w backend/.env.master
-                    wget -O backend/.env.develop $DEVELOP_ENV_LINK
-                    chmod g+w backend/.env.develop
-                    wget -O backend/.env.stage $STAGE_ENV_LINK
-                    chmod g+w backend/.env.stage
-                    cp backend/.env.$BRANCH_NAME backend/.env
-                    docker-compose --env-file backend/.env build
-                '''
-                setBuildStatus('success', 'Built successfully.', 'Jenkins CI/CD')
-
+                setBuildStatus('PENDING', "build", 'building started')
+                try {
+                    sh '''
+                        wget -O backend/.env.master $MASTER_ENV_LINK
+                        chmod g+w backend/.env.master
+                        wget -O backend/.env.develop $DEVELOP_ENV_LINK
+                        chmod g+w backend/.env.develop
+                        wget -O backend/.env.stage $STAGE_ENV_LINK
+                        chmod g+w backend/.env.stage
+                        cp backend/.env.$BRANCH_NAME backend/.env
+                        docker-compose --env-file backend/.env build
+                    '''
+                } catch (err) {
+                    echo "Caught exception: ${err}"
+                    setBuildStatus('FAILURE', "build", "build failed")
+                    currentBuild.result = 'FAILURE'
+                }
+                setBuildStatus('SUCCESS', "build", 'building successful')
             }
         }
         stage('Deploy') {
             steps {
-                setBuildStatus('pending', 'Deploymend started.', 'Jenkins CI/CD')
-                sh 'docker-compose --env-file backend/.env up -d'
-                setBuildStatus('success', 'Deployed successfully.', 'Jenkins CI/CD')
+                setBuildStatus('PENDING', "deploy", 'deployment started')
+                try {
+                    sh 'docker-compose --env-file backend/.env up -d'
+                } catch (err) {
+                    echo "Caught exception: ${err}"
+                    setBuildStatus('FAILURE', "deploy", "deployment failed")
+                    currentBuild.result = 'FAILURE'
+                }
+                setBuildStatus('SUCCESS', "deploy", "deployment successful")
             }
         }
     }
