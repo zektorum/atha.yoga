@@ -58,6 +58,7 @@ pipeline {
                 MASTER_ENV_LINK=credentials('MASTER_ENV_LINK')
                 DEVELOP_ENV_LINK=credentials('DEVELOP_ENV_LINK')
                 STAGE_ENV_LINK=credentials('STAGE_ENV_LINK')
+                env.GIT_COMMIT_HASH=sh(script: 'git rev-parse HEAD', returnStdout: true)
             }
             steps {
                 script {
