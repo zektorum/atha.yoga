@@ -59,8 +59,8 @@ pipeline {
                 STAGE_ENV_LINK=credentials('STAGE_ENV_LINK')
             }
             steps {
-                setBuildStatus('PENDING', "build", 'building started')
                 try {
+                    setBuildStatus('PENDING', "build", 'building started')
                     sh '''
                         wget -O backend/.env.master $MASTER_ENV_LINK
                         chmod g+w backend/.env.master
@@ -70,26 +70,27 @@ pipeline {
                         chmod g+w backend/.env.stage
                         cp backend/.env.$BRANCH_NAME backend/.env
                         docker-compose --env-file backend/.env build
+                        
                     '''
+                    setBuildStatus('SUCCESS', "build", 'building successful')
                 } catch (err) {
                     echo "Caught exception: ${err}"
                     setBuildStatus('FAILURE', "build", "build failed")
                     currentBuild.result = 'FAILURE'
                 }
-                setBuildStatus('SUCCESS', "build", 'building successful')
             }
         }
         stage('Deploy') {
             steps {
-                setBuildStatus('PENDING', "deploy", 'deployment started')
                 try {
+                    setBuildStatus('PENDING', "deploy", 'deployment started')
                     sh 'docker-compose --env-file backend/.env up -d'
+                    setBuildStatus('SUCCESS', "deploy", "deployment successful")
                 } catch (err) {
                     echo "Caught exception: ${err}"
                     setBuildStatus('FAILURE', "deploy", "deployment failed")
                     currentBuild.result = 'FAILURE'
                 }
-                setBuildStatus('SUCCESS', "deploy", "deployment successful")
             }
         }
     }
