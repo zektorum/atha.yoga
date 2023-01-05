@@ -1,35 +1,36 @@
 
 def setBuildStatus(String state, String context, String message) {
     withEnv(["GIT_COMMIT_HASH=${sh(script: 'git rev-parse HEAD', returnStdout: true).trim()}"]) {
-    step([
-        $class: "GitHubCommitStatusSetter",
-        reposSource: [
-            $class: "ManuallyEnteredRepositorySource",
-            url: "git@github.com:zektorum/atha.yoga.git"
-        ],
-        contextSource: [
-            $class: "ManuallyEnteredCommitContextSource",
-            context: context
-        ],
-        errorHandlers: [[
-            $class: "ChangingBuildStatusErrorHandler",
-            result: "UNSTABLE"
-        ]],
-        commitShaSource: [
-            $class: "ManuallyEnteredShaSource",
-            sha: ${GIT_COMMIT_HASH}
-        ],
-        statusResultSource: [
-            $class: 'ConditionalStatusResultSource',
-            results: [
-                [
-                    $class: 'AnyBuildResult',
-                    message: message,
-                    state: state
+        step([
+            $class: "GitHubCommitStatusSetter",
+            reposSource: [
+                $class: "ManuallyEnteredRepositorySource",
+                url: "git@github.com:zektorum/atha.yoga.git"
+            ],
+            contextSource: [
+                $class: "ManuallyEnteredCommitContextSource",
+                context: context
+            ],
+            errorHandlers: [[
+                $class: "ChangingBuildStatusErrorHandler",
+                result: "UNSTABLE"
+            ]],
+            commitShaSource: [
+                $class: "ManuallyEnteredShaSource",
+                sha: ${GIT_COMMIT_HASH}
+            ],
+            statusResultSource: [
+                $class: 'ConditionalStatusResultSource',
+                results: [
+                    [
+                        $class: 'AnyBuildResult',
+                        message: message,
+                        state: state
+                    ]
                 ]
             ]
-        ]
-    ])
+        ])
+    }
 }
 
 def sendEmail(message) {
