@@ -1,6 +1,6 @@
 
 def setBuildStatus(String state, String context, String message) {
-    withEnv(["GIT_COMMIT_HASH=${sh(script: 'git rev-parse HEAD', returnStdout: true).trim()]}") {
+    withEnv(["GIT_COMMIT_HASH=${sh(script: 'git rev-parse HEAD', returnStdout: true).trim()}"]) {
     step([
         $class: "GitHubCommitStatusSetter",
         reposSource: [
