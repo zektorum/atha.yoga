@@ -16,7 +16,7 @@ def setBuildStatus(String state, String context, String message) {
         ]],
         commitShaSource: [
             $class: "ManuallyEnteredShaSource",
-            sha: env.GIT_COMMIT_HASH
+            sha: '${GIT_COMMIT_HASH}'
         ],
         statusResultSource: [
             $class: 'ConditionalStatusResultSource',
@@ -58,7 +58,7 @@ pipeline {
                 MASTER_ENV_LINK=credentials('MASTER_ENV_LINK')
                 DEVELOP_ENV_LINK=credentials('DEVELOP_ENV_LINK')
                 STAGE_ENV_LINK=credentials('STAGE_ENV_LINK')
-                env.GIT_COMMIT_HASH=sh(script: 'git rev-parse HEAD', returnStdout: true)
+                GIT_COMMIT_HASH=sh(script: 'git rev-parse HEAD', returnStdout: true)
             }
             steps {
                 script {
