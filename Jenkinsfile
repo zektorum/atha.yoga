@@ -1,38 +1,3 @@
-
-def setBuildStatus(String state, String context, String message) {
-    withEnv(["GIT_COMMIT_HASH=${sh(script: 'git rev-parse HEAD', returnStdout: true).trim()}"]) {
-        step([
-            $class: "GitHubCommitStatusSetter",
-            reposSource: [
-                $class: "ManuallyEnteredRepositorySource",
-                url: "https://github.com/zektorum/atha.yoga.git"
-            ],
-            contextSource: [
-                $class: "ManuallyEnteredCommitContextSource",
-                context: context
-            ],
-            errorHandlers: [[
-                $class: "ChangingBuildStatusErrorHandler",
-                result: "UNSTABLE"
-            ]],
-            commitShaSource: [
-                $class: "ManuallyEnteredShaSource",
-                sha: GIT_COMMIT_HASH
-            ],
-            statusResultSource: [
-                $class: 'ConditionalStatusResultSource',
-                results: [
-                    [
-                        $class: 'AnyBuildResult',
-                        message: message,
-                        state: state
-                    ]
-                ]
-            ]
-        ])
-    }
-}
-
 def sendEmail(message) {
     emailext body: 'Project built and deployed successfully.',
         subject: 'Atha.Yoga: CI/CD',
@@ -64,7 +29,7 @@ pipeline {
             steps {
                 script {
                     try {
-                        setBuildStatus('PENDING', "build", 'building started')
+                        publishChecks conclusion: 'Building started', status: 'in progress', name: 'Building', title: 'CI/CD')
                         sh '''
                             wget -O backend/.env.master $MASTER_ENV_LINK
                             chmod g+w backend/.env.master
@@ -76,10 +41,10 @@ pipeline {
                             docker-compose --env-file backend/.env build
 
                         '''
-                        setBuildStatus('SUCCESS', "build", 'building successful')
+                        publishChecks conclusion: 'Building finished', status: 'success', name: 'Building', title: 'CI/CD')
                     } catch (err) {
                         echo "Caught exception: ${err}"
-                        setBuildStatus('FAILURE', "build", "build failed")
+                        publishChecks conclusion: 'Building failed', status: 'failure', name: 'Building', title: 'CI/CD')
                         currentBuild.result = 'FAILURE'
                     }
                 }
@@ -89,12 +54,12 @@ pipeline {
             steps {
                 script {
                     try {
-                        setBuildStatus('PENDING', "deploy", 'deployment started')
+                        publishChecks conclusion: 'Deployment started', status: 'in progress', name: 'Deployment', title: 'CI/CD')
                         sh 'docker-compose --env-file backend/.env up -d'
-                        setBuildStatus('SUCCESS', "deploy", "deployment successful")
+                        publishChecks conclusion: 'Deployment successful', status: 'success', name: 'Deployment', title: 'CI/CD')
                     } catch (err) {
                         echo "Caught exception: ${err}"
-                        setBuildStatus('FAILURE', "deploy", "deployment failed")
+                        publishChecks conclusion: 'Deployment failed', status: 'failure', name: 'Deployment', title: 'CI/CD')
                         currentBuild.result = 'FAILURE'
                     }
                 }
