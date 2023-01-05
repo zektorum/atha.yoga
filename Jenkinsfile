@@ -17,7 +17,7 @@ def setBuildStatus(String state, String context, String message) {
             ]],
             commitShaSource: [
                 $class: "ManuallyEnteredShaSource",
-                sha: ${GIT_COMMIT_HASH}
+                sha: GIT_COMMIT_HASH
             ],
             statusResultSource: [
                 $class: 'ConditionalStatusResultSource',
