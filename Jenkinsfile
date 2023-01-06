@@ -51,10 +51,10 @@ pipeline {
                             docker-compose --env-file backend/.env build
 
                         '''
-                        publishChecks conclusion: 'SUCCESS', summary: 'Building finished', status: 'COMPLETED', name: 'Building', title: 'CI/CD'
+                        publishChecks actions: [[description: 'Building finished', identifier: '1. Building', label: 'CI/CD']], conclusion: 'SUCCESS', summary: 'Building finished', status: 'COMPLETED', name: 'Building', title: 'CI/CD'
                     } catch (err) {
                         echo "Caught exception: ${err}"
-                        publishChecks conclusion: 'FAILURE', summary: 'Building failed', status: 'COMPLETED', name: 'Building', title: 'CI/CD'
+                        publishChecks actions: [[description: 'Building failed', identifier: '1. Building', label: 'CI/CD']], summary: 'Building started', status: 'IN_PROGRESS', name: 'Building', title: 'Jenkins CI/CD'
                         currentBuild.result = 'FAILURE'
                     }
                 }
@@ -64,13 +64,12 @@ pipeline {
             steps {
                 script {
                     try {
-                        publishChecks summary: 'Deployment started', status: 'IN_PROGRESS', name: 'Deployment', title: 'CI/CD'
+                        publishChecks actions: [[description: 'Deployment started', identifier: '2. Deployment', label: 'CI/CD']], summary: 'Deployment started', status: 'IN_PROGRESS', name: 'Deployment', title: 'CI/CD'
                         sh 'docker-compose --env-file backend/.env up -d'
                         publishChecks conclusion: 'SUCCESS', summary: 'Deployment successful', status: 'COMPLETED', name: 'Deployment', title: 'CI/CD'
-                        setBuildStatus("Build complete", "SUCCESS")
                     } catch (err) {
                         echo "Caught exception: ${err}"
-                        publishChecks conclusion: 'FAILURE', summary: 'Deployment failed', status: 'COMPLETED', name: 'Deployment', title: 'CI/CD'
+                        publishChecks actions: [[description: 'Deployment failed', identifier: '2. Deployment', label: 'CI/CD']], summary: 'Building started', status: 'IN_PROGRESS', name: 'Building', title: 'Jenkins CI/CD'
                         currentBuild.result = 'FAILURE'
                     }
                 }
