@@ -39,13 +39,7 @@ pipeline {
             steps {
                 script {
                     try {
-                        
-
-                        publishChecks name: 'pipeline check', title: 'pipeline ', summary: '# A pipeline check example',
-                                text: "## This check is published through the pipeline script",
-                                detailsURL: 'https://ci.jenkins.io'
-
-                        publishChecks summary: 'Building started', status: 'IN_PROGRESS', name: 'Building', title: 'Jenkins CI/CD'
+                        publishChecks [[description: 'Building started', identifier: '1. Building', label: 'CI/CD']], summary: 'Building started', status: 'IN_PROGRESS', name: 'Building', title: 'Jenkins CI/CD'
                         sh '''
                             wget -O backend/.env.master $MASTER_ENV_LINK
                             chmod g+w backend/.env.master
