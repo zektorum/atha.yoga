@@ -16,7 +16,6 @@ def publishReport() {
         reportTitles: 'My Reports'])
 }
 
-
 void setBuildStatus(String message, String state) {
   step([
       $class: "GitHubCommitStatusSetter",
