@@ -16,6 +16,16 @@ def publishReport() {
         reportTitles: 'My Reports'])
 }
 
+void setBuildStatus(String message, String state) {
+  step([
+      $class: "GitHubCommitStatusSetter",
+      reposSource: [$class: "ManuallyEnteredRepositorySource", url: "https://github.com/my-org/my-repo"],
+      contextSource: [$class: "ManuallyEnteredCommitContextSource", context: "ci/jenkins/build-status"],
+      errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
+      statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
+  ]);
+}
+
 pipeline {
     agent any
     stages {
@@ -63,6 +73,7 @@ pipeline {
                         publishChecks summary: 'Deployment started', status: 'IN_PROGRESS', name: 'Deployment', title: 'CI/CD'
                         sh 'docker-compose --env-file backend/.env up -d'
                         publishChecks conclusion: 'SUCCESS', summary: 'Deployment successful', status: 'COMPLETED', name: 'Deployment', title: 'CI/CD'
+                        setBuildStatus("Build complete", "SUCCESS")
                     } catch (err) {
                         echo "Caught exception: ${err}"
                         publishChecks conclusion: 'FAILURE', summary: 'Deployment failed', status: 'COMPLETED', name: 'Deployment', title: 'CI/CD'
