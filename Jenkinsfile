@@ -5,6 +5,7 @@ def sendEmail(message) {
         to: '${DEFAULT_RECIPIENTS}'
 }
 
+
 def publishReport() {
     publishHTML (target : [allowMissing: false,
         alwaysLinkToLastBuild: true,
