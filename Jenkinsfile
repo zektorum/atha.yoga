@@ -8,7 +8,7 @@ def sendEmail(message) {
 def publishReport() {
     publishHTML (target : [allowMissing: false,
         alwaysLinkToLastBuild: true,
-        keepAll: true,
+        // keepAll: true,
         reportDir: 'frontend/tests/reports/html',
         reportFiles: 'index.html',
         reportTitles: 'My Reports',
