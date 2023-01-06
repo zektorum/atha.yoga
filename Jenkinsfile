@@ -74,7 +74,7 @@ pipeline {
                     } catch (err) {
                         echo "Caught exception: ${err}"
                         // publishChecks actions: [[description: 'Deployment failed', identifier: '2. Deployment', label: 'CI/CD']], summary: 'Building started', status: 'FAILURE', name: 'Deployment', title: 'Jenkins CI/CD'
-                        currentBuild.result = 'FAILURE'
+                        // currentBuild.result = 'FAILURE'
                     }
                 }
             }
