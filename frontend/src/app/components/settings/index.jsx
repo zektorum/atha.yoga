@@ -36,74 +36,72 @@ const Settings = () => (
         <img src={avatarIcon} alt="profile icon" />
       </Stack>
     </Box>
-    <Paper
+    <Stack
+      direction="column"
+      spacing={2}
       sx={{
-        p: '17px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
+        margin: '32px auto',
         width: '100%',
         maxWidth: '800px',
-        margin: '32px auto 16px auto',
       }}
     >
-      <Stack direction="row" spacing={2}>
-        <PersonOutlineOutlinedIcon color="action" />
-        <Typography>Личные данные</Typography>
-      </Stack>
-      <KeyboardArrowRightIcon color="action" />
-    </Paper>
-    <Paper
-      sx={{
-        p: '17px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        width: '100%',
-        maxWidth: '800px',
-        margin: '16px auto',
-      }}
-    >
-      <Stack direction="row" spacing={2}>
-        <CreditCardIcon color="action" />
-        <Typography>Платежи и карты</Typography>
-      </Stack>
-      <KeyboardArrowRightIcon color="action" />
-    </Paper>
-    <Paper
-      sx={{
-        p: '17px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        width: '100%',
-        maxWidth: '800px',
-        margin: '16px auto',
-      }}
-    >
-      <Stack direction="row" spacing={2}>
-        <SchoolOutlinedIcon color="action" />
-        <Typography>Стать преподавателем</Typography>
-      </Stack>
-      <KeyboardArrowRightIcon color="action" />
-    </Paper>
-    <Paper
-      sx={{
-        p: '17px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        width: '100%',
-        maxWidth: '800px',
-        margin: '16px auto',
-      }}
-    >
-      <Stack direction="row" spacing={2}>
-        <HelpOutlineOutlinedIcon color="action" />
-        <Typography>Помощь</Typography>
-      </Stack>
-      <KeyboardArrowRightIcon color="action" />
-    </Paper>
+      <Paper
+        sx={{
+          p: '17px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
+        <Stack direction="row" spacing={2}>
+          <PersonOutlineOutlinedIcon color="action" />
+          <Typography>Личные данные</Typography>
+        </Stack>
+        <KeyboardArrowRightIcon color="action" />
+      </Paper>
+      <Paper
+        sx={{
+          p: '17px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
+        <Stack direction="row" spacing={2}>
+          <CreditCardIcon color="action" />
+          <Typography>Платежи и карты</Typography>
+        </Stack>
+        <KeyboardArrowRightIcon color="action" />
+      </Paper>
+      <Paper
+        sx={{
+          p: '17px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
+        <Stack direction="row" spacing={2}>
+          <SchoolOutlinedIcon color="action" />
+          <Typography>Стать преподавателем</Typography>
+        </Stack>
+        <KeyboardArrowRightIcon color="action" />
+      </Paper>
+      <Paper
+        sx={{
+          p: '17px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
+        <Stack direction="row" spacing={2}>
+          <HelpOutlineOutlinedIcon color="action" />
+          <Typography>Помощь</Typography>
+        </Stack>
+        <KeyboardArrowRightIcon color="action" />
+      </Paper>
+    </Stack>
   </Box>
 );
 
