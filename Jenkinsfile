@@ -5,16 +5,16 @@ def sendEmail(message) {
         to: '${DEFAULT_RECIPIENTS}'
 }
 
-// def publishReport() {
-//     publishHTML (target : [allowMissing: false,
-//         alwaysLinkToLastBuild: true,
-//         // keepAll: true,
-//         reportDir: 'frontend/tests/reports/html',
-//         reportFiles: 'index.html',
-//         reportTitles: 'My Reports',
-//         reportName: 'Frontend testing report',
-//         reportTitles: 'My Reports'])
-// }
+def publishReport() {
+    publishHTML (target : [allowMissing: false,
+        alwaysLinkToLastBuild: true,
+        // keepAll: true,
+        reportDir: 'frontend/tests/reports/html',
+        reportFiles: 'index.html',
+        reportTitles: 'My Reports',
+        reportName: 'Frontend testing report',
+        reportTitles: 'My Reports'])
+}
 
 void setBuildStatus(String message, String state) {
   step([
