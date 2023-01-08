@@ -1,9 +1,9 @@
-def sendEmail(message) {
-    emailext body: 'Project built and deployed successfully.',
-        subject: 'Atha.Yoga: CI/CD',
-        from: 'Jenkins (Atha.Yoga Master Node)',
-        to: '${DEFAULT_RECIPIENTS}'
-}
+// def sendEmail(message) {
+//     emailext body: 'Project built and deployed successfully.',
+//         subject: 'Atha.Yoga: CI/CD',
+//         from: 'Jenkins (Atha.Yoga Master Node)',
+//         to: '${DEFAULT_RECIPIENTS}'
+// }
 
 def publishReport() {
     publishHTML (target : [allowMissing: false,
