@@ -39,10 +39,10 @@ pipeline {
             steps {
                 script {
                     try {
-//                         publishChecks name: 'example', title: 'Pipeline Check', summary: 'check through pipeline',
-//                             text: 'you can publish checks in pipeline script',
-//                             detailsURL: 'https://github.com/jenkinsci/checks-api-plugin#pipeline-usage',
-//                             actions: [[label:'an-user-request-action', description:'actions allow users to request pre-defined behaviours', identifier:'an unique identifier']]
+                        publishChecks name: 'example', title: 'Pipeline Check', summary: 'check through pipeline',
+                            text: 'you can publish checks in pipeline script',
+                            detailsURL: 'https://github.com/jenkinsci/checks-api-plugin#pipeline-usage',
+                            actions: [[label:'an-user-request-action', description:'actions allow users to request pre-defined behaviours', identifier:'an unique identifier']]
                         // publishChecks actions: [[description: 'Building started', identifier: '1. Building', label: 'CI/CD']], summary: 'Building started', status: 'IN_PROGRESS', name: 'Building', title: 'Jenkins CI/CD'
                         sh '''
                             wget -O backend/.env.master $MASTER_ENV_LINK
@@ -72,7 +72,7 @@ pipeline {
                         // publishChecks actions: [[description: 'Deployment started', identifier: '2. Deployment', label: 'CI/CD']], summary: 'Deployment started', status: 'IN_PROGRESS', name: 'Deployment', title: 'CI/CD'
                         // sh 'docker-compose --env-file backend/.env up -d'
                         // publishChecks conclusion: 'SUCCESS', summary: 'Deployment successful', status: 'COMPLETED', name: 'Deployment', title: 'CI/CD'
-                        setBuildStatus("Build complete", "SUCCESS")
+//                         setBuildStatus("Build complete", "SUCCESS")
                     } catch (err) {
                         echo "Caught exception: ${err}"
                         // publishChecks actions: [[description: 'Deployment failed', identifier: '2. Deployment', label: 'CI/CD']], summary: 'Building started', status: 'FAILURE', name: 'Deployment', title: 'Jenkins CI/CD'
