@@ -39,11 +39,11 @@ pipeline {
                 '''
             }
         }
-        stage('Deploy') {
-            steps {
+//         stage('Deploy') {
+//             steps {
                 // sh 'docker-compose --env-file backend/.env up -d'                        
-            }
-        }
+//             }
+//         }
     }
     post {
         success {
