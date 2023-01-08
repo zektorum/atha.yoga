@@ -41,7 +41,7 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                sh 'docker-compose --env-file backend/.env up -d'                        
+                // sh 'docker-compose --env-file backend/.env up -d'                        
             }
         }
     }
