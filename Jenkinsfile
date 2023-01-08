@@ -70,7 +70,7 @@ pipeline {
                 script {
                     try {
                         // publishChecks actions: [[description: 'Deployment started', identifier: '2. Deployment', label: 'CI/CD']], summary: 'Deployment started', status: 'IN_PROGRESS', name: 'Deployment', title: 'CI/CD'
-                        // sh 'docker-compose --env-file backend/.env up -d'
+                        sh 'docker-compose --env-file backend/.env up -d'
                         // publishChecks conclusion: 'SUCCESS', summary: 'Deployment successful', status: 'COMPLETED', name: 'Deployment', title: 'CI/CD'
 //                         setBuildStatus("Build complete", "SUCCESS")
                     } catch (err) {
