@@ -34,6 +34,32 @@ pipeline {
                 sh 'docker-compose --env-file backend/.env up -d'
             }
         }
+        stage('Test') {
+            environment {
+                BRANCH_NAME="develop"
+            }
+            steps {
+                script {
+                    waitUntil {
+                        EXIT_CODE = """${sh(
+                            script: "docker inspect -f '{{.State.ExitCode}}' cypress-${BRANCH_NAME}",
+                            returnStdout: true
+                        )}"""
+                        STATUS = """${sh(
+                            script: "docker inspect -f '{{.State.Status}}' cypress-${BRANCH_NAME}",
+                            returnStdout: true
+                        )}"""
+                        if (STATUS == "exited\n" && EXIT_CODE == "0\n") {
+                            return true;
+                        } else if (STATUS == "exited\n" && !(EXIT_CODE == "0\n")) {
+                            error 'Failed, exiting now...'
+                        } else {
+                            return false
+                        }
+                    }
+                }
+            }
+        }
     }
     post {
         success {
