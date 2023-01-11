@@ -1,5 +1,9 @@
 from typing import Any
 
+from django.http import HttpResponseRedirect
+from django.shortcuts import redirect
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema
 from rest_framework.decorators import permission_classes
 from rest_framework.exceptions import NotFound
 from rest_framework.generics import GenericAPIView
@@ -13,49 +17,60 @@ from core.app.utils.permissions import IsTeacher
 from courses.app.http.requests.course_requests import (
     CourseFilterRequest,
     CourseCreateRequest,
-    CourseUpdateRequest,
+    BaseCourseUpdateRequest,
     FavoriteCourseAddRemoveRequest,
     CourseTicketBuyRequest,
     CourseTicketUseRequest,
 )
-from courses.app.http.resources.course_resources import CourseResource
+from courses.app.http.resources.context import BaseCourseResourceContext
+from courses.app.http.resources.course_resources import (
+    CourseResource,
+    LessonResource,
+    CourseCardResource,
+)
 from courses.app.repositories.course_repository import CourseRepository
+from courses.app.repositories.lesson_repository import LessonRepository
+from courses.app.repositories.transaction_repository import TicketTransactionRepository
+from courses.app.services.course_service import (
+    BaseCourseUpdator,
+    CourseParticipateService,
+)
 from courses.app.services.course_service import (
     CourseCreator,
     FavoriteCoursesWork,
-    TicketWorkService,
-)
-from courses.app.services.course_service import (
-    CourseUpdator,
-    CourseParticipateService,
+    TicketBuy,
 )
 
 
 class CourseFilterHandler(GenericAPIView):
     serializer_class = CourseFilterRequest
 
-    def post(self, *args: Any, **kwargs: Any) -> Response:
-        data = self.serializer_class(data=self.request.data, partial=True)
+    def post(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        data = self.serializer_class(data=request.data, partial=True)
         data.is_valid(raise_exception=True)
 
-        courses = CourseRepository().filter(data=data.validated_data)
+        repository = CourseRepository(user=self.request.user)
+        courses = repository.fetch_relations(
+            queryset=repository.filter(
+                data=data.validated_data,
+                base_query=repository.find_public_all(user_id=self.request.user.id),
+            )
+        )
 
         return Response(
-            paginate(data=courses, request=self.request, resource=CourseResource)
+            paginate(data=courses, request=request, resource=CourseCardResource)
         )
 
 
 class CourseRetrieveHandler(APIView):
-    repository = CourseRepository()
-
+    @extend_schema(responses=OpenApiTypes.OBJECT)
     def get(self, request: Request, pk: int, *args: Any, **kwargs: Any) -> Response:
-        course = self.repository.find_by_id(id_=pk)
-        if not course:
-            raise NotFound(f"Undefined course with pk {pk}")
+        repository = CourseRepository(user=request.user)
+        course = repository.find_by_id(id_=pk, raise_exception=True, fetch_rels=True)
         return Response(
             {
-                "data": CourseResource(
-                    course, context={"user": self.request.user.pk}
+                "data": CourseCardResource(
+                    course, context=BaseCourseResourceContext(user=self.request.user)
                 ).data
             }
         )
@@ -65,8 +80,8 @@ class CourseRetrieveHandler(APIView):
 class CourseCreateHandler(GenericAPIView):
     serializer_class = CourseCreateRequest
 
-    def post(self, *args: Any, **kwargs: Any) -> Response:
-        data = self.serializer_class(data=self.request.data)
+    def post(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        data = self.serializer_class(data=request.data)
         data.is_valid(raise_exception=True)
 
         course = CourseCreator(
@@ -76,28 +91,28 @@ class CourseCreateHandler(GenericAPIView):
         return Response(
             {
                 "data": CourseResource(
-                    course, context={"user": self.request.user.pk}
+                    course, context=BaseCourseResourceContext(user=self.request.user)
                 ).data
             }
         )
 
 
 @permission_classes([IsTeacher])
-class CourseUpdateHandler(GenericAPIView):
-    serializer_class = CourseUpdateRequest
+class BaseCourseUpdateHandler(GenericAPIView):
+    serializer_class = BaseCourseUpdateRequest
 
     def patch(self, request: Request, pk: int, *args: Any, **kwargs: Any) -> Response:
         data = self.serializer_class(data=request.data, partial=True)
         data.is_valid(raise_exception=True)
 
-        course = CourseUpdator(
+        course = BaseCourseUpdator(
             user=request.user, data=data.validated_data, pk=pk
         ).update()
 
         return Response(
             {
                 "data": CourseResource(
-                    course, context={"user": self.request.user.pk}
+                    course, context=BaseCourseResourceContext(user=self.request.user)
                 ).data
             }
         )
@@ -107,18 +122,18 @@ class CourseUpdateHandler(GenericAPIView):
 class FavoriteCourseAddHandler(GenericAPIView):
     serializer_class = FavoriteCourseAddRemoveRequest
 
-    def post(self, *args: Any, **kwargs: Any) -> Response:
-        data = self.serializer_class(data=self.request.data)
+    def post(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        data = self.serializer_class(data=request.data)
         data.is_valid(raise_exception=True)
 
         course = FavoriteCoursesWork(
-            user=self.request.user, course_id=data.validated_data["course_id"]
+            user=request.user, course_id=data.validated_data["course_id"]
         ).add()
 
         return Response(
             {
                 "data": CourseResource(
-                    course, context={"user": self.request.user.pk}
+                    course, context=BaseCourseResourceContext(user=self.request.user)
                 ).data
             }
         )
@@ -128,8 +143,8 @@ class FavoriteCourseAddHandler(GenericAPIView):
 class FavoriteCourseRemoveHandler(GenericAPIView):
     serializer_class = FavoriteCourseAddRemoveRequest
 
-    def post(self, *args: Any, **kwargs: Any) -> Response:
-        data = self.serializer_class(data=self.request.data)
+    def post(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        data = self.serializer_class(data=request.data)
         data.is_valid(raise_exception=True)
 
         course = FavoriteCoursesWork(
@@ -139,7 +154,7 @@ class FavoriteCourseRemoveHandler(GenericAPIView):
         return Response(
             {
                 "data": CourseResource(
-                    course, context={"user": self.request.user.pk}
+                    course, context=BaseCourseResourceContext(user=self.request.user)
                 ).data
             }
         )
@@ -147,12 +162,15 @@ class FavoriteCourseRemoveHandler(GenericAPIView):
 
 @permission_classes([IsAuthenticated])
 class FavoriteCourseListHandler(APIView):
+    @extend_schema(responses=OpenApiTypes.OBJECT)
     def get(self, *args: Any, **kwargs: Any) -> Response:
         courses = CourseRepository().find_user_favorite_courses(user=self.request.user)
         return Response(
             {
                 "data": CourseResource(
-                    courses, context={"user": self.request.user.pk}, many=True
+                    courses,
+                    context=BaseCourseResourceContext(user=self.request.user),
+                    many=True,
                 ).data
             }
         )
@@ -162,25 +180,34 @@ class FavoriteCourseListHandler(APIView):
 class CourseTicketBuyHandler(GenericAPIView):
     serializer_class = CourseTicketBuyRequest
 
-    def post(self, *args: Any, **kwargs: Any) -> Response:
-        data = self.serializer_class(data=self.request.data)
+    def post(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        data = self.serializer_class(data=request.data)
         data.is_valid(raise_exception=True)
 
-        TicketWorkService().buy(
+        payment_url = TicketBuy().buy(
             course_id=data.validated_data["course_id"],
             user=self.request.user,
             amount=data.validated_data["amount"],
         )
 
-        return Response("Ticket obtained")
+        return Response({"data": payment_url})
+
+
+class SuccessTicketPaymentHandler(APIView):
+    repos = TicketTransactionRepository()
+
+    @extend_schema(responses=OpenApiTypes.OBJECT)
+    def get(self, request: Request, transaction_id: str) -> HttpResponseRedirect:
+        redirect_url = TicketBuy().confirm(transaction_id=transaction_id)
+        return redirect(redirect_url)
 
 
 @permission_classes([IsAuthenticated])
 class CourseTicketUseHandler(GenericAPIView):
     serializer_class = CourseTicketUseRequest
 
-    def put(self, *args: Any, **kwargs: Any) -> Response:
-        data = self.serializer_class(data=self.request.data)
+    def put(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        data = self.serializer_class(data=request.data)
         data.is_valid(raise_exception=True)
 
         link = CourseParticipateService(
@@ -188,3 +215,25 @@ class CourseTicketUseHandler(GenericAPIView):
         ).participate()
 
         return Response({"data": {"course_link": link}})
+
+
+class LessonRetrieveHandler(APIView):
+    @extend_schema(responses=OpenApiTypes.OBJECT)
+    def get(self, request: Request, pk: int, *args: Any, **kwargs: Any) -> Response:
+        lesson = LessonRepository().find_by_id(id_=pk)
+        if not lesson:
+            raise NotFound(f"Undefined lesson with pk {pk}")
+        return Response({"data": LessonResource(lesson).data})
+
+
+class LessonListHandler(APIView):
+    repository = LessonRepository()
+
+    @extend_schema(responses=OpenApiTypes.OBJECT)
+    def get(self, request: Request, pk: int, *args: Any, **kwargs: Any) -> Response:
+        lessons = self.repository.fetch_relations(
+            self.repository.find_by_course_id(course_id=pk)
+        )
+        return Response(
+            paginate(data=lessons, request=request, resource=LessonResource)
+        )

@@ -1,5 +1,7 @@
 from typing import Any
 
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema
 from rest_framework.decorators import permission_classes
 from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -14,6 +16,7 @@ from courses.app.services.review_service import CourseReviewCreate, CourseReview
 
 
 class CourseReviewListHandler(APIView):
+    @extend_schema(responses=OpenApiTypes.OBJECT)
     def get(self, request: Request, pk: int, *args: Any, **kwargs: Any) -> Response:
         reviews = CourseReviewRepository().find_by_course_id(course_id=pk)
         return Response({"reviews": CourseReviewResource(reviews, many=True).data})
@@ -35,6 +38,7 @@ class CourseReviewCreateHandler(GenericAPIView):
 
 @permission_classes([IsAuthenticated])
 class CourseReviewRemoveHandler(APIView):
+    @extend_schema(responses=OpenApiTypes.OBJECT)
     def delete(self, request: Request, pk: int, *args: Any, **kwargs: Any) -> Response:
         review = CourseReviewRemove(review_id=pk, user=request.user).remove()
         return Response({"review": CourseReviewResource(review).data})

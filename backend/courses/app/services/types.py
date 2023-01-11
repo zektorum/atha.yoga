@@ -28,13 +28,13 @@ class CourseCreateData(TypedDict):
     link_info: str
     level: CourseLevels
     duration: str
-    repeat_editing: bool
     start_datetime: datetime.datetime
     deadline_datetime: Optional[datetime.datetime]
     payment: CoursePaymentTypes
     price: int
     complexity: CourseComplexities
     lessons: Optional[List[LessonCreateData]]
+    is_draft: bool
 
 
 class CourseUpdateData(TypedDict):

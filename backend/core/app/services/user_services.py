@@ -12,14 +12,35 @@ from rest_framework.exceptions import (
 from core.app.errors import ErrorsMessages
 from core.app.repositories.user_repository import UserRepository
 from core.app.services.email_services import SimpleEmailTextService
-from core.app.services.types import TextMailData
+from core.app.services.types import TextMailData, UserProfileUpdateData
 from core.app.services.types import (
     UserRegisterData,
+    UserRegisterConfirmData,
     UserLoginData,
     UserChangePassData,
 )
 from core.app.utils.jwt import UserToken, get_tokens_for_user
+from core.app.utils.profile_photo_creator import ProfilePhotoCreator
+from core.app.utils.util import setup_resource_attributes
 from core.models import User
+
+
+class UserRegisterConfirm:
+    repository = UserRepository()
+
+    def __init__(self, data: UserRegisterConfirmData):
+        self.data = data
+
+    def confirm(self) -> Tuple[User, UserToken]:
+        user = self.repository.find_by_email(self.data["email"])
+        if not user:
+            raise PermissionDenied("User with this email does not exist")
+        if self.data["register_confirm_token"] != user.register_confirm_token:
+            raise AuthenticationFailed("Tokens don't match")
+        user.is_active = True
+        self.repository.store(user=user)
+        token_data = get_tokens_for_user(user)
+        return user, token_data
 
 
 class UserRegister:
@@ -31,16 +52,31 @@ class UserRegister:
     @cached_property
     def user(self) -> User:
         user = User()
-        if self.repository.find_user_by_email(self.data["email"]):
+        if self.repository.find_by_email(self.data["email"]):
             raise ValidationError("User with this email already exists")
         user.username = user.email = self.data["email"]
         user.set_password(self.data["password"])
+        user.is_active = False
         return user
 
-    def register(self) -> Tuple[User, UserToken]:
+    def _send_confirmation_mail(self, token: str) -> None:
+        SimpleEmailTextService(
+            data=TextMailData(
+                subject="Регистрация в Atha.Yoga",
+                message=f"Дорогой пользователь, для завершения процедуры регистрации на платформе Atha.Yoga, "
+                f"пожалуйста, перейдите по следующей "
+                f"ссылке:\n{settings.SITE_URL}/verify-email/?token={token}/.\n"
+                f"Если Вы не регистрировались на платформе, просто проигнорируйте это письмо."
+                f"\nС уважением и заботой,\nкоманда ATHAYOGA.",
+                receivers=[self.user.email],
+            )
+        ).send()
+
+    def register(self) -> None:
+        register_confirm_token = str(uuid.uuid4())
+        self._send_confirmation_mail(token=register_confirm_token)
+        self.user.register_confirm_token = register_confirm_token
         self.repository.store(self.user)
-        token_data = get_tokens_for_user(user=self.user)
-        return self.user, token_data
 
 
 class UserLogin:
@@ -51,7 +87,7 @@ class UserLogin:
 
     @cached_property
     def user(self) -> User:
-        user = self.repository.find_user_by_email(self.data["email"])
+        user = self.repository.find_by_email(self.data["email"])
         if not user or not user.check_password(self.data["password"]):
             raise AuthenticationFailed(ErrorsMessages.AUTH_FAILED.value)
         return user
@@ -69,7 +105,7 @@ class UserChangePass:
 
     @cached_property
     def user(self) -> User:
-        user = self.repository.find_user_by_email(self.data["email"])
+        user = self.repository.find_by_email(self.data["email"])
         if not user or not user.check_password(self.data["password"]):
             raise AuthenticationFailed()
         user.set_password(self.data["new_password"])
@@ -84,26 +120,32 @@ class UserChangePass:
 class UserResetPass:
     repository = UserRepository()
 
-    def reset(self, email: str) -> None:
-        user = self.repository.find_user_by_email(email)
-        if not user:
-            raise PermissionDenied("User with this email does not exist")
-        pwd_reset_token = str(uuid.uuid4())
+    def _send_confirmation_mail(self, email: str, token: str) -> None:
         SimpleEmailTextService(
             data=TextMailData(
-                subject="Please reset your password",
-                message=f"""Reset your Atha.Yoga password
-            Click here: {settings.SITE_URL}/?token={pwd_reset_token}/""",
+                subject="Восстановление пароля",
+                message=f"Дорогой пользователь, для восстановления доступа к Atha.Yoga, "
+                f"пожалуйста, перейдите по следующей "
+                f"ссылке:\n{settings.SITE_URL}/?token={token}/.\n"
+                f"Если Вы не запрашивали восстановление пароля, просто проигнорируйте это письмо."
+                f"\nС уважением и заботой,\nкоманда ATHAYOGA.",
                 receivers=[email],
             )
         ).send()
+
+    def reset(self, email: str) -> None:
+        user = self.repository.find_by_email(email)
+        if not user:
+            raise PermissionDenied("User with this email does not exist")
+        pwd_reset_token = str(uuid.uuid4())
+        self._send_confirmation_mail(email=email, token=pwd_reset_token)
         user.pwd_reset_token = pwd_reset_token
         self.repository.store(user=user)
 
     def change(
         self, new_password: str, email: str, pwd_reset_token: str
     ) -> Tuple[User, UserToken]:
-        user = self.repository.find_user_by_email(email=email)
+        user = self.repository.find_by_email(email=email)
         if not user:
             raise PermissionDenied("User with this email does not exist")
         if pwd_reset_token != user.pwd_reset_token:
@@ -112,3 +154,28 @@ class UserResetPass:
         self.repository.store(user=user)
         token_data = get_tokens_for_user(user)
         return user, token_data
+
+
+class UserProfileUpdator:
+    repository = UserRepository()
+
+    def __init__(self, user: User, data: UserProfileUpdateData):
+        self.user = user
+        self.data = data
+
+    def update(self) -> User:
+        if username := self.data.pop("username", None):
+            self.repository.update_username(self.user, username)
+
+        if "avatar" in self.data:
+            self.user.avatar = ProfilePhotoCreator(
+                photo=self.data.pop("avatar")
+            ).create()
+        setup_resource_attributes(
+            instance=self.user,
+            validated_data=self.data,
+            fields=list(UserProfileUpdateData.__annotations__.keys()),
+        )
+        self.repository.store(self.user)
+
+        return self.user

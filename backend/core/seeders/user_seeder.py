@@ -3,7 +3,7 @@ import random
 from django.contrib.auth.hashers import make_password
 from faker import Faker
 
-from core.models import User, Transaction, QuestionnaireTeacher
+from core.models import User, Transaction, QuestionnaireTeacher, TransactionStatuses
 
 
 class UserSeeder:
@@ -21,11 +21,16 @@ class UserSeeder:
 
 
 class TransactionSeeder:
+    def __init__(self, user: User) -> None:
+        self.faker = Faker("ru-RU")
+        self.user = user
 
     def seed(self) -> Transaction:
         return Transaction(
             amount=random.randint(1, 10),
-            payment_id=random.randint(1, 100)
+            payment_id=random.randint(1, 100),
+            user=self.user,
+            status=random.choice([i[0] for i in TransactionStatuses.choices]),
         )
 
 
@@ -40,10 +45,12 @@ class QuestionnaireTeacherSeeder:
             user=self.user,
             name=profile["name"].split()[0],
             surname=profile["name"].split()[1],
-            date_of_birth=profile['birthdate'],
-            gender=profile['sex'],
+            date_of_birth=profile["birthdate"],
+            gender=profile["sex"],
             about_me=" ".join(self.faker.words(self.faker.random_int(0, 20)))[:100],
-            work_experience=" ".join(self.faker.words(self.faker.random_int(0, 20)))[:100],
+            work_experience=" ".join(self.faker.words(self.faker.random_int(0, 20)))[
+                :100
+            ],
             vk_link=self.faker.url(),
             telegram_link=self.faker.url(),
             status="ACCEPTED",

@@ -8,25 +8,35 @@ from courses.app.handlers.comment_handlers import (
 from courses.app.handlers.course_handlers import (
     CourseFilterHandler,
     CourseCreateHandler,
-    CourseUpdateHandler,
+    BaseCourseUpdateHandler,
     FavoriteCourseAddHandler,
     FavoriteCourseRemoveHandler,
     FavoriteCourseListHandler,
     CourseTicketBuyHandler,
     CourseTicketUseHandler,
     CourseRetrieveHandler,
+    LessonRetrieveHandler,
+    LessonListHandler,
+    SuccessTicketPaymentHandler,
+)
+from courses.app.handlers.lesson_handlers import (
+    LessonRescheduleHandler,
+    LessonCancelHandler,
 )
 from courses.app.handlers.review_handlers import (
     CourseReviewListHandler,
     CourseReviewCreateHandler,
     CourseReviewRemoveHandler,
 )
+from courses.app.handlers.ticket_handlers import TicketListHandler
 
 urlpatterns = [
     path("", CourseCreateHandler.as_view(), name="course_create"),
     path("<int:pk>/", CourseRetrieveHandler.as_view(), name="course_retrieve"),
-    path("<int:pk>/update/", CourseUpdateHandler.as_view(), name="course_update"),
+    path("<int:pk>/update/", BaseCourseUpdateHandler.as_view(), name="course_update"),
     path("filter/", CourseFilterHandler.as_view(), name="courses_filter"),
+    path("lessons/<int:pk>/", LessonRetrieveHandler.as_view(), name="lesson_retrieve"),
+    path("<int:pk>/lessons/", LessonListHandler.as_view(), name="lesson_list"),
     path(
         "favorites/", FavoriteCourseListHandler.as_view(), name="favorite_course_list"
     ),
@@ -66,4 +76,10 @@ urlpatterns = [
         CourseReviewRemoveHandler.as_view(),
         name="course_review_remove",
     ),
+    path(
+        "success-payment/<str:transaction_id>/", SuccessTicketPaymentHandler.as_view()
+    ),
+    path("reschedule-lesson/<int:lesson_id>/", LessonRescheduleHandler.as_view()),
+    path("cancel-lesson/<int:lesson_id>/", LessonCancelHandler.as_view()),
+    path("tickets/", TicketListHandler.as_view()),
 ]

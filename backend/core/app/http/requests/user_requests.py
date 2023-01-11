@@ -7,7 +7,7 @@ from core.app.utils.serializers import UnimplementedSerializer, PasswordField
 class UserRegisterRequest(UnimplementedSerializer):
     email = serializers.EmailField()
     password = PasswordField()
-    password_confirmation = serializers.CharField(min_length=8, max_length=128)
+    password_confirmation = PasswordField()
 
     def validate(self, attrs: dict) -> dict:
         if attrs["password"] != attrs["password_confirmation"]:
@@ -15,6 +15,11 @@ class UserRegisterRequest(UnimplementedSerializer):
                 "`password` and `password_confirmation` should be equal"
             )
         return attrs
+
+
+class UserConfirmRegisterRequest(UnimplementedSerializer):
+    email = serializers.EmailField()
+    register_confirm_token = serializers.CharField(max_length=128)
 
 
 class UserLoginRequest(UnimplementedSerializer):
@@ -53,3 +58,11 @@ class UserResetPassRequest(UnimplementedSerializer):
     pwd_reset_token = serializers.CharField(max_length=128)
     email = serializers.EmailField()
     new_password = PasswordField()
+
+
+class UserProfileUpdateRequest(UnimplementedSerializer):
+    username = serializers.CharField(max_length=150)
+    first_name = serializers.CharField(max_length=100)
+    last_name = serializers.CharField(max_length=100)
+    about = serializers.CharField(max_length=100)
+    avatar = serializers.ImageField()
