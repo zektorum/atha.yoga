@@ -32,6 +32,7 @@ from courses.models import (
     CourseCycle,
     CourseSchedule,
     BaseCourse,
+    CourseStatuses,
 )
 
 
@@ -65,6 +66,8 @@ class CourseCreator:
         course.deadline_datetime = self._data["deadline_datetime"]
         course.payment = self._data["payment"]
         course.price = self._data["price"]
+        if self._data["is_draft"]:
+            course.status = CourseStatuses.DRAFT
         course.schedule = [
             CourseSchedule(weekday=item["weekday"], start_time=item["start_time"])
             for item in self._data["lessons"]

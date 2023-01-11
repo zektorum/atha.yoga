@@ -55,6 +55,7 @@ class CourseCreateRequest(UnimplementedSerializer):
     payment = serializers.ChoiceField(choices=CoursePaymentTypes.choices)
     price = serializers.IntegerField(min_value=0)
     lessons = LessonCreateRequest(many=True, allow_null=True)
+    is_draft = serializers.BooleanField(default=False)
 
     def validate(self, attrs: dict) -> dict:
         if (

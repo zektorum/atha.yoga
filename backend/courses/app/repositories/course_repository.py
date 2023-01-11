@@ -8,7 +8,7 @@ from core.app.repositories.base_repository import BaseRepository
 from core.models import User, QuestionnaireTeacher, QuestionnaireTeacherStatuses
 from courses.app.repositories.types import CourseFilterData
 from courses.documents import BaseCourseDocument
-from courses.models import Course, Lesson, BaseCourse
+from courses.models import Course, Lesson, BaseCourse, CourseStatuses
 
 
 class CourseRepository(BaseRepository):
@@ -40,8 +40,14 @@ class CourseRepository(BaseRepository):
     def remove_user_favorite_course(self, user: User, course: Course) -> None:
         course.base_course.favorites.remove(user)
 
-    def filter(self, data: CourseFilterData) -> QuerySet[Course]:
-        base_query = self.model.objects.all()
+    def find_public_all(self, user_id: Optional[int] = None) -> QuerySet[Course]:
+        return self.model.objects.filter(
+            Q(status=CourseStatuses.PUBLISHED) | Q(base_course__teacher_id=user_id)
+        )
+
+    def filter(
+        self, data: CourseFilterData, base_query: QuerySet[Course]
+    ) -> QuerySet[Course]:
         filter_query = Q()
         if "query" in data:
             query = Course.objects.filter(

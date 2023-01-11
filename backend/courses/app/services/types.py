@@ -34,6 +34,7 @@ class CourseCreateData(TypedDict):
     price: int
     complexity: CourseComplexities
     lessons: Optional[List[LessonCreateData]]
+    is_draft: bool
 
 
 class CourseUpdateData(TypedDict):
