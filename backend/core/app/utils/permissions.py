@@ -35,15 +35,15 @@ class ReCaptcha(object):
         ) -> Callable:
             sender = self.sender(request)
             sender_info = self.sender_info(sender)
-            time = datetime.now() - sender_info["time"]
+            time = sender_info["time"] - datetime.now()
             counter = sender_info["count"] + 1
-            if counter >= 5 and time < timedelta(days=1):
+            sender_info["count"] = counter
+            if counter >= 5:
                 captcha = self.check_recaptcha(request)
-                if not captcha:
+                if not captcha and time < timedelta(days=1):
                     raise Throttled
                 sender_info["count"] = -1
                 sender_info["time"] = datetime.now()
-            sender_info["count"] = counter
             cache.set(f"{sender}", sender_info)
             return func(self_, request, *args, **kwargs)
 
