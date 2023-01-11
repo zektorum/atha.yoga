@@ -17,6 +17,7 @@ import useAuth from './utils/hooks/useAuth';
 import CreateLessonPage from './pages/create_lesson';
 import SearchLessonsPage from './pages/search-lessons';
 import CalendarPage from './pages/calendar';
+import SettingsPage from './pages/settings';
 import MyLessonsPage from './pages/my-lessons';
 import LessonDetailsPage from './pages/lesson-details';
 
@@ -91,7 +92,7 @@ const App = () => {
             <Route path="search-lessons" element={<SearchLessonsPage />} />
             <Route path="calendar" element={<CalendarPage />} />
             <Route path="profile" element={<ProfilePage auth={auth} />} />
-            <Route path="calendar" element={<CalendarPage />} />
+            <Route path="settings" element={<SettingsPage />} />
             <Route path="create-lesson" element={<CreateLessonPage />} />
             <Route path="my-lessons" element={<MyLessonsPage />} />
             <Route path="lesson-details/:id" element={<LessonDetailsPage />} />
