@@ -81,6 +81,7 @@ const SearchLessonsPage = () => {
           {lessons && lessons.data?.map(lesson => (
             <LessonCard
               key={lesson.id}
+              id={lesson.id}
               title={lesson.name}
               description={lesson.description}
             />

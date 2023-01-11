@@ -6,7 +6,7 @@ from core.models import GenderTypes
 
 class QuestionnaireTeacherRequest(UnimplementedSerializer):
     name = serializers.CharField(max_length=30)
-    surname = serializers.CharField(max_length=30)
+    surname = serializers.CharField(max_length=50)
     date_of_birth = serializers.DateField()
     gender = serializers.ChoiceField(choices=GenderTypes.choices)
     about_me = serializers.CharField(max_length=3000)
@@ -14,5 +14,6 @@ class QuestionnaireTeacherRequest(UnimplementedSerializer):
     vk_link = serializers.URLField()
     telegram_link = serializers.URLField()
     certificate_photos = serializers.ListField(child=serializers.ImageField())
-    passport_photos = serializers.ListField(child=serializers.ImageField())
-    user_photos = serializers.ListField(child=serializers.ImageField())
+    passport_photo = serializers.ImageField()
+    user_photo = serializers.ImageField()
+    user_with_passport_photo = serializers.ImageField()

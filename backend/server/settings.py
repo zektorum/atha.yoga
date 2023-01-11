@@ -1,4 +1,6 @@
 import os
+from collections import OrderedDict
+from datetime import timedelta
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -20,6 +22,7 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:3000",
     "http://localhost:8000",
     "http://127.0.0.1:8000",
+    "http://127.0.0.1:8080",
 ]
 
 # Application definition
@@ -39,7 +42,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "django_extensions",
     "core",
-    "lessons",
+    "courses",
     "django_elasticsearch_dsl",
 ]
 
@@ -97,6 +100,11 @@ SPECTACULAR_SETTINGS = {
     "COMPONENT_SPLIT_REQUEST": True,
 }
 
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=7),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=8),
+}
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -145,8 +153,7 @@ EMAIL_HOST = os.getenv("EMAIL_HOST")
 EMAIL_PORT = os.getenv("EMAIL_PORT")
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
+EMAIL_USE_SSL = True
 
 ELASTICSEARCH_DSL = {
     "default": {
@@ -206,9 +213,21 @@ LOGGING = {
             "propagate": True,
             "level": "INFO",
         },
-        "": {
-            "handlers": ["console"],
-            "level": "INFO",
-        },
     },
 }
+
+DEFAULT_SUPERUSER_PASSWORD = os.environ.get("POSTGRES_PASSWORD")
+
+COURSE_LESSONS_CYCLE = timedelta(days=60)
+
+RESCHEDULE_CANCEL_COUNT_PERCENT = 0.25
+
+MAX_FINE = 0.25
+RATE_FINES_MAPPING = OrderedDict(
+    {
+        0.025: timedelta(hours=24),
+        0.05: timedelta(hours=12),
+        0.1: timedelta(hours=6),
+        0.15: timedelta(hours=1),
+    }
+)

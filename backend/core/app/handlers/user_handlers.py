@@ -1,5 +1,7 @@
 from typing import Any
 
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema
 from rest_framework.decorators import permission_classes
 from rest_framework.exceptions import NotFound
 from rest_framework.generics import GenericAPIView
@@ -10,18 +12,22 @@ from rest_framework.views import APIView
 
 from core.app.http.requests.user_requests import (
     UserRegisterRequest,
+    UserConfirmRegisterRequest,
     UserLoginRequest,
     UserChangePassRequest,
     UserResetPassRequest,
     UserSendPwdResetMailRequest,
+    UserProfileUpdateRequest,
 )
 from core.app.http.resources.user_resources import UserResource
 from core.app.repositories.user_repository import UserRepository
 from core.app.services.user_services import (
     UserRegister,
+    UserRegisterConfirm,
     UserLogin,
     UserChangePass,
     UserResetPass,
+    UserProfileUpdator,
 )
 
 
@@ -32,7 +38,18 @@ class UserRegisterHandler(GenericAPIView):
         data = self.serializer_class(data=request.data)
         data.is_valid(raise_exception=True)
 
-        user, token = UserRegister(data=data.validated_data).register()
+        UserRegister(data=data.validated_data).register()
+        return Response("Success")
+
+
+class UserRegisterConfirmHandler(GenericAPIView):
+    serializer_class = UserConfirmRegisterRequest
+
+    def post(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        data = self.serializer_class(data=request.data)
+        data.is_valid(raise_exception=True)
+
+        user, token = UserRegisterConfirm(data=data.validated_data).confirm()
         return Response(
             {"data": {"user": UserResource(user).data, "tokens": token._asdict()}}
         )
@@ -96,6 +113,7 @@ class UserResetPassHandler(GenericAPIView):
 class LoggedUserProfileHandler(APIView):
     repository = UserRepository()
 
+    @extend_schema(responses=OpenApiTypes.OBJECT)
     def get(self, *args: Any, **kwargs: Any) -> Response:
         user = self.repository.find_by_id(id_=self.request.user.id, fetch_rels=True)
         return Response({"data": UserResource(user).data})
@@ -104,9 +122,24 @@ class LoggedUserProfileHandler(APIView):
 class UserProfileHandler(APIView):
     repository = UserRepository()
 
+    @extend_schema(responses=OpenApiTypes.OBJECT)
     def get(self, request: Request, pk: int, *args: Any, **kwargs: Any) -> Response:
-        user = self.repository.find_by_id(id_=self.request.user.id, fetch_rels=True)
+        user = self.repository.find_by_id(id_=pk, fetch_rels=True)
         if not user:
             raise NotFound(f"Undefined user with pk {pk}")
 
+        return Response({"data": UserResource(user).data})
+
+
+@permission_classes([IsAuthenticated])
+class UserProfileUpdateHandler(GenericAPIView):
+    serializer_class = UserProfileUpdateRequest
+
+    @extend_schema(responses=OpenApiTypes.OBJECT)
+    def patch(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        data = self.serializer_class(data=request.data, partial=True)
+        data.is_valid(raise_exception=True)
+        user = UserProfileUpdator(
+            user=self.request.user, data=data.validated_data
+        ).update()
         return Response({"data": UserResource(user).data})
