@@ -36,9 +36,8 @@ class ReCaptcha(object):
             sender = self.sender(request)
             sender_info = self.sender_info(sender)
             time = sender_info["time"] - datetime.now()
-            counter = sender_info["count"] + 1
-            sender_info["count"] = counter
-            if counter >= 5:
+            sender_info["count"] += 1
+            if sender_info["count"] >= 5:
                 captcha = self.check_recaptcha(request)
                 if not captcha and time < timedelta(days=1):
                     raise Throttled
@@ -54,7 +53,7 @@ class ReCaptcha(object):
             return self.ip(request)
         return request.user
 
-    def sender_info(self, sender: str) -> SenderInfo:
+    def sender_info(self, sender: Union[User, str]) -> SenderInfo:
         info = cache.get(f"{sender}", {})
         return SenderInfo(
             count=info.get("count", 0), time=info.get("time", datetime.now())
