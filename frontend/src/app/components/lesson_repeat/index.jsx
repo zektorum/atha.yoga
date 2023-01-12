@@ -160,7 +160,7 @@ const RegularLessons = ({ lessonData, setLessonData }) => {
 
         <Button
           variant="text"
-          disabled={regularLessonDay.length || lessonTime === null}
+        //  disabled={regularLessonDay.length || lessonTime === null}
           onClick={lessonsInfo}
         >
           Добавить занятие

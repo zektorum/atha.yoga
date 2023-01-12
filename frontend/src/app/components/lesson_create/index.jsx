@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useState } from 'react';
+import dayjs from 'dayjs';
 import 'dayjs/locale/ru';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -59,6 +60,8 @@ const LessonCreate = () => {
       ...lessonData,
       [e.target.name]: value,
     });
+    const date = `${dayjs(lessonData.date).get('year')}-${dayjs(lessonData.date).get('month') < 10 ? `0${dayjs(lessonData.date).get('month') + 1}` : dayjs(lessonData.date).get('month')}-${dayjs(lessonData.date).get('date')}T${dayjs(lessonData.time).get('hour') < 10 ? `0${dayjs(lessonData.time).get('hour')}` : dayjs(lessonData.time).get('hour')}:${dayjs(lessonData.time).get('minute') < 10 ? `0${dayjs(lessonData.time).get('minute')}` : dayjs(lessonData.time).get('minute')}:00.791Z`;
+    console.log(date);
   };
 
   const changeLessonLevel = event => {
@@ -253,6 +256,7 @@ const LessonCreate = () => {
               <Button
                 variant="contained"
                 type="submit"
+                onClick={() => console.log(lessonData)}
               >
                 Создать
               </Button>
