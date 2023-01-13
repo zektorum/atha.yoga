@@ -41,9 +41,13 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "corsheaders",
     "django_extensions",
+    "django_elasticsearch_dsl",
+    "ckeditor",
+    "mptt",
+    "django_mptt_admin",
     "core",
     "courses",
-    "django_elasticsearch_dsl",
+    "articles",
 ]
 
 MIDDLEWARE = [
