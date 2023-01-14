@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import {
   Box, Paper, Typography, Stack, Badge,
 } from '@mui/material';
@@ -33,7 +34,10 @@ const Settings = () => (
         <Badge color="error" variant="dot">
           <NotificationsNoneIcon fontSize="medium" color="disabled" />
         </Badge>
-        <img src={avatarIcon} alt="profile icon" />
+        <Link to="/profile">
+          <img src={avatarIcon} alt="profile icon" />
+        </Link>
+
       </Stack>
     </Box>
     <Stack

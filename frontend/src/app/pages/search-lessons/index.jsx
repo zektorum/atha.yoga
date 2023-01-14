@@ -17,15 +17,14 @@ const SearchLessonsPage = () => {
   const searchQuery = useDebounce(query, 500);
 
   useEffect(() => {
-    dispatch(filterSlice());
-  }, []);
-
-  useEffect(() => {
     dispatch(filterSlice(query));
   }, [searchQuery]);
+
   function updateSearch(e) {
     setQuery(e.target.value);
   }
+
+  console.log(lessons);
 
   return (
     <Box sx={{ width: '100%' }}>
