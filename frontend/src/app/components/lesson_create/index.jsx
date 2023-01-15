@@ -1,6 +1,6 @@
+/* eslint-disable no-console */
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useState } from 'react';
-import dayjs from 'dayjs';
 import 'dayjs/locale/ru';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -39,12 +39,15 @@ const LessonCreate = () => {
     level: [],
     duration: '',
     repeat: 'once',
-    date: null,
-    time: null,
+    dateForOnceLesson: null,
+    timeForOnceLesson: null,
+    startDateForRegularLessons: null,
+    finishDateForRegularLessons: null,
     regularLessons: [],
     payment: 'paid',
     donation: true,
     cost: '',
+    isDraft: false,
   });
 
   const update = e => {
@@ -54,14 +57,26 @@ const LessonCreate = () => {
     });
   };
 
+  const saveFormUsDraft = () => {
+    setLessonData({
+      ...lessonData,
+      isDraft: true,
+    });
+  };
+
+  const saveForm = () => {
+    setLessonData({
+      ...lessonData,
+      isDraft: false,
+    });
+  };
+
   const changeDonation = e => {
     const value = !(e.target.value === 'on');
     setLessonData({
       ...lessonData,
       [e.target.name]: value,
     });
-    const date = `${dayjs(lessonData.date).get('year')}-${dayjs(lessonData.date).get('month') < 10 ? `0${dayjs(lessonData.date).get('month') + 1}` : dayjs(lessonData.date).get('month')}-${dayjs(lessonData.date).get('date')}T${dayjs(lessonData.time).get('hour') < 10 ? `0${dayjs(lessonData.time).get('hour')}` : dayjs(lessonData.time).get('hour')}:${dayjs(lessonData.time).get('minute') < 10 ? `0${dayjs(lessonData.time).get('minute')}` : dayjs(lessonData.time).get('minute')}:00.791Z`;
-    console.log(date);
   };
 
   const changeLessonLevel = event => {
@@ -249,6 +264,7 @@ const LessonCreate = () => {
             <Grid item container sx={{ justifyContent: 'end', columnGap: '5%' }}>
               <Button
                 variant="text"
+                onClick={() => saveFormUsDraft()}
               >
                 Сохранить черновик
               </Button>
@@ -256,7 +272,7 @@ const LessonCreate = () => {
               <Button
                 variant="contained"
                 type="submit"
-                onClick={() => console.log(lessonData)}
+                onClick={() => saveForm()}
               >
                 Создать
               </Button>

@@ -10,23 +10,41 @@ const filter = ({ query }) => axios
 const getLesson = id => axios
   .get(`${GET_LESSON_URL + id}/`);
 
+const getParseDateTime = (date, time) => {
+  const year = dayjs(date).get('year');
+  const month = dayjs(date).get('month') < 10 ? `0${dayjs(date).get('month') + 1}` : dayjs(date).get('month');
+  const day = dayjs(date).get('date');
+  const hour = dayjs(time).get('hour') < 10 ? `0${dayjs(time).get('hour')}` : dayjs(time).get('hour');
+  const minute = dayjs(time).get('minute') < 10 ? `0${dayjs(time).get('minute')}` : dayjs(time).get('minute');
+  const parseDate = `${year}-${month}-${day}T${hour}:${minute}:00.791Z`;
+  return parseDate;
+};
+
+const getParseDate = (date) => {
+  const year = dayjs(date).get('year');
+  const month = dayjs(date).get('month') < 10 ? `0${dayjs(date).get('month') + 1}` : dayjs(date).get('month');
+  const day = dayjs(date).get('date');
+  const parseDate = `${year}-${month}-${day}`;
+  return parseDate;
+};
+
 const postLesson = ({ lessonState }) => axios
   .post(GET_LESSON_URL, {
     name: lessonState.name,
     description: lessonState.description,
-    //  complexity: lessonState,
+    //  complexity: lessonState,  //removed, because obj has level property
     level: lessonState.level,
     duration: lessonState.duration,
     course_type: lessonState.type,
     link: lessonState.link,
     link_info: lessonState.conferenceId,
-    //  onceLesson_datetime: `${dayjs(lessonState.date).get('year')}-${dayjs(lessonState.date).get('month') < 10 ? `0${dayjs(lessonState.date).get('month') + 1}` : dayjs(lessonState.date).get('month')}-${dayjs(lessonState.date).get('date')}T${dayjs(lessonState.time).get('hour') < 10 ? `0${dayjs(lessonState.time).get('hour')}` : dayjs(lessonState.time).get('hour')}:${dayjs(lessonState.time).get('minute') < 10 ? `0${dayjs(lessonState.time).get('minute')}` : dayjs(lessonState.time).get('minute')}:00.791Z`,
-    start_datetime: lessonState,
-    deadline_datetime: lessonState,
+    onceLesson_datetime: getParseDateTime(lessonState.dateForOnceLesson, lessonState.timeForOnceLesson), //  added
+    start_datetime: getParseDate(lessonState.startDateForRegularLessons),
+    deadline_datetime: getParseDate(lessonState.finishDateForRegularLessons),
     payment: lessonState.payment,
     price: lessonState.cost,
     lessons: lessonState.regularLessons,
-    is_draft: false,
+    is_draft: lessonState.isDraft,
   });
 
 const LessonsService = { filter, getLesson, postLesson };

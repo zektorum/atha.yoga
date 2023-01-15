@@ -29,14 +29,14 @@ const OnceLesson = ({
   const setDate = newValue => {
     setLessonData({
       ...lessonData,
-      date: newValue.$d,
+      dateForOnceLesson: newValue.$d,
     });
   };
 
   const setTime = newValue => {
     setLessonData({
       ...lessonData,
-      time: newValue.$d,
+      timeForOnceLesson: newValue.$d,
     });
   };
 
@@ -61,22 +61,36 @@ const OnceLesson = ({
   );
 };
 
-const RegularLessons = ({ lessonData, setLessonData }) => {
-  const [startLessonDate, setStartLessonDate] = useState(null);
-  const [finishLessonDate, setFinishLessonDate] = useState(null);
+const RegularLessons = ({
+  regularLessons, startDate, finishDate, lessonData, setLessonData,
+}) => {
   const [regularLessonDay, setRegularLessonDay] = useState('');
-  const [lessonTime, setLessonTime] = useState(null);
+  const [redularLessonTime, setRegularLessonTime] = useState(null);
+
+  const setStartDate = newValue => {
+    setLessonData({
+      ...lessonData,
+      startDateForRegularLessons: newValue.$d,
+    });
+  };
+
+  const setFinishDate = newValue => {
+    setLessonData({
+      ...lessonData,
+      finishDateForRegularLessons: newValue.$d,
+    });
+  };
 
   const lessonsInfo = () => {
-    const time = dayjs(lessonTime).minute() > 9 ? `${dayjs(lessonTime).hour()}:${dayjs(lessonTime).minute()}` : `${dayjs(lessonTime).hour()}:0${dayjs(lessonTime).minute()}`;
-    const copyRegularLessons = [...lessonData.regularLessons];
+    const time = dayjs(redularLessonTime).minute() > 9 ? `${dayjs(redularLessonTime).hour()}:${dayjs(redularLessonTime).minute()}` : `${dayjs(redularLessonTime).hour()}:0${dayjs(redularLessonTime).minute()}`;
+    const copyRegularLessons = [...regularLessons];
     copyRegularLessons.push({ day: regularLessonDay, time });
     setLessonData({
       ...lessonData,
       regularLessons: copyRegularLessons,
     });
     setRegularLessonDay('');
-    setLessonTime(null);
+    setRegularLessonTime(null);
   };
 
   const deleteLesson = lesson => {
@@ -92,18 +106,18 @@ const RegularLessons = ({ lessonData, setLessonData }) => {
 
         <DatePicker
           label="Начало"
-          value={startLessonDate}
+          value={startDate}
           minDate={dayjs(Date())}
-          onChange={newValue => setStartLessonDate(newValue)}
+          onChange={newValue => setStartDate(newValue)}
           renderInput={params => <TextField {...params} sx={{ width: '35%' }} required />}
         />
         <DatePicker
           label="Окончание"
-          value={finishLessonDate}
-          disabled={startLessonDate === null}
-          minDate={startLessonDate}
-          maxDate={dayjs(startLessonDate).add(2, 'month')}
-          onChange={newValue => setFinishLessonDate(newValue)}
+          value={finishDate}
+          disabled={startDate === null}
+          minDate={startDate}
+          maxDate={dayjs(startDate).add(2, 'month')}
+          onChange={newValue => setFinishDate(newValue)}
           renderInput={params => <TextField {...params} sx={{ width: '35%' }} required />}
         />
 
@@ -151,10 +165,10 @@ const RegularLessons = ({ lessonData, setLessonData }) => {
 
         <TimePicker
           label="Время"
-          value={lessonTime}
+          value={redularLessonTime}
           id="regular_lesson_time"
           sx={{ width: '30%' }}
-          onChange={newValue => setLessonTime(newValue)}
+          onChange={newValue => setRegularLessonTime(newValue)}
           renderInput={params => <TextField {...params} />}
         />
 
@@ -225,8 +239,8 @@ const RepeatLessons = ({ update, lessonData, setLessonData }) => (
     {lessonData.repeat === 'once'
       ? (
         <OnceLesson
-          date={lessonData.date}
-          time={lessonData.time}
+          date={lessonData.dateForOnceLesson}
+          time={lessonData.timeForOnceLesson}
           lessonData={lessonData}
           setLessonData={setLessonData}
         />
@@ -234,6 +248,8 @@ const RepeatLessons = ({ update, lessonData, setLessonData }) => (
       : (
         <RegularLessons
           regularLessons={lessonData.regularLessons}
+          startDate={lessonData.startDateForRegularLessons}
+          finishDate={lessonData.finishDateForRegularLessons}
           lessonData={lessonData}
           setLessonData={setLessonData}
         />
