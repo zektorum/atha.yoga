@@ -25,6 +25,8 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:8080",
 ]
 
+READING_SPEED = 180  # words per min.
+
 # Application definition
 
 INSTALLED_APPS = [

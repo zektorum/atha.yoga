@@ -11,14 +11,13 @@ class ArticleAdmin(admin.ModelAdmin):
         "author",
         "rating",
         "category",
-        "is_draft",
+        "published",
         "created_at",
         "updated_at",
     )
     list_filter = (
-        "is_draft",
+        "published",
         "category",
-        "rating",
         "created_at",
         "updated_at",
     )

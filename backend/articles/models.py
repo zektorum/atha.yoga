@@ -1,10 +1,16 @@
+from typing import Any
+
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from ckeditor.fields import RichTextField
+from django.template.defaultfilters import slugify, striptags
+from django.urls import reverse
 
 from mptt.models import MPTTModel, TreeForeignKey
 from core.models import TimeStampedModel, User
 from core.models import Comment
+
+from django.conf import settings
 
 
 class Tag(models.Model):
@@ -13,6 +19,9 @@ class Tag(models.Model):
     class Meta:
         verbose_name = "Тэг"
         verbose_name_plural = "Тэги"
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class Article(TimeStampedModel):
@@ -27,9 +36,9 @@ class Article(TimeStampedModel):
         ),
     )
     slug = models.SlugField(max_length=150, unique=True)
-    is_draft = models.BooleanField(default=False)
-    seo_keywords = models.CharField(max_length=255)
-    seo_description = models.TextField()
+    published = models.BooleanField(default=False)
+    seo_keywords = models.CharField(max_length=255, blank=True)
+    seo_description = models.TextField(blank=True)
     category = TreeForeignKey(
         "Category",
         blank=False,
@@ -37,11 +46,27 @@ class Article(TimeStampedModel):
         on_delete=models.PROTECT,
         related_name="articles",
     )
-    tags = models.ManyToManyField(Tag, related_name="articles")
+    tags = models.ManyToManyField(Tag, related_name="articles", blank=True)
 
     class Meta:
         verbose_name = "Статья"
         verbose_name_plural = "Статьи"
+        ordering = ["-created_at"]
+
+    def get_absolute_url(self) -> str:
+        return reverse("article", kwargs={"article_slug": self.slug})
+
+    def get_reading_time(self) -> int:
+        time = round(len(striptags(self.content).split(" ")) / settings.READING_SPEED)
+        return time if time > 0 else 1
+
+    def save(self, *args: Any, **kwargs: Any) -> None:
+        if not self.slug:
+            self.slug = slugify(self.title)
+        return super().save(*args, **kwargs)
+
+    def __str__(self) -> str:
+        return self.title
 
 
 class ArticleComment(Comment):
@@ -61,6 +86,21 @@ class Category(MPTTModel):
     )
     slug = models.SlugField()
 
+    class MPTTMeta:
+        order_insertion_by = ["name"]
+
     class Meta:
+        unique_together = ("parent", "slug")
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
+
+    def get_absolute_url(self) -> str:
+        return reverse("category", kwargs={"category_slug": self.slug})
+
+    def save(self, *args: Any, **kwargs: Any) -> None:
+        if not self.slug:
+            self.slug = slugify(self.name)
+        return super().save(*args, **kwargs)
+
+    def __str__(self) -> str:
+        return self.name
