@@ -65,6 +65,10 @@ class BaseCourse(TimeStampedModel):
         User, related_name="favorite_courses", blank=True
     )
 
+    class Meta:
+        verbose_name = "Базовый курс"
+        verbose_name_plural = "Базовые курсы"
+
 
 class CourseStatuses(models.TextChoices):
     CANCELED = "CANCELED"
@@ -123,8 +127,8 @@ class Course(TimeStampedModel):
         return result
 
     class Meta:
-        verbose_name = "Занятие"
-        verbose_name_plural = "Занятия"
+        verbose_name = "Курс"
+        verbose_name_plural = "Курсы"
 
 
 class CourseCycle(TimeStampedModel):
@@ -133,6 +137,10 @@ class CourseCycle(TimeStampedModel):
     end_at = models.DateTimeField()
     canceled_lessons_amount = models.IntegerField(default=0)
     transferred_lessons_amount = models.IntegerField(default=0)
+
+    class Meta:
+        verbose_name = "Цикл курса"
+        verbose_name_plural = "Циклы курсов"
 
 
 class Review(PolymorphicModel, TimeStampedModel):
@@ -173,8 +181,8 @@ class Lesson(TimeStampedModel):
     )
 
     class Meta:
-        verbose_name = "Урок"
-        verbose_name_plural = "Уроки"
+        verbose_name = "Занятие"
+        verbose_name_plural = "Занятия"
         ordering = ("id",)
 
 
@@ -211,3 +219,7 @@ class Ticket(TimeStampedModel):
 class TicketTransaction(Transaction):
     ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE)
     ticket_amount = models.IntegerField()
+
+    class Meta:
+        verbose_name = "Транзакция билета"
+        verbose_name_plural = "Транзакции билетов"

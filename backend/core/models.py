@@ -22,6 +22,10 @@ class Attachment(PolymorphicModel):
     created_at = models.DateTimeField(auto_now_add=True, db_index=False)
     updated_at = models.DateTimeField(auto_now=True, db_index=False)
 
+    class Meta:
+        verbose_name = "Вложение"
+        verbose_name_plural = "Вложения"
+
 
 class UserRoles(models.TextChoices):
     STUDENT = "STUDENT"
@@ -82,6 +86,10 @@ class Transaction(PolymorphicModel):
     created_at = models.DateTimeField(auto_now_add=True, db_index=False)
     updated_at = models.DateTimeField(auto_now=True, db_index=False)
 
+    class Meta:
+        verbose_name = "Транзакция"
+        verbose_name_plural = "Транзакции"
+
 
 class GenderTypes(models.TextChoices):
     MALE = "MALE"
@@ -123,4 +131,4 @@ class QuestionnaireTeacher(TimeStampedModel):
 
     class Meta:
         verbose_name = "Анкета преподавателя"
-        verbose_name_plural = "Анкета преподавателя"
+        verbose_name_plural = "Анкеты преподавателей"
