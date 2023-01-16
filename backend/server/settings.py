@@ -37,13 +37,18 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+
+    # Third-party apps
     "rest_framework",
     "drf_spectacular",
     "corsheaders",
     "django_extensions",
+    "django_elasticsearch_dsl",
+    "django_json_widget",
+
+    # Custom apps
     "core",
     "courses",
-    "django_elasticsearch_dsl",
 ]
 
 MIDDLEWARE = [
