@@ -31,6 +31,7 @@ django-cms = "*"
 django-sekizai = "*"
 djangocms-text-ckeditor = "*"
 django-filer = "*"
+pre-commit = "*"
 
 [dev-packages]
 isort = "*"
