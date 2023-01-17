@@ -25,7 +25,9 @@ const Settings = () => (
       }}
     >
       <Stack direction="row" alignItems="center" spacing={2} color="text.secondary">
-        <ArrowBackIcon fontSize="medium" />
+        <Link to="..">
+          <ArrowBackIcon fontSize="medium" sx={{ transform: 'translateY(3px)', color: '#616161' }} />
+        </Link>
         <Typography fontSize="20px" fontWeight="500">
           Назад
         </Typography>
