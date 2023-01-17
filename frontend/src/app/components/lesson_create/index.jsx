@@ -245,16 +245,18 @@ const LessonCreate = () => {
             />
             <Grid item container sx={{ justifyContent: 'end', columnGap: '5%' }}>
               <Button
+                size="large"
                 variant="text"
               >
                 Сохранить черновик
               </Button>
 
               <Button
+                size="large"
                 variant="contained"
                 type="submit"
               >
-                Создать
+                Опубликовать
               </Button>
             </Grid>
 

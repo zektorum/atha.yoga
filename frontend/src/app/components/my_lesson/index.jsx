@@ -42,16 +42,28 @@ const MyLesson = () => {
           spacing={2}
         >
           <Grid container direction="column" gap="16px">
-            <Typography
-              variant="h6"
-              noWrap="true"
-              paragraph
-              sx={{
-                fontSize: '18px', maxWidth: '271px',
-              }}
-            >
-              Бхакти-йога для начинающих по курсу Евгения Романова ещё какой-то текст чтобы добить 100ку символов
-            </Typography>
+            <div>
+              <Typography
+                variant="h6"
+                noWrap="true"
+                paragraph
+                sx={{
+                  fontSize: '18px', maxWidth: '271px', mb: '0',
+                }}
+              >
+                Бхакти-йога для начинающих
+              </Typography>
+              <Typography
+                variant="h6"
+                noWrap="true"
+                paragraph
+                sx={{
+                  fontSize: '18px', maxWidth: '271px', mb: '0',
+                }}
+              >
+                по курсу Евгения Романова ещё какой-то текст чтобы добить 100ку символов
+              </Typography>
+            </div>
             <Grid item xs container direction="column">
               <Typography variant="caption" color="text.secondary" sx={{ fontSize: '13px', mb: '7px' }}>
                 Ближайшее занятие:
