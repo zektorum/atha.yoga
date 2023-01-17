@@ -26,8 +26,6 @@ const SearchLessonsPage = () => {
     setQuery(e.target.value);
   }
 
-  console.log(lessons);
-
   return (
     <Box sx={{ width: '100%' }}>
       <Box
