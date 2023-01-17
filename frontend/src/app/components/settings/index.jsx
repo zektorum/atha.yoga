@@ -26,7 +26,7 @@ const Settings = () => (
     >
       <Stack direction="row" alignItems="center" spacing={2} color="text.secondary">
         <ArrowBackIcon fontSize="medium" />
-        <Typography fontSize="24px" fontWeight="500">
+        <Typography fontSize="20px" fontWeight="500">
           Назад
         </Typography>
       </Stack>

@@ -24,7 +24,7 @@ const MyLessonsPage = () => (
         width: '100%', height: '64px', px: '29px', boxShadow: '0px 8px 16px rgba(46, 60, 80, 0.1)',
       }}
     >
-      <Typography fontSize="24px" fontWeight="500" color="text.secondary">
+      <Typography fontSize="20px" fontWeight="500" color="text.secondary">
         Мои занятия
       </Typography>
       <Stack alignItems="center" direction="row" spacing={2}>
@@ -36,7 +36,6 @@ const MyLessonsPage = () => (
         </Link>
       </Stack>
     </Grid>
-    <MyLesson />
     <Grid
       item
       display="flex"
