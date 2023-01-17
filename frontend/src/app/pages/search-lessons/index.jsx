@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  Box, InputBase, Paper, Typography, Container,
+  Box, InputBase, Paper, Typography, Container, Badge, Stack,
 } from '@mui/material';
-import SettingsIcon from '@mui/icons-material/Settings';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
+import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
+import { Link } from 'react-router-dom';
 import SearchIcon from '@mui/icons-material/Search';
 import filterSlice from '../../core/slices/lessons/filter';
 import useDebounce from '../../utils/hooks/useDebounce';
@@ -40,7 +42,14 @@ const SearchLessonsPage = () => {
         <Typography fontSize="20px" fontWeight="500" color="text.secondary">
           Поиск
         </Typography>
-        <SettingsIcon color="disabled" />
+        <Stack alignItems="center" direction="row" spacing={2}>
+          <Badge color="error" variant="dot">
+            <NotificationsNoneIcon fontSize="medium" color="disabled" />
+          </Badge>
+          <Link to="/settings">
+            <SettingsOutlinedIcon color="disabled" sx={{ transform: 'translateY(3px)' }} />
+          </Link>
+        </Stack>
       </Box>
       <Paper
         component="form"
