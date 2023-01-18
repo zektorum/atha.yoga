@@ -10,6 +10,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import filterSlice from '../../core/slices/lessons/filter';
 import useDebounce from '../../utils/hooks/useDebounce';
 import LessonCard from '../../components/lesson-card';
+import MyLesson from '../../components/my_lesson';
 
 const SearchLessonsPage = () => {
   const dispatch = useDispatch();

@@ -130,7 +130,9 @@ const MyLesson = () => (
         sx={{ height: '100%' }}
       >
         <Stack direction="column" spacing={2} alignItems="center" justifyContent="center" sx={{ width: '200%', height: '100%' }}>
-          <SearchIcon color="disabled" sx={{ width: '45px', height: '45px' }} />
+          <Link to="/search-lessons">
+            <SearchIcon color="disabled" sx={{ width: '45px', height: '45px' }} />
+          </Link>
           <Typography variant="body2" sx={{ fontWeight: '500' }}>
             Найти занятие
           </Typography>
