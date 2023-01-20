@@ -1,10 +1,20 @@
 from django.urls import path
-from . import views
+
+from articles.app.handlers.article_handlers import (
+    ArticleListHandler,
+    ArticleDetailHandler,
+    ArticleListByCategoryHandler,
+    ArticleListBySearchQueryHandler,
+)
 
 
 urlpatterns = [
-    path("", views.index, name="index"),
-    path("article/<slug:article_slug>", views.article, name="article"),
-    path("category/<slug:category_slug>", views.category, name="category"),
-    path("search", views.search, name="search"),
+    path("", ArticleListHandler.as_view(), name="index"),
+    path("article/<slug:article_slug>", ArticleDetailHandler.as_view(), name="article"),
+    path(
+        "category/<slug:category_slug>",
+        ArticleListByCategoryHandler.as_view(),
+        name="category",
+    ),
+    path("search", ArticleListBySearchQueryHandler.as_view(), name="search"),
 ]

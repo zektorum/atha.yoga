@@ -22,7 +22,7 @@
         <section>
             {% for comment in article.comments.all %}
                 <div>
-                    <b>{{ comment.user.username }}</b> ({{ comment.created_at }})<br>: {{ comment.text }}
+                    <b>{{ comment.user.username }}</b> ({{ comment.created_at|date:"SHORT_DATETIME_FORMAT" }})<br>: {{ comment.text }}
                 </div>
             {% endfor %}
         </section>

@@ -1,10 +1,11 @@
 {% extends "articles/layout.html" %}
 {% load mptt_tags %}
+{% load rest_framework %}
 
 {% block body %}
     <form action="{% url 'search' %}" method="POST">
         {% csrf_token %}
-        {{ search_form }}
+        {% render_form search_form %}
     </form>
 
     <h1>Категории</h1>
