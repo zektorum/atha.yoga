@@ -8,6 +8,7 @@ handler500 = "rest_framework.exceptions.server_error"
 urlpatterns = (
     [
         path("admin/", admin.site.urls),
+        path("journal/", include('cms.urls')),
         path("articles/", include("articles.urls")),
         re_path(
             r"^api/",
