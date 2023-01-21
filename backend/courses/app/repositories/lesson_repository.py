@@ -1,7 +1,8 @@
 import datetime
 from typing import List, Optional
 
-from django.db.models import QuerySet, F
+from django.db.models import QuerySet, F, Q
+from django.utils.timezone import now
 
 from core.app.repositories.base_repository import BaseRepository
 from core.models import User
@@ -35,8 +36,13 @@ class LessonRepository(BaseRepository):
     def add_participant(self, lesson: Lesson, user: User) -> None:
         return lesson.participants.add(user)
 
-    def find_user_participant(self, user_id: int) -> QuerySet[Lesson]:
-        return self.model.objects.filter(participants__id=user_id)
+    def find_user_participant(
+        self, user_id: int, skip_past: bool = False
+    ) -> QuerySet[Lesson]:
+        q = Q()
+        if skip_past:
+            q &= Q(start_at__gte=now())
+        return self.model.objects.filter(q, participants__id=user_id)
 
     def store(self, lesson: Lesson) -> None:
         lesson.save()

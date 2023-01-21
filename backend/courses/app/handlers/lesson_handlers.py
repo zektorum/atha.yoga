@@ -12,6 +12,7 @@ from rest_framework.views import APIView
 
 from core.app.utils.pagination import paginate
 from core.app.utils.permissions import IsTeacher
+from core.app.utils.queryset import OrderedQueryset
 from courses.app.http.requests.lesson_requests import LessonRescheduleRequest
 from courses.app.http.resources.course_resources import LessonResource
 from courses.app.repositories.lesson_repository import LessonRepository
@@ -80,9 +81,13 @@ class UserLessonsParticipateHandler(APIView):
 
     @extend_schema(responses=OpenApiTypes.OBJECT)
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
-        lessons = self.repository.fetch_relations(
-            self.repository.find_user_participant(user_id=request.user.id)
-        )
+        lessons = OrderedQueryset(
+            queryset=self.repository.fetch_relations(
+                self.repository.find_user_participant(
+                    user_id=request.user.id, skip_past=True
+                )
+            )
+        ).order_by(columns=["start_at"])
         return Response(
             paginate(data=lessons, request=request, resource=LessonResource)
         )
