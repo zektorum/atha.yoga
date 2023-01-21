@@ -27,6 +27,9 @@ dacite = "*"
 types-requests = "*"
 django-recaptcha = "*"
 django-polymorphic = "*"
+django-ckeditor = "*"
+django-mptt = "*"
+django-mptt-admin = "*"
 
 [dev-packages]
 isort = "*"

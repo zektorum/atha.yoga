@@ -25,6 +25,8 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:8080",
 ]
 
+READING_SPEED = 180  # words per min.
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -41,9 +43,13 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "corsheaders",
     "django_extensions",
+    "django_elasticsearch_dsl",
+    "ckeditor",
+    "mptt",
+    "django_mptt_admin",
     "core",
     "courses",
-    "django_elasticsearch_dsl",
+    "articles",
 ]
 
 MIDDLEWARE = [

@@ -12,7 +12,7 @@ from polymorphic.models import PolymorphicModel
 from pytz import utc
 
 from core.app.utils.fields import JSONParsedField, IsDataclass
-from core.models import User, TimeStampedModel, Transaction
+from core.models import User, TimeStampedModel, Transaction, Comment
 
 
 class CourseTypes(models.TextChoices):
@@ -176,16 +176,6 @@ class Lesson(TimeStampedModel):
         verbose_name = "Урок"
         verbose_name_plural = "Уроки"
         ordering = ("id",)
-
-
-class Comment(PolymorphicModel):
-    text = models.TextField(max_length=512)
-    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        verbose_name = "Комментарий"
-        verbose_name_plural = "Комментарии"
 
 
 class CourseComment(Comment):

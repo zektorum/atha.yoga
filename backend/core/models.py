@@ -124,3 +124,13 @@ class QuestionnaireTeacher(TimeStampedModel):
     class Meta:
         verbose_name = "Анкета преподавателя"
         verbose_name_plural = "Анкета преподавателя"
+
+
+class Comment(PolymorphicModel):
+    text = models.TextField(max_length=512)
+    user = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Комментарий"
+        verbose_name_plural = "Комментарии"
