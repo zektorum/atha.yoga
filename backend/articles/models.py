@@ -1,16 +1,14 @@
 from typing import Any
 
-from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator
 from ckeditor.fields import RichTextField
+from django.conf import settings
+from django.core.validators import MinValueValidator, MaxValueValidator
+from django.db import models
 from django.template.defaultfilters import slugify, striptags
 from django.urls import reverse
-
 from mptt.models import MPTTModel, TreeForeignKey
-from core.models import TimeStampedModel, User
-from core.models import Comment
 
-from django.conf import settings
+from core.models import TimeStampedModel, User, Comment
 
 
 class Tag(models.Model):
