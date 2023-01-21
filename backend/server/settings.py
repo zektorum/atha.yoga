@@ -25,6 +25,8 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:8080",
 ]
 
+READING_SPEED = 180  # words per min.
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -37,10 +39,15 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+
+    # Third-party apps
     "rest_framework",
     "drf_spectacular",
     "corsheaders",
     "django_extensions",
+    "django_elasticsearch_dsl",
+    "django_json_widget",
+    # Custom apps
     "core",
     "courses",
     "django_elasticsearch_dsl",
@@ -54,6 +61,12 @@ INSTALLED_APPS = [
     'easy_thumbnails',
     'mptt',
     "djangocms_text_ckeditor",
+    "ckeditor",
+    "mptt",
+    "django_mptt_admin",
+    "core",
+    "courses",
+    "articles",
 ]
 
 MIDDLEWARE = [

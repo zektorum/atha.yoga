@@ -9,6 +9,7 @@ urlpatterns = (
     [
         path("admin/", admin.site.urls),
         path("journal/", include('cms.urls')),
+        path("articles/", include("articles.urls")),
         re_path(
             r"^api/",
             include(
@@ -28,3 +29,7 @@ urlpatterns = (
     + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 )
+
+admin.site.site_header = "Администрирование ATHAYOGA"
+admin.site.site_title = "ATHAYOGA"
+admin.site.index_title = "ATHAYOGA"
