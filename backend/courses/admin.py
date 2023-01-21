@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
+from django.db import models
 from django.contrib import admin
+from django_json_widget.widgets import JSONEditorWidget
 
 from .models import (
     BaseCourse,
@@ -31,6 +33,9 @@ class BaseCourseAdmin(admin.ModelAdmin):
     raw_id_fields = ("favorites",)
     search_fields = ("name",)
     date_hierarchy = "created_at"
+    formfield_overrides = {
+        models.JSONField: {'widget': JSONEditorWidget},
+    }
 
 
 @admin.register(Course)
