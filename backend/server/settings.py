@@ -39,34 +39,26 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
-    # Third-party apps
+    "core",
+    "courses",
+    "articles",
     "rest_framework",
     "drf_spectacular",
     "corsheaders",
     "django_extensions",
     "django_elasticsearch_dsl",
     "django_json_widget",
-    # Custom apps
-    "core",
-    "courses",
-    "django_elasticsearch_dsl",
-    'djangocms_admin_style',
-    'django.contrib.sites',
-    'cms',
-    'menus',
-    'treebeard',
-    #'filer',
-    'sekizai',
-    'easy_thumbnails',
-    'mptt',
+    "djangocms_admin_style",
+    "django.contrib.sites",
+    "cms",
+    "menus",
+    "treebeard",
+    "sekizai",
+    "easy_thumbnails",
     "djangocms_text_ckeditor",
     "ckeditor",
     "mptt",
     "django_mptt_admin",
-    "core",
-    "courses",
-    "articles",
 ]
 
 MIDDLEWARE = [
@@ -78,11 +70,11 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    'cms.middleware.user.CurrentUserMiddleware',
-    'cms.middleware.page.CurrentPageMiddleware',
-    'cms.middleware.toolbar.ToolbarMiddleware',
-    'cms.middleware.language.LanguageCookieMiddleware',
-    'cms.middleware.utils.ApphookReloadMiddleware',
+    "cms.middleware.user.CurrentUserMiddleware",
+    "cms.middleware.page.CurrentPageMiddleware",
+    "cms.middleware.toolbar.ToolbarMiddleware",
+    "cms.middleware.language.LanguageCookieMiddleware",
+    "cms.middleware.utils.ApphookReloadMiddleware",
     "django.middleware.locale.LocaleMiddleware",
 ]
 
@@ -99,9 +91,9 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                'sekizai.context_processors.sekizai',
-                'cms.context_processors.cms_settings',
-                'django.template.context_processors.i18n',
+                "sekizai.context_processors.sekizai",
+                "cms.context_processors.cms_settings",
+                "django.template.context_processors.i18n",
             ],
         },
     },
@@ -264,24 +256,23 @@ RATE_FINES_MAPPING = OrderedDict(
     }
 )
 
-
 SITE_ID = 1
 LANGUAGES = [
-    ('ru-ru', 'Russian'),
+    ("ru-ru", "Russian"),
 ]
-X_FRAME_OPTIONS = 'SAMEORIGIN'
+X_FRAME_OPTIONS = "SAMEORIGIN"
 
 CMS_TEMPLATES = [
-    ('fullwidth.html', 'Fullwidth'),
-    ('sidebar_left.html', 'Sidebar Left'),
-    ('sidebar_right.html', 'Sidebar Right'),
+    ("fullwidth.html", "Fullwidth"),
+    ("sidebar_left.html", "Sidebar Left"),
+    ("sidebar_right.html", "Sidebar Right"),
 ]
 
 THUMBNAIL_HIGH_RESOLUTION = True
 
 THUMBNAIL_PROCESSORS = (
-    'easy_thumbnails.processors.colorspace',
-    'easy_thumbnails.processors.autocrop',
-    'filer.thumbnail_processors.scale_and_crop_with_subject_location',
-    'easy_thumbnails.processors.filters'
+    "easy_thumbnails.processors.colorspace",
+    "easy_thumbnails.processors.autocrop",
+    "filer.thumbnail_processors.scale_and_crop_with_subject_location",
+    "easy_thumbnails.processors.filters",
 )
