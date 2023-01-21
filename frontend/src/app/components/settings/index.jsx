@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import {
   Box, Paper, Typography, Stack, Badge,
 } from '@mui/material';
@@ -24,8 +25,10 @@ const Settings = () => (
       }}
     >
       <Stack direction="row" alignItems="center" spacing={2} color="text.secondary">
-        <ArrowBackIcon fontSize="medium" />
-        <Typography fontSize="24px" fontWeight="500">
+        <Link to="..">
+          <ArrowBackIcon fontSize="medium" sx={{ transform: 'translateY(3px)', color: '#616161' }} />
+        </Link>
+        <Typography fontSize="20px" fontWeight="500">
           Назад
         </Typography>
       </Stack>
@@ -33,7 +36,10 @@ const Settings = () => (
         <Badge color="error" variant="dot">
           <NotificationsNoneIcon fontSize="medium" color="disabled" />
         </Badge>
-        <img src={avatarIcon} alt="profile icon" />
+        <Link to="/profile">
+          <img src={avatarIcon} alt="profile icon" />
+        </Link>
+
       </Stack>
     </Box>
     <Stack

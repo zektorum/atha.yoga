@@ -28,6 +28,9 @@ types-requests = "*"
 django-recaptcha = "*"
 django-polymorphic = "*"
 django-json-widget = "*"
+django-ckeditor = "*"
+django-mptt = "*"
+django-mptt-admin = "*"
 
 [dev-packages]
 isort = "*"

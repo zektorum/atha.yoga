@@ -10,7 +10,6 @@ from .models import (
     Review,
     CourseReview,
     Lesson,
-    Comment,
     CourseComment,
     Ticket,
     TicketTransaction,
@@ -130,13 +129,6 @@ class LessonAdmin(admin.ModelAdmin):
     )
     list_filter = ("created_at", "updated_at", "start_at")
     raw_id_fields = ("participants",)
-    date_hierarchy = "created_at"
-
-
-@admin.register(Comment)
-class CommentAdmin(admin.ModelAdmin):
-    list_display = ("id", "polymorphic_ctype", "text", "user", "created_at")
-    list_filter = ("created_at",)
     date_hierarchy = "created_at"
 
 
