@@ -35,6 +35,9 @@ class LessonRepository(BaseRepository):
     def add_participant(self, lesson: Lesson, user: User) -> None:
         return lesson.participants.add(user)
 
+    def find_user_participant(self, user_id: int) -> QuerySet[Lesson]:
+        return self.model.objects.filter(participants__id=user_id)
+
     def store(self, lesson: Lesson) -> None:
         lesson.save()
 

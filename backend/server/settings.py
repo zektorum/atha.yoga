@@ -231,3 +231,21 @@ RATE_FINES_MAPPING = OrderedDict(
         0.15: timedelta(hours=1),
     }
 )
+
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL", "").split(",")
+CELERY_BROKER_TRANSPORT = os.environ.get("CELERY_BROKER_TRANSPORT", "rabbitmq")
+CELERY_BROKER_TRANSPORT_OPTIONS = {
+    "visibility_timeout": 3600,
+    "polling_interval": 60,
+    "region": os.environ.get("CELERY_BROKER_TRANSPORT_REGION", "ru-central1"),
+    "queue_name_prefix": "atha-",
+}
+CELERY_RESULT_BACKEND = "redis://:{}@{}:{}/1/".format(
+    os.environ.get("REDIS_PASSWORD"),
+    os.environ.get("REDIS_HOST"),
+    os.environ.get("REDIS_PORT"),
+)
+CELERY_TASK_DEFAULT_QUEUE = "default"
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TASK_SERIALIZER = "json"
