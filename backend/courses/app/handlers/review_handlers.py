@@ -9,6 +9,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from core.app.framework.pagination import Pagination
 from courses.app.http.requests.review_requests import CourseReviewCreateRequest
 from courses.app.http.resources.review_resources import CourseReviewResource
 from courses.app.repositories.review_repository import CourseReviewRepository
@@ -19,7 +20,11 @@ class CourseReviewListHandler(APIView):
     @extend_schema(responses=OpenApiTypes.OBJECT)
     def get(self, request: Request, pk: int, *args: Any, **kwargs: Any) -> Response:
         reviews = CourseReviewRepository().find_by_course_id(course_id=pk)
-        return Response({"reviews": CourseReviewResource(reviews, many=True).data})
+        return Response(
+            Pagination(
+                resource=CourseReviewResource, data=reviews, request=self.request
+            )
+        )
 
 
 @permission_classes([IsAuthenticated])

@@ -8,6 +8,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from core.app.framework.pagination import Pagination
 from courses.app.http.resources.ticket_resourses import TicketResource
 from courses.app.repositories.ticket_repository import TicketRepository
 
@@ -21,4 +22,6 @@ class TicketListHandler(APIView):
             queryset=repository.find_user_tickets(user_id=request.user.id)
         )
 
-        return Response({"data": TicketResource(data, many=True).data})
+        return Response(
+            Pagination(resource=TicketResource, data=data, request=self.request)
+        )
