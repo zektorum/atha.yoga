@@ -11,6 +11,7 @@ from django.db.models import (
     Avg,
     Subquery,
 )
+from django.utils.timezone import now
 from elasticsearch_dsl import Q as EQ
 from rest_framework.exceptions import NotFound
 
@@ -146,6 +147,9 @@ class CourseRepository(BaseRepository):
             )
 
         return queryset
+
+    def find_ended_courses(self) -> QuerySet[Course]:
+        return self.model.objects.filter(deadline_datetime__lte=now())
 
 
 class BaseCourseRepository(BaseRepository):
