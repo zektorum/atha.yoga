@@ -1,6 +1,16 @@
 from typing import Optional
 
-from django.db.models import QuerySet, Q, F, Prefetch, Count, Exists, OuterRef, Avg
+from django.db.models import (
+    QuerySet,
+    Q,
+    F,
+    Prefetch,
+    Count,
+    Exists,
+    OuterRef,
+    Avg,
+    Subquery,
+)
 from elasticsearch_dsl import Q as EQ
 from rest_framework.exceptions import NotFound
 
@@ -8,7 +18,7 @@ from core.app.repositories.base_repository import BaseRepository
 from core.models import User, QuestionnaireTeacher, QuestionnaireTeacherStatuses
 from courses.app.repositories.types import CourseFilterData
 from courses.documents import BaseCourseDocument
-from courses.models import Course, Lesson, BaseCourse, CourseStatuses
+from courses.models import Course, Lesson, BaseCourse, CourseStatuses, Ticket
 
 
 class CourseRepository(BaseRepository):
@@ -120,6 +130,11 @@ class CourseRepository(BaseRepository):
                     Lesson.objects.filter(
                         course_id=OuterRef("id"), participants__id=self.user.id
                     )
+                ),
+                tickets_amount=Subquery(
+                    Ticket.objects.filter(
+                        course_id=OuterRef("id"), user_id=self.user.id
+                    ).values("amount")[:1]
                 ),
                 favorite=Exists(
                     Course.objects.filter(

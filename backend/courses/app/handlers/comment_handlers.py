@@ -9,6 +9,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from core.app.framework.pagination import Pagination
 from courses.app.http.requests.comment_requests import CourseCommentCreateRequest
 from courses.app.http.resources.comment_resources import CourseCommentResource
 from courses.app.repositories.comment_repository import CourseCommentRepository
@@ -22,7 +23,11 @@ class CourseCommentListHandler(APIView):
     @extend_schema(responses=OpenApiTypes.OBJECT)
     def get(self, request: Request, pk: int, *args: Any, **kwargs: Any) -> Response:
         comments = CourseCommentRepository().find_by_course_id(course_id=pk)
-        return Response({"comments": CourseCommentResource(comments, many=True).data})
+        return Response(
+            Pagination(
+                resource=CourseCommentResource, data=comments, request=self.request
+            )
+        )
 
 
 @permission_classes([IsAuthenticated])

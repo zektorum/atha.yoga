@@ -10,9 +10,9 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from core.app.utils.pagination import paginate
-from core.app.utils.permissions import IsTeacher
-from core.app.utils.queryset import OrderedQueryset
+from core.app.framework.pagination import Pagination
+from core.app.framework.permissions import IsTeacher
+from core.app.framework.queryset import OrderedQueryset
 from courses.app.http.requests.lesson_requests import LessonRescheduleRequest
 from courses.app.http.resources.course_resources import LessonResource
 from courses.app.repositories.lesson_repository import LessonRepository
@@ -71,7 +71,9 @@ class LessonListHandler(APIView):
             self.repository.find_by_course_id(course_id=course_pk)
         )
         return Response(
-            paginate(data=lessons, request=request, resource=LessonResource)
+            Pagination(
+                data=lessons, request=request, resource=LessonResource
+            ).paginate()
         )
 
 
@@ -89,5 +91,7 @@ class UserLessonsParticipateHandler(APIView):
             )
         ).order_by(columns=["start_at"])
         return Response(
-            paginate(data=lessons, request=request, resource=LessonResource)
+            Pagination(
+                data=lessons, request=request, resource=LessonResource
+            ).paginate()
         )

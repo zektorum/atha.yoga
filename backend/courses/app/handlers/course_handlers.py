@@ -11,8 +11,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from core.app.utils.pagination import paginate
-from core.app.utils.permissions import IsTeacher
+from core.app.framework.pagination import Pagination
+from core.app.framework.permissions import IsTeacher
 from courses.app.http.requests.course_requests import (
     CourseFilterRequest,
     CourseCreateRequest,
@@ -55,7 +55,9 @@ class CourseFilterHandler(GenericAPIView):
         )
 
         return Response(
-            paginate(data=courses, request=request, resource=CourseCardResource)
+            Pagination(
+                data=courses, request=request, resource=CourseCardResource
+            ).paginate()
         )
 
 
@@ -163,13 +165,12 @@ class FavoriteCourseListHandler(APIView):
     def get(self, *args: Any, **kwargs: Any) -> Response:
         courses = CourseRepository().find_user_favorite_courses(user=self.request.user)
         return Response(
-            {
-                "data": CourseResource(
-                    courses,
-                    context=BaseCourseResourceContext(user=self.request.user),
-                    many=True,
-                ).data
-            }
+            Pagination(
+                data=courses,
+                request=self.request,
+                resource=CourseCardResource,
+                context=BaseCourseResourceContext(user=self.request.user),
+            ).paginate()
         )
 
 
