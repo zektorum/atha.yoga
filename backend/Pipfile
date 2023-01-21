@@ -36,6 +36,7 @@ django-json-widget = "*"
 django-ckeditor = "*"
 django-mptt = "*"
 django-mptt-admin = "*"
+redis = "*"
 
 [dev-packages]
 isort = "*"
