@@ -42,7 +42,9 @@ class CourseRepository(BaseRepository):
         return course
 
     def find_user_favorite_courses(self, user: User) -> QuerySet[Course]:
-        return user.favorite_courses.all()
+        return self.model.objects.filter(
+            base_course_id__in=user.favorite_courses.values("id")
+        )
 
     def add_user_favorite_course(self, user: User, course: Course) -> None:
         course.base_course.favorites.add(user)
