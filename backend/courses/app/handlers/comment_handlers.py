@@ -3,12 +3,11 @@ from typing import Any
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema
 from rest_framework.decorators import permission_classes
-from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
+from core.app.framework.handlers import Handler, GenericHandler
 from core.app.framework.pagination import Pagination
 from courses.app.http.requests.comment_requests import CourseCommentCreateRequest
 from courses.app.http.resources.comment_resources import CourseCommentResource
@@ -19,7 +18,7 @@ from courses.app.services.comment_service import (
 )
 
 
-class CourseCommentListHandler(APIView):
+class CourseCommentListHandler(Handler):
     @extend_schema(responses=OpenApiTypes.OBJECT)
     def get(self, request: Request, pk: int, *args: Any, **kwargs: Any) -> Response:
         comments = CourseCommentRepository().find_by_course_id(course_id=pk)
@@ -31,7 +30,7 @@ class CourseCommentListHandler(APIView):
 
 
 @permission_classes([IsAuthenticated])
-class CourseCommentCreateHandler(GenericAPIView):
+class CourseCommentCreateHandler(GenericHandler):
     serializer_class = CourseCommentCreateRequest
 
     def post(self, request: Request, pk: int, *args: Any, **kwargs: Any) -> Response:
@@ -45,7 +44,7 @@ class CourseCommentCreateHandler(GenericAPIView):
 
 
 @permission_classes([IsAuthenticated])
-class CourseCommentRemoveHandler(APIView):
+class CourseCommentRemoveHandler(Handler):
     @extend_schema(responses=OpenApiTypes.OBJECT)
     def delete(self, request: Request, pk: int, *args: Any, **kwargs: Any) -> Response:
         comment = CourseCommentRemove(comment_id=pk, user=request.user).remove()

@@ -4,12 +4,11 @@ from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema
 from rest_framework.decorators import permission_classes
 from rest_framework.exceptions import NotFound
-from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
+from core.app.framework.handlers import GenericHandler, Handler
 from core.app.framework.pagination import Pagination
 from core.app.framework.permissions import IsTeacher
 from core.app.framework.queryset import OrderedQueryset
@@ -20,7 +19,7 @@ from courses.app.services.lessons_service import LessonReschedule, LessonCancel
 
 
 @permission_classes([IsTeacher])
-class LessonRescheduleHandler(GenericAPIView):
+class LessonRescheduleHandler(GenericHandler):
     serializer_class = LessonRescheduleRequest
 
     def post(
@@ -39,7 +38,7 @@ class LessonRescheduleHandler(GenericAPIView):
 
 
 @permission_classes([IsTeacher])
-class LessonCancelHandler(APIView):
+class LessonCancelHandler(Handler):
     @extend_schema(responses=OpenApiTypes.OBJECT)
     def post(
         self, request: Request, lesson_id: int, *args: Any, **kwargs: Any
@@ -49,7 +48,7 @@ class LessonCancelHandler(APIView):
         return Response({"data": "Success canceled"})
 
 
-class LessonRetrieveHandler(APIView):
+class LessonRetrieveHandler(Handler):
     @extend_schema(responses=OpenApiTypes.OBJECT)
     def get(
         self, request: Request, lesson_id: int, *args: Any, **kwargs: Any
@@ -60,7 +59,7 @@ class LessonRetrieveHandler(APIView):
         return Response({"data": LessonResource(lesson).data})
 
 
-class LessonListHandler(APIView):
+class LessonListHandler(Handler):
     repository = LessonRepository()
 
     @extend_schema(responses=OpenApiTypes.OBJECT)
@@ -78,7 +77,7 @@ class LessonListHandler(APIView):
 
 
 @permission_classes([IsAuthenticated])
-class UserLessonsParticipateHandler(APIView):
+class UserLessonsParticipateHandler(Handler):
     repository = LessonRepository()
 
     @extend_schema(responses=OpenApiTypes.OBJECT)
