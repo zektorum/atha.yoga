@@ -9,7 +9,7 @@ from articles.app.repositories.article_repositories import (
     ArticleCategoryRepository,
     ArticleTagRepository,
 )
-from articles.app.utils.pagination import paginate
+from articles.app.utils.pagination import TMPLPagination
 
 
 class ArticleListHandler(APIView):
@@ -22,7 +22,9 @@ class ArticleListHandler(APIView):
         tags = ArticleTagRepository().find_all_tags()
         return Response(
             {
-                "articles": paginate(request, articles),
+                "articles": TMPLPagination(
+                    request=request, queryset=articles
+                ).paginate(),
                 "categories": categories,
                 "tags": tags,
                 "search_form": ArticleSearchRequest(),
@@ -45,7 +47,9 @@ class ArticleListBySearchQueryHandler(APIView):
         tags = ArticleTagRepository().find_all_tags()
         return Response(
             {
-                "articles": paginate(request, articles),
+                "articles": TMPLPagination(
+                    request=request, queryset=articles
+                ).paginate(),
                 "categories": categories,
                 "tags": tags,
                 "search_form": search_form,
@@ -66,7 +70,9 @@ class ArticleListByCategoryHandler(APIView):
         tags = ArticleTagRepository().find_all_tags()
         return Response(
             {
-                "articles": paginate(request, articles),
+                "articles": TMPLPagination(
+                    request=request, queryset=articles
+                ).paginate(),
                 "categories": categories,
                 "tags": tags,
                 "search_form": ArticleSearchRequest(),
