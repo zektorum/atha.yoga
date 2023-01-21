@@ -1,28 +1,42 @@
 /* eslint-disable linebreak-style */
 import React from 'react';
-import {
-  Typography, Box, Grid, Divider,
-} from '@mui/material';
+import {Badge, Box, Divider, Grid, Stack, Typography,} from '@mui/material';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
+import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
+import {Link} from 'react-router-dom';
 import DateRangeOutlinedIcon from '@mui/icons-material/DateRangeOutlined';
 import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
 
 const ScheduleLessonCard = () => (
   <Box
     sx={{
-      marginTop: 6,
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
     }}
   >
-    <Typography
-      color="primary"
+    <Grid
+      item
+      display="flex"
+      flexDirection="row"
+      alignItems="center"
+      justifyContent="space-between"
       sx={{
-        fontSize: '18px', fontWeight: '500', p: '16px',
+        width: '100%', height: '64px', px: '29px', boxShadow: '0px 8px 16px rgba(46, 60, 80, 0.1)',
       }}
     >
-      Мои занятия
-    </Typography>
+      <Typography fontSize="20px" fontWeight="500" color="text.secondary">
+        Календарь
+      </Typography>
+      <Stack alignItems="center" direction="row" spacing={2}>
+        <Badge color="error" variant="dot">
+          <NotificationsNoneIcon fontSize="medium" color="disabled" />
+        </Badge>
+        <Link to="/settings">
+          <SettingsOutlinedIcon color="disabled" sx={{ transform: 'translateY(3px)' }} />
+        </Link>
+      </Stack>
+    </Grid>
     <Box width="800px" m="16px" sx={{ border: '1px solid #E0E0E0', borderRadius: '8px' }}>
       <Grid container alignItems="center" justifyContent="center">
         <Grid item>
