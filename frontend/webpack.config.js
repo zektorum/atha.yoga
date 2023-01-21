@@ -144,11 +144,11 @@ module.exports = {
     extractHtml(envConfig),
     extractCss,
     extractFiles,
-    new WorkboxPlugin.GenerateSW({
-      maximumFileSizeToCacheInBytes: 25_000_000,
-      clientsClaim: true,
-      skipWaiting: true,
-    }),
+    // new WorkboxPlugin.GenerateSW({
+    //   maximumFileSizeToCacheInBytes: 25_000_000,
+    //   clientsClaim: true,
+    //   skipWaiting: true,
+    // }),
   ],
   resolve: {
     extensions: ['.js', '.jsx'],
