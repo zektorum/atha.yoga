@@ -7,16 +7,15 @@ import { Link } from 'react-router-dom';
 import Header from '../../components/header';
 import profileCalendar from '../../../assets/public/profile_calendar.png';
 import getTicketsSlice from '../../core/slices/tickets/getTickets';
+import { tickets } from './mockData';
 
 const MyLessonsPage = () => {
   const dispatch = useDispatch();
-  const tickets = useSelector(state => state.tickets);
+  // const tickets = useSelector(state => state.tickets);
 
   useEffect(() => {
     dispatch(getTicketsSlice());
   }, [dispatch]);
-
-  console.log(tickets);
 
   return (
     <Grid
