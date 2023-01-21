@@ -4,6 +4,7 @@ import {
   Box, Typography, Button, Grid,
 } from '@mui/material';
 import { Link } from 'react-router-dom';
+import AddIcon from '@mui/icons-material/Add';
 import Header from '../../components/header';
 import profileCalendar from '../../../assets/public/profile_calendar.png';
 import getTicketsSlice from '../../core/slices/tickets/getTickets';
@@ -61,6 +62,25 @@ const MyLessonsPage = () => {
         </Box>
       </Grid>
 
+      <Box display="flex" justifyContent="flex-end" m="48px">
+        <Button
+          component={Link}
+          to="/create-lesson"
+          sx={{
+            width: 'max-content',
+            p: '12px 16px',
+            fontSize: '15px',
+            lineHeight: '26px',
+            boxShadow: '0px 3px 3px -2px rgba(0, 0, 0, 0.2), 0px 3px 4px rgba(0, 0, 0, 0.14), 0px 1px 8px rgba(0, 0, 0, 0.12)',
+            borderRadius: '64px',
+            color: '#000',
+          }}
+          size="large"
+        >
+          <Typography sx={{ mr: '8px' }}>Создать занятие</Typography>
+          <AddIcon />
+        </Button>
+      </Box>
     </Grid>
   );
 };
