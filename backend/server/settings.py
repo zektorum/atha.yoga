@@ -232,6 +232,7 @@ LOGGING = {
     "loggers": {
         "app_log": {"handlers": ["app_log"], "propagate": False, "level": "DEBUG"},
         "daily_log": {"handlers": ["daily_file"], "propagate": False, "level": "ERROR"},
+        "default_log": {"handlers": ["console"], "propagate": False, "level": "INFO"},
         "django": {
             "handlers": ["console"],
             "propagate": True,
