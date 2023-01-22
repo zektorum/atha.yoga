@@ -3,11 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   Box, InputBase, Paper, Typography, Container,
 } from '@mui/material';
-import SettingsIcon from '@mui/icons-material/Settings';
 import SearchIcon from '@mui/icons-material/Search';
 import filterSlice from '../../core/slices/lessons/filter';
 import useDebounce from '../../utils/hooks/useDebounce';
 import LessonCard from '../../components/lesson-card';
+import Header from '../../components/header';
 
 const SearchLessonsPage = () => {
   const dispatch = useDispatch();
@@ -17,32 +17,16 @@ const SearchLessonsPage = () => {
   const searchQuery = useDebounce(query, 500);
 
   useEffect(() => {
-    dispatch(filterSlice());
-  }, []);
-
-  useEffect(() => {
     dispatch(filterSlice(query));
   }, [searchQuery]);
+
   function updateSearch(e) {
     setQuery(e.target.value);
   }
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Box
-        display="flex"
-        flexDirection="row"
-        alignItems="center"
-        justifyContent="space-between"
-        sx={{
-          width: '100%', height: '64px', px: '29px', boxShadow: '0px 8px 16px rgba(46, 60, 80, 0.1)',
-        }}
-      >
-        <Typography fontSize="24px" fontWeight="500" color="text.secondary">
-          Поиск
-        </Typography>
-        <SettingsIcon color="disabled" />
-      </Box>
+      <Header title="Поиск" />
       <Paper
         component="form"
         sx={{
@@ -82,10 +66,16 @@ const SearchLessonsPage = () => {
             <LessonCard
               key={lesson.id}
               id={lesson.id}
-              title={lesson.name}
-              description={lesson.description}
+              title={lesson.base_course.name}
+              description={lesson.base_course.description}
               price={lesson.price}
-              level={lesson.level}
+              level={lesson.base_course.level}
+              favorite={lesson.favorite}
+              isParticipant={lesson.participant}
+              comments={lesson.comments_count}
+              rate={lesson.rate}
+              votes={lesson.votes_count}
+
             />
           ))}
         </Box>

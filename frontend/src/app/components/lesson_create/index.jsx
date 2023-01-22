@@ -1,29 +1,31 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import 'dayjs/locale/ru';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import {
-  Grid,
-  Container,
-  Typography,
-  TextField,
-  MenuItem,
-  Select,
-  Radio,
+  Badge,
+  Box,
   Button,
-  InputLabel,
+  Checkbox,
+  Container,
+  Divider,
   FormControl,
   FormControlLabel,
-  RadioGroup,
-  Checkbox,
-  OutlinedInput,
+  Grid,
+  InputLabel,
   ListItemText,
-  Box,
-  Divider,
+  MenuItem,
+  OutlinedInput,
+  Radio,
+  RadioGroup,
+  Select,
+  Stack,
+  TextField,
+  Typography,
 } from '@mui/material';
-import SettingsIcon from '@mui/icons-material/Settings';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import Header from '../../components/header';
 import PaymentMethod from '../lesson_payment/index';
 import RepeatLessons from '../lesson_repeat/index';
 
@@ -75,24 +77,7 @@ const LessonCreate = () => {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ru">
-      <Grid
-        container
-        sx={{
-          justifyContent: 'space-between', padding: '20px 24px', marginBottom: '20px', boxShadow: '0px 8px 16px rgba(46, 60, 80, 0.1)',
-        }}
-      >
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <ArrowBackIcon sx={{
-            color: '#616161', width: '24px', height: '24px', cursor: 'pointer', marginRight: '14px',
-          }}
-          />
-          <Typography variant="modal" sx={{ fontWeigth: 500, fontSize: '24px', color: '#616161' }}>Создание занятия</Typography>
-        </Box>
-        <SettingsIcon sx={{
-          color: '#BDBDBD', width: '24px', height: '24px', cursor: 'pointer',
-        }}
-        />
-      </Grid>
+      <Header title="Создание занятия" withBackBtn />
       <form onSubmit={e => {
         e.preventDefault();
       }}
@@ -245,16 +230,18 @@ const LessonCreate = () => {
             />
             <Grid item container sx={{ justifyContent: 'end', columnGap: '5%' }}>
               <Button
+                size="large"
                 variant="text"
               >
                 Сохранить черновик
               </Button>
 
               <Button
+                size="large"
                 variant="contained"
                 type="submit"
               >
-                Создать
+                Опубликовать
               </Button>
             </Grid>
 
