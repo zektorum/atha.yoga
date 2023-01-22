@@ -13,15 +13,20 @@ from courses.app.handlers.course_handlers import (
     FavoriteCourseRemoveHandler,
     FavoriteCourseListHandler,
     CourseTicketBuyHandler,
-    CourseTicketUseHandler,
     CourseRetrieveHandler,
-    LessonRetrieveHandler,
-    LessonListHandler,
     SuccessTicketPaymentHandler,
+    CourseEnrollHandler,
+)
+from courses.app.handlers.lesson_enrolled_users_handlers import (
+    ActivationLessonEnrolledUser,
 )
 from courses.app.handlers.lesson_handlers import (
     LessonRescheduleHandler,
     LessonCancelHandler,
+    LessonRetrieveHandler,
+    LessonListHandler,
+    UserLessonsParticipateHandler,
+    LessonParticipateHandler,
 )
 from courses.app.handlers.review_handlers import (
     CourseReviewListHandler,
@@ -35,8 +40,13 @@ urlpatterns = [
     path("<int:pk>/", CourseRetrieveHandler.as_view(), name="course_retrieve"),
     path("<int:pk>/update/", BaseCourseUpdateHandler.as_view(), name="course_update"),
     path("filter/", CourseFilterHandler.as_view(), name="courses_filter"),
-    path("lessons/<int:pk>/", LessonRetrieveHandler.as_view(), name="lesson_retrieve"),
-    path("<int:pk>/lessons/", LessonListHandler.as_view(), name="lesson_list"),
+    path(
+        "lessons/<int:lesson_id>/",
+        LessonRetrieveHandler.as_view(),
+        name="lesson_retrieve",
+    ),
+    path("<int:course_pk>/lessons/", LessonListHandler.as_view(), name="lesson_list"),
+    path("im/lessons/", UserLessonsParticipateHandler.as_view(), name="im_lesson_list"),
     path(
         "favorites/", FavoriteCourseListHandler.as_view(), name="favorite_course_list"
     ),
@@ -49,7 +59,12 @@ urlpatterns = [
         name="favorite_course_remove",
     ),
     path("ticket/buy/", CourseTicketBuyHandler.as_view()),
-    path("ticket/use/", CourseTicketUseHandler.as_view()),
+    path("enroll/", CourseEnrollHandler.as_view()),
+    path(
+        "lesson-enrolled-user/activation/<int:lesson_id>/<int:active>/",
+        ActivationLessonEnrolledUser.as_view(),
+    ),
+    path("lessons/participate/", LessonParticipateHandler.as_view()),
     path("<int:pk>/comments/", CourseCommentListHandler.as_view(), name="comment_list"),
     path(
         "<int:pk>/comments/create/",

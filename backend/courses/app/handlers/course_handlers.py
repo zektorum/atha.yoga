@@ -5,35 +5,30 @@ from django.shortcuts import redirect
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema
 from rest_framework.decorators import permission_classes
-from rest_framework.exceptions import NotFound
-from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.views import APIView
 
-from core.app.utils.pagination import paginate
-from core.app.utils.permissions import IsTeacher
+from core.app.framework.handlers import GenericHandler, Handler
+from core.app.framework.pagination import Pagination
+from core.app.framework.permissions import IsTeacher
 from courses.app.http.requests.course_requests import (
     CourseFilterRequest,
     CourseCreateRequest,
     BaseCourseUpdateRequest,
     FavoriteCourseAddRemoveRequest,
     CourseTicketBuyRequest,
-    CourseTicketUseRequest,
 )
 from courses.app.http.resources.context import BaseCourseResourceContext
 from courses.app.http.resources.course_resources import (
     CourseResource,
-    LessonResource,
     CourseCardResource,
 )
 from courses.app.repositories.course_repository import CourseRepository
-from courses.app.repositories.lesson_repository import LessonRepository
 from courses.app.repositories.transaction_repository import TicketTransactionRepository
 from courses.app.services.course_service import (
     BaseCourseUpdator,
-    CourseParticipateService,
+    CourseEnroll,
 )
 from courses.app.services.course_service import (
     CourseCreator,
@@ -42,7 +37,7 @@ from courses.app.services.course_service import (
 )
 
 
-class CourseFilterHandler(GenericAPIView):
+class CourseFilterHandler(GenericHandler):
     serializer_class = CourseFilterRequest
 
     def post(self, request: Request, *args: Any, **kwargs: Any) -> Response:
@@ -58,11 +53,13 @@ class CourseFilterHandler(GenericAPIView):
         )
 
         return Response(
-            paginate(data=courses, request=request, resource=CourseCardResource)
+            Pagination(
+                data=courses, request=request, resource=CourseCardResource
+            ).paginate()
         )
 
 
-class CourseRetrieveHandler(APIView):
+class CourseRetrieveHandler(Handler):
     @extend_schema(responses=OpenApiTypes.OBJECT)
     def get(self, request: Request, pk: int, *args: Any, **kwargs: Any) -> Response:
         repository = CourseRepository(user=request.user)
@@ -77,7 +74,7 @@ class CourseRetrieveHandler(APIView):
 
 
 @permission_classes([IsTeacher])
-class CourseCreateHandler(GenericAPIView):
+class CourseCreateHandler(GenericHandler):
     serializer_class = CourseCreateRequest
 
     def post(self, request: Request, *args: Any, **kwargs: Any) -> Response:
@@ -98,7 +95,7 @@ class CourseCreateHandler(GenericAPIView):
 
 
 @permission_classes([IsTeacher])
-class BaseCourseUpdateHandler(GenericAPIView):
+class BaseCourseUpdateHandler(GenericHandler):
     serializer_class = BaseCourseUpdateRequest
 
     def patch(self, request: Request, pk: int, *args: Any, **kwargs: Any) -> Response:
@@ -119,7 +116,7 @@ class BaseCourseUpdateHandler(GenericAPIView):
 
 
 @permission_classes([IsAuthenticated])
-class FavoriteCourseAddHandler(GenericAPIView):
+class FavoriteCourseAddHandler(GenericHandler):
     serializer_class = FavoriteCourseAddRemoveRequest
 
     def post(self, request: Request, *args: Any, **kwargs: Any) -> Response:
@@ -140,7 +137,7 @@ class FavoriteCourseAddHandler(GenericAPIView):
 
 
 @permission_classes([IsAuthenticated])
-class FavoriteCourseRemoveHandler(GenericAPIView):
+class FavoriteCourseRemoveHandler(GenericHandler):
     serializer_class = FavoriteCourseAddRemoveRequest
 
     def post(self, request: Request, *args: Any, **kwargs: Any) -> Response:
@@ -161,23 +158,25 @@ class FavoriteCourseRemoveHandler(GenericAPIView):
 
 
 @permission_classes([IsAuthenticated])
-class FavoriteCourseListHandler(APIView):
+class FavoriteCourseListHandler(Handler):
     @extend_schema(responses=OpenApiTypes.OBJECT)
     def get(self, *args: Any, **kwargs: Any) -> Response:
-        courses = CourseRepository().find_user_favorite_courses(user=self.request.user)
+        repository = CourseRepository(user=self.request.user)
+        courses = repository.fetch_relations(
+            queryset=repository.find_user_favorite_courses(user=self.request.user)
+        )
         return Response(
-            {
-                "data": CourseResource(
-                    courses,
-                    context=BaseCourseResourceContext(user=self.request.user),
-                    many=True,
-                ).data
-            }
+            Pagination(
+                data=courses,
+                request=self.request,
+                resource=CourseCardResource,
+                context=BaseCourseResourceContext(user=self.request.user),
+            ).paginate()
         )
 
 
 @permission_classes([IsAuthenticated])
-class CourseTicketBuyHandler(GenericAPIView):
+class CourseTicketBuyHandler(GenericHandler):
     serializer_class = CourseTicketBuyRequest
 
     def post(self, request: Request, *args: Any, **kwargs: Any) -> Response:
@@ -193,7 +192,7 @@ class CourseTicketBuyHandler(GenericAPIView):
         return Response({"data": payment_url})
 
 
-class SuccessTicketPaymentHandler(APIView):
+class SuccessTicketPaymentHandler(Handler):
     repos = TicketTransactionRepository()
 
     @extend_schema(responses=OpenApiTypes.OBJECT)
@@ -203,37 +202,10 @@ class SuccessTicketPaymentHandler(APIView):
 
 
 @permission_classes([IsAuthenticated])
-class CourseTicketUseHandler(GenericAPIView):
-    serializer_class = CourseTicketUseRequest
-
-    def put(self, request: Request, *args: Any, **kwargs: Any) -> Response:
-        data = self.serializer_class(data=request.data)
-        data.is_valid(raise_exception=True)
-
-        link = CourseParticipateService(
-            lesson_id=data.validated_data["lesson_id"], user=self.request.user
-        ).participate()
-
-        return Response({"data": {"course_link": link}})
-
-
-class LessonRetrieveHandler(APIView):
-    @extend_schema(responses=OpenApiTypes.OBJECT)
-    def get(self, request: Request, pk: int, *args: Any, **kwargs: Any) -> Response:
-        lesson = LessonRepository().find_by_id(id_=pk)
-        if not lesson:
-            raise NotFound(f"Undefined lesson with pk {pk}")
-        return Response({"data": LessonResource(lesson).data})
-
-
-class LessonListHandler(APIView):
-    repository = LessonRepository()
-
-    @extend_schema(responses=OpenApiTypes.OBJECT)
-    def get(self, request: Request, pk: int, *args: Any, **kwargs: Any) -> Response:
-        lessons = self.repository.fetch_relations(
-            self.repository.find_by_course_id(course_id=pk)
-        )
-        return Response(
-            paginate(data=lessons, request=request, resource=LessonResource)
-        )
+class CourseEnrollHandler(Handler):
+    def post(self, request: Request, pk: int, *args: Any, **kwargs: Any) -> Response:
+        CourseEnroll(
+            user=self.request.user,
+            course=CourseRepository().find_by_id(id_=pk, raise_exception=True),
+        ).enroll()
+        return Response({"data": "Success"})
