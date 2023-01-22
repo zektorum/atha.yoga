@@ -29,14 +29,14 @@ const OnceLesson = ({
   const setDate = newValue => {
     setLessonData({
       ...lessonData,
-      dateForOnceLesson: newValue.$d,
+      dateForOnceLesson: newValue,
     });
   };
 
   const setTime = newValue => {
     setLessonData({
       ...lessonData,
-      timeForOnceLesson: newValue.$d,
+      timeForOnceLesson: newValue,
     });
   };
 
@@ -70,14 +70,14 @@ const RegularLessons = ({
   const setStartDate = newValue => {
     setLessonData({
       ...lessonData,
-      startDateForRegularLessons: newValue.$d,
+      startDate: newValue,
     });
   };
 
   const setFinishDate = newValue => {
     setLessonData({
       ...lessonData,
-      finishDateForRegularLessons: newValue.$d,
+      finishDate: newValue,
     });
   };
 
@@ -248,8 +248,8 @@ const RepeatLessons = ({ update, lessonData, setLessonData }) => (
       : (
         <RegularLessons
           regularLessons={lessonData.regularLessons}
-          startDate={lessonData.startDateForRegularLessons}
-          finishDate={lessonData.finishDateForRegularLessons}
+          startDate={lessonData.startDate}
+          finishDate={lessonData.finishDate}
           lessonData={lessonData}
           setLessonData={setLessonData}
         />

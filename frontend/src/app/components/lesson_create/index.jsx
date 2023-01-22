@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useState } from 'react';
+import dayjs from 'dayjs';
 import 'dayjs/locale/ru';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -27,6 +28,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import PaymentMethod from '../lesson_payment/index';
 import RepeatLessons from '../lesson_repeat/index';
+import LessonsService from '../../services/lessons';
 
 const LessonCreate = () => {
   const [lessonLevels, setLessonLevels] = useState([]);
@@ -39,16 +41,41 @@ const LessonCreate = () => {
     level: [],
     duration: '',
     repeat: 'once',
+    startDate: '',
+    finishDate: '',
     dateForOnceLesson: null,
     timeForOnceLesson: null,
-    startDateForRegularLessons: null,
-    finishDateForRegularLessons: null,
     regularLessons: [],
     payment: 'paid',
     donation: true,
     cost: '',
     isDraft: false,
   });
+
+  const getStartForOnceLesson = () => {
+    const date2 = lessonData.dateForOnceLesson;
+    const time2 = lessonData.timeForOnceLesson;
+    const hour = dayjs(time2).get('hour');
+    const minute = dayjs(time2).get('minute');
+    const startDateValue = dayjs(date2).set('hour', hour).set('minute', minute);
+    console.log('startDateValue', startDateValue);
+    console.log(dayjs(lessonData.dateForOnceLesson).get('date'))
+    return startDateValue
+  };
+
+  const getFinishForOnceLesson = () => {
+    const startDate = getStartForOnceLesson();
+    const duration = lessonData.duration;
+    const finishDate = dayjs(startDate).add(duration, 'minute');
+    console.log('startDateOnFinish', startDate)
+    console.log('finishDate', finishDate)
+    return finishDate;
+  };
+
+  const getCorrectDateTime = () => {
+    setLessonData(lessonData.startDate = getStartForOnceLesson());
+    setLessonData(lessonData.finishDate = getFinishForOnceLesson());
+  };
 
   const update = e => {
     setLessonData({
@@ -62,13 +89,17 @@ const LessonCreate = () => {
       ...lessonData,
       isDraft: true,
     });
+    LessonsService.postLesson(lessonData);
   };
 
   const saveForm = () => {
+    getCorrectDateTime();
+    console.log(lessonData);
     setLessonData({
       ...lessonData,
       isDraft: false,
     });
+    LessonsService.postLesson({ lessonData });
   };
 
   const changeDonation = e => {
