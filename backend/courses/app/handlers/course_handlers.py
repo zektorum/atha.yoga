@@ -203,10 +203,10 @@ class SuccessTicketPaymentHandler(Handler):
 
 
 @permission_classes([IsAuthenticated])
-class CourseTicketUseHandler(GenericHandler):
+class CourseParticipateHandler(GenericHandler):
     serializer_class = CourseTicketUseRequest
 
-    def put(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+    def post(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         data = self.serializer_class(data=request.data)
         data.is_valid(raise_exception=True)
 
