@@ -3,6 +3,7 @@ from collections import OrderedDict
 from datetime import timedelta
 from pathlib import Path
 
+from celery.schedules import crontab
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -194,6 +195,8 @@ BACKEND_URL = os.environ.get("BACKEND_URL")
 
 RECAPTCHA_PUBLIC_KEY = os.getenv("RECAPTCHA_PUBLIC_KEY")
 RECAPTCHA_PRIVATE_KEY = os.getenv("RECAPTCHA_PRIVATE_KEY")
+RECAPTCHA_DEFAULT_ACTION = "generic"
+RECAPTCHA_SCORE_THRESHOLD = 0.8
 
 LOGGING = {
     "version": 1,
@@ -243,6 +246,15 @@ LOGGING = {
 
 DEFAULT_SUPERUSER_PASSWORD = os.environ.get("POSTGRES_PASSWORD")
 
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+        "LOCATION": os.path.join(BASE_DIR, "cache"),
+        "TIMEOUT": 86400,
+    }
+}
+
+
 COURSE_LESSONS_CYCLE = timedelta(days=60)
 
 RESCHEDULE_CANCEL_COUNT_PERCENT = 0.25
@@ -266,6 +278,15 @@ CELERY_BROKER_TRANSPORT_OPTIONS = {
     "queue_name_prefix": "atha-",
 }
 CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND")
+CELERY_BEAT_SCHEDULE = {
+    "end-courses-task": {
+        "task": "courses.tasks.end_courses_task",
+        "schedule": crontab(
+            hour="*/6",
+            minute=0,
+        ),
+    },
+}
 CELERY_TASK_DEFAULT_QUEUE = "default"
 CELERY_ACCEPT_CONTENT = ["application/json"]
 CELERY_RESULT_SERIALIZER = "json"
