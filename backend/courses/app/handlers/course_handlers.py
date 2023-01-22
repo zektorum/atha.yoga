@@ -160,9 +160,13 @@ class FavoriteCourseRemoveHandler(GenericHandler):
 
 @permission_classes([IsAuthenticated])
 class FavoriteCourseListHandler(Handler):
+    repository = CourseRepository()
+
     @extend_schema(responses=OpenApiTypes.OBJECT)
     def get(self, *args: Any, **kwargs: Any) -> Response:
-        courses = CourseRepository().find_user_favorite_courses(user=self.request.user)
+        courses = self.repository.fetch_relations(
+            queryset=self.repository.find_user_favorite_courses(user=self.request.user)
+        )
         return Response(
             Pagination(
                 data=courses,
