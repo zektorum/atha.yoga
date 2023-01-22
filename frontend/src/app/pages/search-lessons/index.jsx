@@ -75,7 +75,6 @@ const SearchLessonsPage = () => {
               comments={lesson.comments_count}
               rate={lesson.rate}
               votes={lesson.votes_count}
-
             />
           ))}
         </Box>
