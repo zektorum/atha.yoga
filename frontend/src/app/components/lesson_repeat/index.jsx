@@ -23,6 +23,26 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import DateRangeOutlinedIcon from '@mui/icons-material/DateRangeOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 
+const dateRange = {
+  'Понедельник': 0,
+  'Вторник': 1,
+  'Среда': 2,
+  'Четверг': 3,
+  'Пятница': 4,
+  'Суббота': 5,
+  'Восресенье': 6,
+};
+
+const getDay = (num) => {
+  let day;
+  for (let el in dateRange) {
+    if (dateRange[el] === num) {
+      day = el
+    }
+  }
+  return day;
+};
+
 const OnceLesson = ({
   date, time, setLessonData, lessonData,
 }) => {
@@ -81,10 +101,10 @@ const RegularLessons = ({
     });
   };
 
-  const lessonsInfo = () => {
+  const getLessonInfo = () => {
     const time = dayjs(redularLessonTime).minute() > 9 ? `${dayjs(redularLessonTime).hour()}:${dayjs(redularLessonTime).minute()}` : `${dayjs(redularLessonTime).hour()}:0${dayjs(redularLessonTime).minute()}`;
     const copyRegularLessons = [...regularLessons];
-    copyRegularLessons.push({ day: regularLessonDay, time });
+    copyRegularLessons.push({ day: dateRange[regularLessonDay], start_time: time });
     setLessonData({
       ...lessonData,
       regularLessons: copyRegularLessons,
@@ -175,7 +195,7 @@ const RegularLessons = ({
         <Button
           variant="text"
         //  disabled={regularLessonDay.length || lessonTime === null}
-          onClick={lessonsInfo}
+          onClick={getLessonInfo}
         >
           Добавить занятие
         </Button>
@@ -192,9 +212,9 @@ const RegularLessons = ({
             >
               <Box sx={{ width: '10%', display: 'flex', justifyContent: 'space-around' }}>
                 <DateRangeOutlinedIcon sx={{ color: '#0D6EFD', marginRight: '5px' }} />
-                <Typography variant="modal" sx={{ fontSize: '16px' }}>{lesson.day}</Typography>
+                <Typography variant="modal" sx={{ fontSize: '16px' }}>{getDay(lesson.day)}</Typography>
                 <AccessTimeIcon sx={{ color: '#0D6EFD', marginLeft: '25px', marginRight: '5px' }} />
-                <Typography variant="modal" sx={{ fontSize: '16px' }}>{lesson.time}</Typography>
+                <Typography variant="modal" sx={{ fontSize: '16px' }}>{lesson.start_time}</Typography>
               </Box>
               <CloseOutlinedIcon
                 sx={{ color: '#616161', cursor: 'pointer' }}

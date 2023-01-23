@@ -50,11 +50,31 @@ const LessonCreate = () => {
     startDateForRegularLesson: null,
     finishDateForRegularLesson: null,
     regularLessons: [],
+    regularLessonsWithDate: [],
     payment: 'paid',
     donation: true,
     cost: '',
     isDraft: false,
   });
+
+  const post = () => {
+    return {
+    name: lessonData.name,
+    description: lessonData.description,
+    complexity: 'easy', // need to remove, because obj has level property
+    level: lessonData.level,
+    duration: lessonData.duration,
+    course_type: lessonData.type,
+    link: lessonData.link,
+    link_info: lessonData.conferenceId,
+    start_datetime: lessonData.startDate,
+    deadline_datetime: lessonData.finishDate,
+    payment: lessonData.payment,
+    price: lessonData.cost,
+    lessons: lessonData.regularLessons,
+    is_draft: lessonData.isDraft,
+  }
+}
 
   const getStartDate = () => {
     const date = lessonData.dateForOnceLesson;
@@ -99,7 +119,7 @@ const LessonCreate = () => {
 
   const saveForm = () => {
     getCorrectDateTime();
-    console.log(lessonData);
+    console.log(post());
     setLessonData({
       ...lessonData,
       isDraft: false,

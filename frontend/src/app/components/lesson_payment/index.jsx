@@ -23,12 +23,12 @@ const PaymentMethod = ({
           row
           aria-labelledby="lesson-cost-label"
           name="lesson-cost-radio-buttons-group"
-          defaultValue="paid"
+          defaultValue="payment"
           sx={{ columnGap: '5%' }}
         >
           <FormControlLabel
             onChange={update}
-            value="paid"
+            value="payment"
             name="payment"
             control={<Radio />}
             label={<Typography variant="modal" sx={{ fontSize: '16px', color: '#212121' }}>Платно</Typography>}
