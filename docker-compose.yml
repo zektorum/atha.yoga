@@ -6,6 +6,7 @@ services:
     container_name: "backend-${CONTAINER_SUFFIX}"
     env_file:
       - "${ENV_FILE}"
+      - ".env/.ci-env.${COMPOSE_PROJECT_NAME}"
     ports:
       - "${BACKEND_PORT}:8000"
     volumes:
@@ -17,12 +18,16 @@ services:
   frontend:
     build: frontend/
     container_name: "frontend-${CONTAINER_SUFFIX}"
+    env_file:
+      - ".env/.ci-env.${COMPOSE_PROJECT_NAME}"
     ports:
       - "${FRONTEND_PORT}:8080"
 
   cypress:
     build: frontend/tests/
     container_name: "cypress-${CONTAINER_SUFFIX}"
+    env_file:
+      - ".env/.ci-env.${COMPOSE_PROJECT_NAME}"
     environment:
       - "CYPRESS_baseUrl=http://frontend-${CONTAINER_SUFFIX}:8080"
       - "BRANCH_NAME=${CONTAINER_SUFFIX}"
@@ -37,6 +42,7 @@ services:
     container_name: "db-${CONTAINER_SUFFIX}"
     env_file:
       - "${ENV_FILE}"
+      - ".env/.ci-env.${COMPOSE_PROJECT_NAME}"
     ports:
       - "${DATABASE_PORT}:5432"
     volumes:
@@ -45,6 +51,8 @@ services:
   dozzle:
     container_name: "dozzle-${CONTAINER_SUFFIX}"
     image: amir20/dozzle:v4.4.1
+    env_file:
+      - ".env/.ci-env.${COMPOSE_PROJECT_NAME}"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
@@ -57,6 +65,7 @@ services:
     container_name: "elasticsearch-${CONTAINER_SUFFIX}"
     env_file:
       - "${ENV_FILE}"
+      - ".env/.ci-env.${COMPOSE_PROJECT_NAME}"
     ports:
       - "${ELASTIC_PORT}:9200"
     volumes:
@@ -76,6 +85,7 @@ services:
       - ${REDIS_PASSWORD}
     env_file:
       - "${ENV_FILE}"
+      - ".env/.ci-env.${COMPOSE_PROJECT_NAME}"
     environment:
       - "REDIS_PASSWORD=${REDIS_PASSWORD}"
       - "REDIS_PORT=${REDIS_PORT}"
@@ -89,6 +99,7 @@ services:
     container_name: "rabbitmq-${CONTAINER_SUFFIX}"
     env_file:
       - "${ENV_FILE}"
+      - ".env/.ci-env.${COMPOSE_PROJECT_NAME}"
     ports:
       - ${RABBITMQ_PORT}:5672
       - ${RABBITMQ_MANAGEMENT_PORT}:15672
@@ -105,6 +116,7 @@ services:
               ${RABBITMQ_HOST}:${RABBITMQ_MANAGEMENT_PORT}/api/"
     env_file:
       - "${ENV_FILE}"
+      - ".env/.ci-env.${COMPOSE_PROJECT_NAME}"
     ports:
       - "${FLOWER_PORT}:5555"
     environment:
