@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import 'dayjs/locale/ru';
+import dayjs from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import {
@@ -46,6 +47,8 @@ const LessonCreate = () => {
     finishDate: '',
     dateForOnceLesson: null,
     timeForOnceLesson: null,
+    startDateForRegularLesson: null,
+    finishDateForRegularLesson: null,
     regularLessons: [],
     payment: 'paid',
     donation: true,
@@ -53,29 +56,30 @@ const LessonCreate = () => {
     isDraft: false,
   });
 
-  const getStartForOnceLesson = () => {
-    const date2 = lessonData.dateForOnceLesson;
-    const time2 = lessonData.timeForOnceLesson;
-    const hour = dayjs(time2).get('hour');
-    const minute = dayjs(time2).get('minute');
-    const startDateValue = dayjs(date2).set('hour', hour).set('minute', minute);
-    console.log('startDateValue', startDateValue);
-    console.log(dayjs(lessonData.dateForOnceLesson).get('date'))
-    return startDateValue
+  const getStartDate = () => {
+    const date = lessonData.dateForOnceLesson;
+    const time = lessonData.timeForOnceLesson;
+    const hour = dayjs(time).get('hour');
+    const minute = dayjs(time).get('minute');
+    const startDateValue = dayjs(date).set('hour', hour).set('minute', minute);
+    return startDateValue.format()
   };
 
-  const getFinishForOnceLesson = () => {
-    const startDate = getStartForOnceLesson();
+  const getFinishDate = () => {
+    const startDate = getStartDate();
     const duration = lessonData.duration;
     const finishDate = dayjs(startDate).add(duration, 'minute');
-    console.log('startDateOnFinish', startDate)
-    console.log('finishDate', finishDate)
-    return finishDate;
+    return finishDate.format();
   };
 
   const getCorrectDateTime = () => {
-    setLessonData(lessonData.startDate = getStartForOnceLesson());
-    setLessonData(lessonData.finishDate = getFinishForOnceLesson());
+    if (lessonData.dateForOnceLesson !== null) {
+      setLessonData(lessonData.startDate = getStartDate());
+      setLessonData(lessonData.finishDate = getFinishDate());
+    } else {
+      setLessonData(lessonData.startDate = lessonData.startDateForRegularLesson.format());
+      setLessonData(lessonData.finishDate = lessonData.finishDateForRegularLesson.format());
+    }
   };
 
   const update = e => {
@@ -176,7 +180,6 @@ const LessonCreate = () => {
                   name="row-radio-buttons-group"
                   defaultValue="online"
                   sx={{ columnGap: '5%' }}
-
                 >
                   <FormControlLabel
                     onChange={update}

@@ -70,14 +70,14 @@ const RegularLessons = ({
   const setStartDate = newValue => {
     setLessonData({
       ...lessonData,
-      startDate: newValue,
+      startDateForRegularLesson: newValue,
     });
   };
 
   const setFinishDate = newValue => {
     setLessonData({
       ...lessonData,
-      finishDate: newValue,
+      finishDateForRegularLesson: newValue,
     });
   };
 
@@ -248,8 +248,8 @@ const RepeatLessons = ({ update, lessonData, setLessonData }) => (
       : (
         <RegularLessons
           regularLessons={lessonData.regularLessons}
-          startDate={lessonData.startDate}
-          finishDate={lessonData.finishDate}
+          startDate={lessonData.startDateForRegularLesson}
+          finishDate={lessonData.finishDateForRegularLesson}
           lessonData={lessonData}
           setLessonData={setLessonData}
         />
