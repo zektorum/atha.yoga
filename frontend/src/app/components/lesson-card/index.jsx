@@ -25,6 +25,7 @@ const LessonCard = ({
     CONTINUER: 'Средний',
     ADVANCED: 'Продвинутый',
   };
+  // const [isFavorite, setIsFavorite] = useState(false);
 
   const setFavorite = () => {
     if (favorite) {
@@ -57,6 +58,13 @@ const LessonCard = ({
                 : { color: '#9E9E9E', '&:hover': { cursor: 'pointer' } }}
             />
 
+            <FavoriteIcon
+              onClick={setFavorite}
+              fontSize="medium"
+              sx={favorite
+                ? { color: '#E91E63', '&:hover': { cursor: 'pointer' } }
+                : { color: '#9E9E9E', '&:hover': { cursor: 'pointer' } }}
+            />
           </Grid>
           <Grid item sx={{ flex: '1 0 auto' }}>
             <Typography
