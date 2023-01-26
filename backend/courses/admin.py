@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
+from django import forms
 from django.contrib import admin
 from django.db import models
 from django_json_widget.widgets import JSONEditorWidget
 
+from core.framework.admin_fields import CustomJSONField
 from .models import (
     BaseCourse,
     Course,
@@ -38,8 +40,28 @@ class BaseCourseAdmin(admin.ModelAdmin):
     }
 
 
+class CourseAdminForm(forms.ModelForm):
+    schedule = CustomJSONField()
+
+    class Meta:
+        model = Course
+        fields = [
+            "base_course",
+            "duration",
+            "start_datetime",
+            "deadline_datetime",
+            "link",
+            "link_info",
+            "payment",
+            "price",
+            "schedule",
+            "status",
+        ]
+
+
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
+    form = CourseAdminForm
     list_display = (
         "id",
         "created_at",
