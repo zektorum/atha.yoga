@@ -22,6 +22,9 @@ import {
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import DateRangeOutlinedIcon from '@mui/icons-material/DateRangeOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
+import { useDispatch, useSelector } from 'react-redux';
+import { setMessage } from '../../core/slices/message';
+import postLessonSlice from '../../core/slices/lessonCreate/postLesson';
 
 const dateRange = {
   'Понедельник': 0,
@@ -60,6 +63,9 @@ const OnceLesson = ({
     });
   };
 
+  const dispatch = useDispatch();
+  const { message } = useSelector(state => state.message)
+
   return (
     <Grid item container sx={{ justifyContent: 'start', columnGap: '4%' }}>
       <DatePicker
@@ -69,6 +75,8 @@ const OnceLesson = ({
         minDate={dayjs(Date())}
         onChange={newValue => setDate(newValue)}
         renderInput={params => <TextField {...params} sx={{ width: '35%' }} required />}
+        //error={ !!message?.invalid?.start_datetime }
+        //helperText={message?.invalid?.start_datetime }
       />
       <TimePicker
         label="Время"
@@ -82,7 +90,7 @@ const OnceLesson = ({
 };
 
 const RegularLessons = ({
-  regularLessons, startDate, finishDate, lessonData, setLessonData,
+  lessons, start_datetime, deadline_datetime, lessonData, setLessonData,
 }) => {
   const [regularLessonDay, setRegularLessonDay] = useState('');
   const [redularLessonTime, setRegularLessonTime] = useState(null);
@@ -103,19 +111,22 @@ const RegularLessons = ({
 
   const getLessonInfo = () => {
     const time = dayjs(redularLessonTime).minute() > 9 ? `${dayjs(redularLessonTime).hour()}:${dayjs(redularLessonTime).minute()}` : `${dayjs(redularLessonTime).hour()}:0${dayjs(redularLessonTime).minute()}`;
-    const copyRegularLessons = [...regularLessons];
+    const copyRegularLessons = [...lessons];
     copyRegularLessons.push({ day: dateRange[regularLessonDay], start_time: time });
     setLessonData({
       ...lessonData,
-      regularLessons: copyRegularLessons,
+      lessons: copyRegularLessons,
     });
     setRegularLessonDay('');
     setRegularLessonTime(null);
   };
 
   const deleteLesson = lesson => {
-    setLessonData(lessonData.regularLessons.filter(p => p !== lesson));
+    setLessonData(lessonData.lessons.filter(p => p !== lesson));
   };
+
+  const dispatch = useDispatch();
+  const { message } = useSelector(state => state.message)
 
   return (
     <>
@@ -126,17 +137,17 @@ const RegularLessons = ({
 
         <DatePicker
           label="Начало"
-          value={startDate}
+          value={start_datetime}
           minDate={dayjs(Date())}
           onChange={newValue => setStartDate(newValue)}
           renderInput={params => <TextField {...params} sx={{ width: '35%' }} required />}
         />
         <DatePicker
           label="Окончание"
-          value={finishDate}
-          disabled={startDate === null}
-          minDate={startDate}
-          maxDate={dayjs(startDate).add(2, 'month')}
+          value={deadline_datetime}
+          disabled={start_datetime === null}
+          minDate={start_datetime}
+          maxDate={dayjs(start_datetime).add(2, 'month')}
           onChange={newValue => setFinishDate(newValue)}
           renderInput={params => <TextField {...params} sx={{ width: '35%' }} required />}
         />
@@ -199,7 +210,7 @@ const RegularLessons = ({
         >
           Добавить занятие
         </Button>
-        {lessonData.regularLessons.map(lesson => (
+        {lessonData.lessons.map(lesson => (
           <Box
             key={Math.random()}
             sx={{
@@ -267,9 +278,9 @@ const RepeatLessons = ({ update, lessonData, setLessonData }) => (
       )
       : (
         <RegularLessons
-          regularLessons={lessonData.regularLessons}
-          startDate={lessonData.startDateForRegularLesson}
-          finishDate={lessonData.finishDateForRegularLesson}
+          lessons={lessonData.lessons}
+          start_datetime={lessonData.startDateForRegularLesson}
+          deadline_datetime={lessonData.finishDateForRegularLesson}
           lessonData={lessonData}
           setLessonData={setLessonData}
         />

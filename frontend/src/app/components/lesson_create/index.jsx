@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import 'dayjs/locale/ru';
 import dayjs from 'dayjs';
@@ -15,6 +15,7 @@ import {
   Divider,
   FormControl,
   FormControlLabel,
+  FormHelperText,
   Grid,
   InputLabel,
   ListItemText,
@@ -31,31 +32,71 @@ import Header from '../../components/header';
 import PaymentMethod from '../lesson_payment/index';
 import RepeatLessons from '../lesson_repeat/index';
 import LessonsService from '../../services/lessons';
+import { useDispatch, useSelector } from 'react-redux';
+import { setMessage } from '../../core/slices/message';
+import postLessonSlice from '../../core/slices/lessonCreate/postLesson';
 
 const LessonCreate = () => {
   const [lessonLevels, setLessonLevels] = useState([]);
   const [lessonData, setLessonData] = useState({
     name: '',
     description: '',
-    type: 'online',
+    course_type: 'online',
     link: '',
-    conferenceId: '',
+    link_info: '',
     level: [],
+    complexity: 'EASY',
     duration: '',
     repeat: 'once',
-    startDate: '',
-    finishDate: '',
+    start_datetime: '',
+    deadline_datetime: '',
     dateForOnceLesson: null,
     timeForOnceLesson: null,
     startDateForRegularLesson: null,
     finishDateForRegularLesson: null,
-    regularLessons: [],
+    lessons: [],
     regularLessonsWithDate: [],
-    payment: 'paid',
+    payment: 'PAYMENT',
     donation: true,
-    cost: '',
+    price: '',
     isDraft: false,
   });
+  const [errorMessages, setErrorMessages] = useState({});
+
+  const dispatch = useDispatch();
+  const { message } = useSelector(state => state.message)
+ 
+  const addError = (item, value) => {
+    setErrorMessages({
+      ...errorMessages,
+      [item]: value,
+    })
+  }
+
+  const validation = (items) => {
+    console.log(errorMessages)
+    for (let key in items) {
+    console.log(key)
+      switch(key) {
+        case 'name':
+      if (lessonData.name.length < 1) {
+        return addError(key, 'Поле обязательно для заполнения');
+      } else if (lessonData.name.length < 5) {
+        return addError(key, 'Имя должно содержать не менее 5 символов');
+      }
+      return setErrorMessages(delete errorMessages.name);
+        case 'link':
+        if (lessonData.link.length < 1) {
+          return addError(key, 'Поле обязательно для заполнения');
+        } else if (lessonData.link !== 333) {
+          return addError(key, 'Введите корректный адрес URL');
+        }
+      return setErrorMessages(delete errorMessages.link);
+      default:
+        return setErrorMessages({})
+      }
+    }
+  };
 
   const post = () => {
     return {
@@ -64,14 +105,14 @@ const LessonCreate = () => {
     complexity: 'easy', // need to remove, because obj has level property
     level: lessonData.level,
     duration: lessonData.duration,
-    course_type: lessonData.type,
+    course_type: lessonData.course_type,
     link: lessonData.link,
-    link_info: lessonData.conferenceId,
-    start_datetime: lessonData.startDate,
-    deadline_datetime: lessonData.finishDate,
+    link_info: lessonData.link_info,
+    start_datetime: lessonData.start_datetime,
+    deadline_datetime: lessonData.deadline_datetime,
     payment: lessonData.payment,
-    price: lessonData.cost,
-    lessons: lessonData.regularLessons,
+    price: lessonData.price,
+    lessons: lessonData.lessons,
     is_draft: lessonData.isDraft,
   }
 }
@@ -86,21 +127,34 @@ const LessonCreate = () => {
   };
 
   const getFinishDate = () => {
-    const startDate = getStartDate();
+    const start_datetime = getStartDate();
     const duration = lessonData.duration;
-    const finishDate = dayjs(startDate).add(duration, 'minute');
-    return finishDate.format();
+    const deadline_datetime = dayjs(start_datetime).add(duration, 'minute');
+    return deadline_datetime.format();
   };
 
   const getCorrectDateTime = () => {
     if (lessonData.dateForOnceLesson !== null) {
-      setLessonData(lessonData.startDate = getStartDate());
-      setLessonData(lessonData.finishDate = getFinishDate());
+      setLessonData(lessonData.start_datetime = getStartDate());
+      setLessonData(lessonData.deadline_datetime = getFinishDate());
     } else {
       setLessonData(lessonData.startDate = lessonData.startDateForRegularLesson.format());
-      setLessonData(lessonData.finishDate = lessonData.finishDateForRegularLesson.format());
+      setLessonData(lessonData.deadline_datetime = lessonData.finishDateForRegularLesson.format());
     }
   };
+
+  const getCorrectOtherData = () => {
+    setLessonData(lessonData.course_type = lessonData.course_type.toUpperCase());
+    lessonData.description.length > 0 ? '' : setLessonData(lessonData.description = ' ');
+    setLessonData(lessonData.description.toString());
+    setLessonData(lessonData.level = lessonData.level.map(el => {
+      if (el === 'Начинающий') el = 'STARTING';
+      if (el === 'Средний') el = 'CONTINUER';
+      if (el === 'Продвинутый') el = 'ADVANCED';
+      return el;
+    }));
+    lessonData.payment === 'FREE' ? setLessonData(lessonData.price = 0) : '';
+  }
 
   const update = e => {
     setLessonData({
@@ -110,21 +164,25 @@ const LessonCreate = () => {
   };
 
   const saveFormUsDraft = () => {
+    validation(lessonData)
     setLessonData({
       ...lessonData,
       isDraft: true,
     });
-    LessonsService.postLesson(lessonData);
+    LessonsService.postLesson(lessonData)
   };
+
+  console.log(message)
 
   const saveForm = () => {
     getCorrectDateTime();
+    getCorrectOtherData();
     console.log(post());
     setLessonData({
       ...lessonData,
       isDraft: false,
     });
-    LessonsService.postLesson({ lessonData });
+    dispatch(postLessonSlice({ ...lessonData }));
   };
 
   const changeDonation = e => {
@@ -175,6 +233,8 @@ const LessonCreate = () => {
                 value={lessonData.name}
                 required
                 fullWidth
+                error={ !!message?.invalid?.name }
+                helperText={message?.invalid?.name}
               />
             </Grid>
 
@@ -188,7 +248,10 @@ const LessonCreate = () => {
                 value={lessonData.description}
                 multiline
                 fullWidth
+                required
                 rows={4}
+                error={ !!message?.invalid?.description }
+                helperText={message?.invalid?.description}
               />
             </Grid>
 
@@ -196,7 +259,7 @@ const LessonCreate = () => {
               <FormControl fullWidth sx={{ paddingLeft: '2%' }}>
                 <RadioGroup
                   row
-                  aria-labelledby="demo-row-radio-buttons-group-label"
+                  aria-labelledby="row-radio-buttons-group-label"
                   name="row-radio-buttons-group"
                   defaultValue="online"
                   sx={{ columnGap: '5%' }}
@@ -204,13 +267,13 @@ const LessonCreate = () => {
                   <FormControlLabel
                     onChange={update}
                     value="online"
-                    name="type"
+                    name="course_type"
                     control={<Radio />}
                     label={<Typography variant="modal" sx={{ fontSize: '16px', color: '#212121' }}>Онлайн</Typography>}
                   />
                   <FormControlLabel
                     onChange={update}
-                    name="type"
+                    name="course_type"
                     value="video"
                     control={<Radio />}
                     label={<Typography variant="modal" sx={{ fontSize: '16px', color: '#212121' }}>Видео</Typography>}
@@ -228,21 +291,26 @@ const LessonCreate = () => {
                 onChange={update}
                 sx={{ width: '48%' }}
                 required
+                error={ !!message?.invalid?.link }
+                helperText={message?.invalid?.link}
               />
 
               <TextField
                 id="lesson_link"
                 label="Данные для доступа"
-                name="conferenceId"
-                value={lessonData.conferenceId}
+                name="link_info"
+                value={lessonData.link_info}
                 onChange={update}
                 placeholder="Идентификатор конференции"
                 sx={{ width: '48%' }}
+                required
+                error={ !!message?.invalid?.link_info }
+                helperText={message?.invalid?.link_info}
               />
             </Grid>
 
             <Grid item>
-              <FormControl fullWidth>
+              <FormControl fullWidth error={!!message?.invalid?.level}>
                 <InputLabel id="lesson-level-label">Уровень подготовки</InputLabel>
                 <Select
                   labelId="lesson-level-label"
@@ -263,6 +331,7 @@ const LessonCreate = () => {
                     </MenuItem>
                   ))}
                 </Select>
+                <FormHelperText>{message?.invalid?.level}</FormHelperText>
               </FormControl>
             </Grid>
 
@@ -276,6 +345,8 @@ const LessonCreate = () => {
                 required
                 value={lessonData.duration}
                 sx={{ width: '49%' }}
+                error={ !!message?.invalid?.duration }
+                helperText={message?.invalid?.duration}
               />
             </Grid>
 
@@ -297,13 +368,13 @@ const LessonCreate = () => {
               update={update}
               changeDonation={changeDonation}
               payment={lessonData.payment}
-              cost={lessonData.cost}
+              price={lessonData.price}
             />
             <Grid item container sx={{ justifyContent: 'end', columnGap: '5%' }}>
               <Button
                 size="large"
                 variant="text"
-                onClick={() => saveFormUsDraft()}
+                onClick={saveFormUsDraft}
               >
                 Сохранить черновик
               </Button>
@@ -312,7 +383,7 @@ const LessonCreate = () => {
                 size="large"
                 variant="contained"
                 type="submit"
-                onClick={() => saveForm()}
+                onClick={saveForm}
               >
                 Опубликовать
               </Button>

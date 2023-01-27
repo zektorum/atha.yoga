@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 
 const PaymentMethod = ({
-  update, changeDonation, payment, cost,
+  update, changeDonation, payment, price,
 }) => (
   <>
     <Grid item sx={{ height: '6%' }}>
@@ -23,12 +23,12 @@ const PaymentMethod = ({
           row
           aria-labelledby="lesson-cost-label"
           name="lesson-cost-radio-buttons-group"
-          defaultValue="payment"
+          defaultValue="PAYMENT"
           sx={{ columnGap: '5%' }}
         >
           <FormControlLabel
             onChange={update}
-            value="payment"
+            value="PAYMENT"
             name="payment"
             control={<Radio />}
             label={<Typography variant="modal" sx={{ fontSize: '16px', color: '#212121' }}>Платно</Typography>}
@@ -36,7 +36,7 @@ const PaymentMethod = ({
           <FormControlLabel
             onChange={update}
             name="payment"
-            value="free"
+            value="FREE"
             control={<Radio />}
             label={<Typography variant="modal" sx={{ fontSize: '16px', color: '#212121' }}>Бесплатно</Typography>}
             sx={{ marginRight: '1%' }}
@@ -60,12 +60,12 @@ const PaymentMethod = ({
       <TextField
         id="lesson_cost"
         label="Стоимость, руб"
-        name="cost"
+        name="price"
         type="number"
         onChange={update}
-        required={payment !== 'free'}
-        disabled={payment === 'free'}
-        value={payment === 'free' ? '' : cost}
+        required={payment !== 'FREE'}
+        disabled={payment === 'FREE'}
+        value={payment === 'FREE' ? 0 : price}
         sx={{ width: '35%' }}
       />
     </Grid>
