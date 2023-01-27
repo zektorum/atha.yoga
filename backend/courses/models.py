@@ -271,8 +271,15 @@ class TicketTransaction(Transaction):
 class CourseQuestion(TimeStampedModel):
     title = models.CharField("Заголовок", max_length=120)
     text = models.TextField("Текст")
-    author = models.ForeignKey(User, verbose_name="Автор", null=True, on_delete=models.SET_NULL)
-    course = models.ForeignKey(BaseCourse, verbose_name="Курс", related_name="questions", on_delete=models.CASCADE)
+    author = models.ForeignKey(
+        User, verbose_name="Автор", null=True, on_delete=models.SET_NULL
+    )
+    course = models.ForeignKey(
+        BaseCourse,
+        verbose_name="Курс",
+        related_name="questions",
+        on_delete=models.CASCADE,
+    )
 
     class Meta:
         verbose_name = "Вопрос по курсу"
@@ -281,8 +288,15 @@ class CourseQuestion(TimeStampedModel):
 
 class CourseAnswer(TimeStampedModel):
     text = models.TextField("Текст")
-    question = models.ForeignKey(CourseQuestion, verbose_name="Вопрос", related_name="answers", on_delete=models.CASCADE)
-    author = models.ForeignKey(User, verbose_name="Автор", null=True, on_delete=models.SET_NULL)
+    question = models.ForeignKey(
+        CourseQuestion,
+        verbose_name="Вопрос",
+        related_name="answers",
+        on_delete=models.CASCADE,
+    )
+    author = models.ForeignKey(
+        User, verbose_name="Автор", null=True, on_delete=models.SET_NULL
+    )
 
     class Meta:
         verbose_name = "Ответ на вопрос к курсу"

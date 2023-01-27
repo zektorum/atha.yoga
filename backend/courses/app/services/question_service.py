@@ -14,10 +14,10 @@ class CourseQuestionCreate:
     user_repository = UserRepository()
     course_repository = BaseCourseRepository()
 
-    def __init__(self, course_id: int, user: User, title: str, text: str):
+    def __init__(self, course_id: int, author: User, title: str, text: str):
         self.title = title
         self.text = text
-        self.user = user
+        self.user = author
         self.course_id = course_id
 
     @cached_property
@@ -67,9 +67,9 @@ class CourseAnswerCreate:
     repository = CourseQuestionRepository()
     user_repository = UserRepository()
 
-    def __init__(self, question_id: int, user: User, text: str):
+    def __init__(self, question_id: int, author: User, text: str):
         self.text = text
-        self.user = user
+        self.user = author
         self.question_id = question_id
 
     @cached_property

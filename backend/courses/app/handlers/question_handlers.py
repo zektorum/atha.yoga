@@ -34,7 +34,7 @@ class CourseQuestionCreateHandler(GenericHandler):
 
         question = CourseQuestionCreate(
             course_id=pk,
-            user=request.user,
+            author=request.user,
             title=data.validated_data["title"],
             text=data.validated_data["text"],
         ).create()
@@ -50,7 +50,7 @@ class CourseAnswerCreateHandler(GenericHandler):
         data.is_valid(raise_exception=True)
 
         answer = CourseAnswerCreate(
-            question_id=pk, user=request.user, text=data.validated_data["text"]
+            question_id=pk, author=request.user, text=data.validated_data["text"]
         ).create()
         return Response({"answer": CourseAnswerResource(answer).data})
 
