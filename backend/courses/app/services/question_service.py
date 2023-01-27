@@ -52,7 +52,9 @@ class CourseQuestionRemove:
         if not question:
             raise NotFound(f"Undefined question with id {self.question_id}")
         if question.author.id != self.user.id:
-            raise PermissionDenied(f"User with id {self.user.id} can't remove question with id {self.question_id}")
+            raise PermissionDenied(
+                f"User with id {self.user.id} can't remove question with id {self.question_id}"
+            )
 
         return question
 
@@ -101,7 +103,9 @@ class CourseAnswerRemove:
         if not answer:
             raise NotFound(f"Undefined answer with id {self.answer_id}")
         if answer.author.id != self.user.id:
-            raise PermissionDenied(f"User with id {self.user.id} can't remove answer with id {self.answer_id}")
+            raise PermissionDenied(
+                f"User with id {self.user.id} can't remove answer with id {self.answer_id}"
+            )
 
         return answer
 
