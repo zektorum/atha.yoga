@@ -32,6 +32,7 @@ class CategoryAdmin(DjangoMpttAdmin):
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
+    prepopulated_fields = {"slug": ("name",)}
     list_display = ("name",)
 
 

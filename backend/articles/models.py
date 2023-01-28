@@ -13,10 +13,19 @@ from core.models import TimeStampedModel, User, Comment
 
 class Tag(models.Model):
     name = models.CharField(max_length=50, unique=True)
+    slug = models.SlugField()
 
     class Meta:
         verbose_name = "Тэг"
         verbose_name_plural = "Тэги"
+
+    def get_absolute_url(self) -> str:
+        return reverse("tag", kwargs={"tag_slug": self.slug})
+
+    def save(self, *args: Any, **kwargs: Any) -> None:
+        if not self.slug:
+            self.slug = slugify(self.name)
+        return super().save(*args, **kwargs)
 
     def __str__(self) -> str:
         return self.name

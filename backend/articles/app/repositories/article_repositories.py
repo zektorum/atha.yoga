@@ -14,19 +14,24 @@ class ArticleRepository(BaseRepository):
         return self.model.objects.filter(published=True, slug=article_slug).first()
 
     def filter_articles(
-        self, data: ArticleFilterData = None, category: Optional[Category] = None
+        self,
+        data: Optional[ArticleFilterData] = None,
+        category: Optional[Category] = None,
+        tag: Optional[Tag] = None,
     ) -> QuerySet[Article]:
         filter_query = Q(published=True)
         if data:
             if query := data.get("query", None):
                 filter_query &= Q(title__icontains=query)
-            if tags := data.get("tags", None):
-                filter_query &= Q(tags__name__in=tags)
         if category:
             filter_query &= Q(category__in=category.get_children()) | Q(
                 category=category
             )
-        return self.model.objects.filter(filter_query)
+
+        if tag:
+            return tag.articles.filter(filter_query)
+        else:
+            return self.model.objects.filter(filter_query)
 
 
 class ArticleCategoryRepository(BaseRepository):
@@ -44,3 +49,6 @@ class ArticleTagRepository(BaseRepository):
 
     def find_all_tags(self) -> QuerySet[Tag]:
         return self.model.objects.all()
+
+    def find_tag_by_slug(self, tag_slug: str) -> Tag:
+        return self.model.objects.filter(slug=tag_slug).first()

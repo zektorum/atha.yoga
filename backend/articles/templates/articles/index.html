@@ -3,7 +3,13 @@
 {% load rest_framework %}
 
 {% block body %}
-    <form action="{% if category_slug %}{% url 'category' category_slug=category_slug %}{% else %}{% url 'index' %}{% endif %}" method="GET">
+    <form action="{% if category_slug %}
+                    {% url 'category' category_slug=category_slug %}
+                  {% elif tag_slug %}
+                    {% url 'tag' tag_slug=tag_slug %}
+                  {% else %}
+                    {% url 'index' %}
+                  {% endif %}" method="GET">
         {% render_form search_form %}
         <input type="submit" value="Submit">
     </form>
@@ -25,7 +31,7 @@
     <h1>Тэги</h1>
     <p>
         {% for tag in tags %}
-            {{ tag.name }},
+            <a href="{{ tag.get_absolute_url }}">{{ tag.name }}</a>,
         {% endfor %}
     </p>
 

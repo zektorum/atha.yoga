@@ -10,7 +10,7 @@
         {% endif %}
     {% endrecursetree %}
     <p><b>Дата публикации: </b>{{ article.created_at|date }}</p>
-    <p><b>Тэги: </b>{% for tag in article.tags.all %}{{ tag.name }}, {% endfor %}</p>
+    <p><b>Тэги: </b>{% for tag in article.tags.all %}<a href="{{ tag.get_absolute_url }}">{{ tag.name }}</a>, {% endfor %}</p>
     <p><b>Автор: </b>{{ article.author.first_name }} {{ article.author.last_name }} ({{ article.author.username }})</p>
     <p><b>Рейтинг: </b>{{ article.rating|floatformat:2 }}</p>
     <p><b>Время прочтения: </b>{{ article.get_reading_time }} мин.</p>
