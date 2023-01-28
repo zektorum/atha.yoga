@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/jsx-props-no-spreading */
-import React from 'react';
+import React, { useState } from 'react';
 import {
     Divider,
     FormControl,
@@ -14,8 +14,10 @@ import {
 } from '@mui/material';
 
 const PaymentMethod = ({
-  update, changeDonation, payment, price,
-}) => (
+  update, changeDonation, payment, price, error
+}) => {
+ 
+  return (
   <>
     <Grid item sx={{ height: '6%' }}>
       <FormControl fullWidth sx={{ paddingLeft: '2%' }}>
@@ -67,9 +69,12 @@ const PaymentMethod = ({
         disabled={payment === 'FREE'}
         value={payment === 'FREE' ? 0 : price}
         sx={{ width: '35%' }}
+        error={ !!error }
+        helperText={error}
       />
     </Grid>
   </>
-);
+  );
+};
 
 export default PaymentMethod;

@@ -41,12 +41,13 @@ const LessonCreate = () => {
   const [lessonData, setLessonData] = useState({
     name: '',
     description: '',
-    course_type: 'online',
+    course_type: 'ONLINE',
     link: '',
     link_info: '',
     level: [],
     complexity: 'EASY',
     duration: '',
+    duration_number: '',
     repeat: 'once',
     start_datetime: '',
     deadline_datetime: '',
@@ -59,9 +60,39 @@ const LessonCreate = () => {
     payment: 'PAYMENT',
     donation: true,
     price: '',
-    isDraft: false,
+    is_draft: false,
   });
-  const [errorMessages, setErrorMessages] = useState({});
+  const [errorMessageForLevel, setErrorMessageForLevel] = useState('');
+  const [errorMessageForCost, setErrorMessageForCost] = useState('');
+  const [errorMessageForOnceLessonDate, setErrorMessageForOnceLessonDate] = useState('');
+  const [errorMessageForOnceLessonTime, setErrorMessageForOnceLessonTime] = useState('');
+
+  const getErrorMessageForCost = () => {
+    if (lessonData.payment === 'PAYMENT' && lessonData.price.length === 0) {
+      setErrorMessageForCost('Это поле не может быть пустым.')
+    } else {
+      setErrorMessageForCost('')
+    }
+  }
+
+  const getErrorMessageForOnceLessonDate = () => {
+    if (lessonData.dateForOnceLesson === null && lessonData.repeat === 'once') {
+      setErrorMessageForOnceLessonDate('Это поле не может быть пустым.')
+    } else if (lessonData.dateForOnceLesson < Date.now()) {
+      console.log(Date.now())
+      setErrorMessageForOnceLessonDate('Дата должна быть не ранее сегодняшней')
+    } else {
+      setErrorMessageForOnceLessonDate('')
+    }
+  }
+
+  const getErrorMessageForOnceLessonTime = () => {
+    if (lessonData.timeForOnceLesson === null && lessonData.repeat === 'once') {
+      setErrorMessageForOnceLessonTime('Это поле не может быть пустым.')
+    } else {
+      setErrorMessageForOnceLessonTime('')
+    }
+  }
 
   const dispatch = useDispatch();
   const { message } = useSelector(state => state.message)
@@ -98,24 +129,13 @@ const LessonCreate = () => {
     }
   };
 
-  const post = () => {
-    return {
-    name: lessonData.name,
-    description: lessonData.description,
-    complexity: 'easy', // need to remove, because obj has level property
-    level: lessonData.level,
-    duration: lessonData.duration,
-    course_type: lessonData.course_type,
-    link: lessonData.link,
-    link_info: lessonData.link_info,
-    start_datetime: lessonData.start_datetime,
-    deadline_datetime: lessonData.deadline_datetime,
-    payment: lessonData.payment,
-    price: lessonData.price,
-    lessons: lessonData.lessons,
-    is_draft: lessonData.isDraft,
+  const getErrorMessageForLevel = () => {
+    if (lessonData.level.length === 0) {
+      setErrorMessageForLevel('Это поле не может быть пустым.')
+    } else {
+      setErrorMessageForLevel('')
+    }
   }
-}
 
   const getStartDate = () => {
     const date = lessonData.dateForOnceLesson;
@@ -128,8 +148,9 @@ const LessonCreate = () => {
 
   const getFinishDate = () => {
     const start_datetime = getStartDate();
-    const duration = lessonData.duration;
-    const deadline_datetime = dayjs(start_datetime).add(duration, 'minute');
+    const duration = lessonData.duration.split(':');
+    const minute = Number(duration[0] * 60) + Number(duration[1])
+    const deadline_datetime = dayjs(start_datetime).add(minute, 'minute');
     return deadline_datetime.format();
   };
 
@@ -138,15 +159,19 @@ const LessonCreate = () => {
       setLessonData(lessonData.start_datetime = getStartDate());
       setLessonData(lessonData.deadline_datetime = getFinishDate());
     } else {
-      setLessonData(lessonData.startDate = lessonData.startDateForRegularLesson.format());
-      setLessonData(lessonData.deadline_datetime = lessonData.finishDateForRegularLesson.format());
+      setLessonData(lessonData.startDate = lessonData?.startDateForRegularLesson?.format());
+      setLessonData(lessonData.deadline_datetime = lessonData?.finishDateForRegularLesson?.format());
     }
   };
 
+  const getDuration = (duration) => {
+    const today = new Date;
+    today.setHours(0, duration, 0, 0);
+    const now = today.toLocaleTimeString('ru-RU');
+    return now
+  }
+
   const getCorrectOtherData = () => {
-    setLessonData(lessonData.course_type = lessonData.course_type.toUpperCase());
-    lessonData.description.length > 0 ? '' : setLessonData(lessonData.description = ' ');
-    setLessonData(lessonData.description.toString());
     setLessonData(lessonData.level = lessonData.level.map(el => {
       if (el === 'Начинающий') el = 'STARTING';
       if (el === 'Средний') el = 'CONTINUER';
@@ -154,6 +179,7 @@ const LessonCreate = () => {
       return el;
     }));
     lessonData.payment === 'FREE' ? setLessonData(lessonData.price = 0) : '';
+    setLessonData(lessonData.duration = getDuration(lessonData.duration_number))
   }
 
   const update = e => {
@@ -164,24 +190,30 @@ const LessonCreate = () => {
   };
 
   const saveFormUsDraft = () => {
-    validation(lessonData)
+    getCorrectDateTime();
+    getCorrectOtherData();
+    getErrorMessageForLevel();
     setLessonData({
       ...lessonData,
-      isDraft: true,
+      is_draft: true,
     });
+    console.log(lessonData);
     LessonsService.postLesson(lessonData)
   };
-
-  console.log(message)
 
   const saveForm = () => {
     getCorrectDateTime();
     getCorrectOtherData();
-    console.log(post());
+    getErrorMessageForLevel();
+    getErrorMessageForCost();
+    getErrorMessageForOnceLessonDate();
+    getErrorMessageForOnceLessonTime();
     setLessonData({
       ...lessonData,
-      isDraft: false,
+      is_draft: false,
     });
+    console.log(lessonData);
+    console.warn(message)
     dispatch(postLessonSlice({ ...lessonData }));
   };
 
@@ -261,12 +293,12 @@ const LessonCreate = () => {
                   row
                   aria-labelledby="row-radio-buttons-group-label"
                   name="row-radio-buttons-group"
-                  defaultValue="online"
+                  defaultValue="ONLINE"
                   sx={{ columnGap: '5%' }}
                 >
                   <FormControlLabel
                     onChange={update}
-                    value="online"
+                    value="ONLINE"
                     name="course_type"
                     control={<Radio />}
                     label={<Typography variant="modal" sx={{ fontSize: '16px', color: '#212121' }}>Онлайн</Typography>}
@@ -274,7 +306,7 @@ const LessonCreate = () => {
                   <FormControlLabel
                     onChange={update}
                     name="course_type"
-                    value="video"
+                    value="VIDEO"
                     control={<Radio />}
                     label={<Typography variant="modal" sx={{ fontSize: '16px', color: '#212121' }}>Видео</Typography>}
                   />
@@ -310,7 +342,7 @@ const LessonCreate = () => {
             </Grid>
 
             <Grid item>
-              <FormControl fullWidth error={!!message?.invalid?.level}>
+              <FormControl fullWidth error={ !!errorMessageForLevel }>
                 <InputLabel id="lesson-level-label">Уровень подготовки</InputLabel>
                 <Select
                   labelId="lesson-level-label"
@@ -331,7 +363,7 @@ const LessonCreate = () => {
                     </MenuItem>
                   ))}
                 </Select>
-                <FormHelperText>{message?.invalid?.level}</FormHelperText>
+                <FormHelperText>{ errorMessageForLevel }</FormHelperText>
               </FormControl>
             </Grid>
 
@@ -339,11 +371,11 @@ const LessonCreate = () => {
               <TextField
                 id="lesson_duration"
                 label="Длительность занятия, мин"
-                name="duration"
+                name="duration_number"
                 type="number"
                 onChange={update}
                 required
-                value={lessonData.duration}
+                value={lessonData.duration_number}
                 sx={{ width: '49%' }}
                 error={ !!message?.invalid?.duration }
                 helperText={message?.invalid?.duration}
@@ -358,6 +390,9 @@ const LessonCreate = () => {
               update={update}
               lessonData={lessonData}
               setLessonData={setLessonData}
+              errorDateForOnceLesson={errorMessageForOnceLessonDate}
+              errorTimeForOnceLesson={errorMessageForOnceLessonTime}
+              errorMessage={message}
             />
 
             <Grid item>
@@ -369,6 +404,7 @@ const LessonCreate = () => {
               changeDonation={changeDonation}
               payment={lessonData.payment}
               price={lessonData.price}
+              error={errorMessageForCost}
             />
             <Grid item container sx={{ justifyContent: 'end', columnGap: '5%' }}>
               <Button

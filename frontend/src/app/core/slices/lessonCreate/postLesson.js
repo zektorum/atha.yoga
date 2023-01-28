@@ -18,7 +18,7 @@ const postLessonSlice = createAsyncThunk(
     payment,
     price,
     lessons,
-    is_draft: isDraft,
+    is_draft,
   }, thunkAPI) => {
     try {
       return await LessonsService.postLesson({
@@ -35,7 +35,7 @@ const postLessonSlice = createAsyncThunk(
         payment,
         price,
         lessons,
-        isDraft,
+        is_draft,
       });
     } catch (error) {
       const message = error.response.data.errors;

@@ -47,7 +47,7 @@ const getDay = (num) => {
 };
 
 const OnceLesson = ({
-  date, time, setLessonData, lessonData,
+  date, time, setLessonData, lessonData, errorTime, errorDate, error
 }) => {
   const setDate = newValue => {
     setLessonData({
@@ -63,9 +63,6 @@ const OnceLesson = ({
     });
   };
 
-  const dispatch = useDispatch();
-  const { message } = useSelector(state => state.message)
-
   return (
     <Grid item container sx={{ justifyContent: 'start', columnGap: '4%' }}>
       <DatePicker
@@ -74,16 +71,20 @@ const OnceLesson = ({
         id="lesson_date"
         minDate={dayjs(Date())}
         onChange={newValue => setDate(newValue)}
-        renderInput={params => <TextField {...params} sx={{ width: '35%' }} required />}
-        //error={ !!message?.invalid?.start_datetime }
-        //helperText={message?.invalid?.start_datetime }
+        renderInput={params => <TextField 
+          {...params}
+          sx={{ width: '35%' }}
+          required
+          error={ !!errorDate }
+          helperText={errorDate}
+        />}
       />
       <TimePicker
         label="Время"
         value={time}
         id="lesson_time"
         onChange={newValue => setTime(newValue)}
-        renderInput={params => <TextField {...params} sx={{ width: '35%' }} required />}
+        renderInput={params => <TextField {...params} sx={{ width: '35%' }} required error={ !!errorTime } helperText={errorTime}/>}
       />
     </Grid>
   );
@@ -239,7 +240,7 @@ const RegularLessons = ({
   );
 };
 
-const RepeatLessons = ({ update, lessonData, setLessonData }) => (
+const RepeatLessons = ({ update, lessonData, setLessonData, errorDateForOnceLesson, errorTimeForOnceLesson, errorMessage }) => (
   <>
     <Grid item sx={{ height: '6%' }}>
       <FormControl fullWidth sx={{ paddingLeft: '2%' }}>
@@ -274,6 +275,9 @@ const RepeatLessons = ({ update, lessonData, setLessonData }) => (
           time={lessonData.timeForOnceLesson}
           lessonData={lessonData}
           setLessonData={setLessonData}
+          errorTime={errorTimeForOnceLesson}
+          errorDate={errorDateForOnceLesson}
+          error={errorMessage}
         />
       )
       : (
@@ -283,6 +287,7 @@ const RepeatLessons = ({ update, lessonData, setLessonData }) => (
           deadline_datetime={lessonData.finishDateForRegularLesson}
           lessonData={lessonData}
           setLessonData={setLessonData}
+          error={errorMessage}
         />
       )}
   </>

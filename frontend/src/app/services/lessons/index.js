@@ -23,7 +23,7 @@ const postLesson = lessonState => axios
     payment: lessonState.payment,
     price: lessonState.price,
     lessons: lessonState.lessons,
-    is_draft: lessonState.isDraft,
+    is_draft: lessonState.is_draft,
   }, { headers: authHeader() });
 
 const LessonsService = { filter, getLesson, postLesson };
