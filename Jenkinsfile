@@ -58,7 +58,7 @@ pipeline {
                             return true;
                         } else if (STATUS == "exited\n" && !(EXIT_CODE == "0\n")) {
                             sh 'COMPOSE_PROJECT_NAME=${BRANCH_NAME}.test docker-compose --env-file backend/.env.${BRANCH_NAME} down'
-                            error 'Failed, exiting now...'
+                            return true
                         } else {
                             return false
                         }

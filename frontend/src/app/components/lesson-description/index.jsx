@@ -16,7 +16,7 @@ import avatar from '../../../assets/public/profile_avatar.jpg';
 
 const LessonDescription = ({
   title, description, price, level, favorite, comments,
-  rate, votes, isVideo, isRegular, startDate, duration, id, isPaid,
+  rate, votes, isVideo, isRegular, startDate, duration, id, payment,
 }) => (
   <>
     <Box display="flex" alignItems="start" mb="23px">
@@ -36,11 +36,11 @@ const LessonDescription = ({
       </Stack>
     </Box>
     <Typography display="flex" alignItems="center" fontSize="16px" color="text.secondary" mb="32px">
-      {level.join(' • ')}
+      {level}
     </Typography>
 
-    <Box width="982px" maxHeight="176px" display="flex" flexDirection="column" mb="32px">
-      <Typography fontSize="16px" noWrap="false">
+    <Box maxHeight="176px" display="flex" flexDirection="column" mb="32px">
+      <Typography fontSize="16px" noWrap={false}>
         {description}
         {' '}
         {description.length > 600 && (
@@ -127,9 +127,7 @@ const LessonDescription = ({
     <Box display="flex" alignItems="center" flexWrap="wrap" gap="6px" mb="56px">
       <Avatar
         src={avatar}
-        sx={{
-          width: '40px', height: '40px',
-        }}
+        sx={{ width: 32, height: 32 }}
       />
       <Typography
         fontSize="16px"
@@ -140,7 +138,7 @@ const LessonDescription = ({
     <Box display="flex" justifyContent="flex-end">
       <Button
         component={Link}
-        to={isPaid && `/abonement/${id}`}
+        to={`/abonement/${id}`}
         variant="contained"
         sx={{
           fontSize: '16px', fontWeight: '500', width: '227px', mb: '20px',
