@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  Typography, Button, Stack, Container,
+  Box, Typography, Button, Stack, Container,
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
@@ -19,7 +19,11 @@ const MyLessonsPage = () => {
   }, [dispatch]);
 
   return (
-    <>
+    <Box
+      height="100%"
+      display="flex"
+      flexDirection="column"
+    >
       <Header title="Мои занятия" />
       {tickets?.length ? (
         <Box height="100%" display="flex" flexDirection="column" justifyContent="space-between">
@@ -68,28 +72,7 @@ const MyLessonsPage = () => {
       ) : (
         <MyLessonsEmpty />
       )}
-
-      <Button
-        component={Link}
-        to="/create-lesson"
-        sx={{
-          position: 'absolute',
-          bottom: '4%',
-          right: '4%',
-          p: '12px 16px',
-          fontSize: '15px',
-          lineHeight: '26px',
-          boxShadow: '0px 3px 3px -2px rgba(0, 0, 0, 0.2), 0px 3px 4px rgba(0, 0, 0, 0.14), 0px 1px 8px rgba(0, 0, 0, 0.12)',
-          borderRadius: '64px',
-          color: '#000',
-        }}
-        size="large"
-      >
-        <Typography sx={{ mr: '8px' }}>Создать занятие</Typography>
-        <AddIcon />
-      </Button>
-
-    </>
+    </Box>
   );
 };
 
