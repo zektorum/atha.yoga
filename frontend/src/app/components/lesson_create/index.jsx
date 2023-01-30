@@ -4,6 +4,8 @@ import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import 'dayjs/locale/ru';
 import dayjs from 'dayjs';
+import { Navigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import {
@@ -35,6 +37,7 @@ import LessonsService from '../../services/lessons';
 import { useDispatch, useSelector } from 'react-redux';
 import { setMessage } from '../../core/slices/message';
 import postLessonSlice from '../../core/slices/lessonCreate/postLesson';
+import AlertDialog from '../lesson_alert';
 
 const LessonCreate = () => {
   const [lessonLevels, setLessonLevels] = useState([]);
@@ -69,12 +72,24 @@ const LessonCreate = () => {
   const [errorMessageForStartRegularLessonDate, setErrorMessageForStartRegularLessonDate] = useState('');
   const [errorMessageForFinishRegularLessonDate, setErrorMessageForFinishRegularLessonDate] = useState('');
   const [errorMessageForRegularLessons, setErrorMessageForRegularLessons] = useState('');
+  const [errorMessageForLessonId, setErrorMessageForLessonId] = useState('');
+  const [isFormSend, setIsFormSend] = useState(false);
+  
+  const location = useLocation();
 
   const getErrorMessageForCost = () => {
     if (lessonData.payment === 'PAYMENT' && lessonData.price.length === 0) {
       setErrorMessageForCost('Это поле не может быть пустым.')
     } else {
       setErrorMessageForCost('')
+    }
+  }
+
+  const getErrorMessageForLessonId = () => {
+    if (lessonData.link_info.length === 0) {
+      setErrorMessageForLessonId('Это поле не может быть пустым.')
+    } else {
+      setErrorMessageForLessonId('')
     }
   }
 
@@ -90,7 +105,7 @@ const LessonCreate = () => {
   }
 
   const getErrorMessageForOnceLessonTime = () => {
-    if (lessonData.timeForOnceLesson === null && lessonData.repeat !== 'once') {
+    if (lessonData.timeForOnceLesson === null && lessonData.repeat === 'once') {
       setErrorMessageForOnceLessonTime('Это поле не может быть пустым.')
     } else {
       setErrorMessageForOnceLessonTime('')
@@ -124,38 +139,6 @@ const LessonCreate = () => {
   const dispatch = useDispatch();
   const { message } = useSelector(state => state.message)
  
-  const addError = (item, value) => {
-    setErrorMessages({
-      ...errorMessages,
-      [item]: value,
-    })
-  }
-
-  const validation = (items) => {
-    console.log(errorMessages)
-    for (let key in items) {
-    console.log(key)
-      switch(key) {
-        case 'name':
-      if (lessonData.name.length < 1) {
-        return addError(key, 'Поле обязательно для заполнения');
-      } else if (lessonData.name.length < 5) {
-        return addError(key, 'Имя должно содержать не менее 5 символов');
-      }
-      return setErrorMessages(delete errorMessages.name);
-        case 'link':
-        if (lessonData.link.length < 1) {
-          return addError(key, 'Поле обязательно для заполнения');
-        } else if (lessonData.link !== 333) {
-          return addError(key, 'Введите корректный адрес URL');
-        }
-      return setErrorMessages(delete errorMessages.link);
-      default:
-        return setErrorMessages({})
-      }
-    }
-  };
-
   const getErrorMessageForLevel = () => {
     if (lessonData.level.length === 0) {
       setErrorMessageForLevel('Это поле не может быть пустым.')
@@ -217,15 +200,26 @@ const LessonCreate = () => {
   };
 
   const saveFormUsDraft = () => {
+    console.log(location)
     getCorrectDateTime();
     getCorrectOtherData();
     getErrorMessageForLevel();
+    getErrorMessageForCost();
+    getErrorMessageForOnceLessonDate();
+    getErrorMessageForOnceLessonTime();
+    getErrorMessageForFinishRegularLessonDate();
+    getErrorMessageForStartRegularLessonDate();
+    getErrorMessageForRegularLessons();
+    getErrorMessageForLessonId();
     setLessonData({
       ...lessonData,
-      is_draft: true,
+      is_draft: false,
     });
     console.log(lessonData);
+    console.warn(message)
+    dispatch(postLessonSlice({ ...lessonData }));
     LessonsService.postLesson(lessonData)
+    .then(setIsFormSend(true))
   };
 
   const saveForm = () => {
@@ -238,6 +232,7 @@ const LessonCreate = () => {
     getErrorMessageForFinishRegularLessonDate();
     getErrorMessageForStartRegularLessonDate();
     getErrorMessageForRegularLessons();
+    getErrorMessageForLessonId();
     setLessonData({
       ...lessonData,
       is_draft: false,
@@ -245,6 +240,8 @@ const LessonCreate = () => {
     console.log(lessonData);
     console.warn(message)
     dispatch(postLessonSlice({ ...lessonData }));
+    LessonsService.postLesson(lessonData)
+    .then(setIsFormSend(true))
   };
 
   const changeDonation = e => {
@@ -366,8 +363,8 @@ const LessonCreate = () => {
                 placeholder="Идентификатор конференции"
                 sx={{ width: '48%' }}
                 required
-                error={ !!message?.invalid?.link_info }
-                helperText={message?.invalid?.link_info}
+                error={ !!errorMessageForLessonId }
+                helperText={errorMessageForLessonId}
               />
             </Grid>
 
@@ -461,6 +458,8 @@ const LessonCreate = () => {
           </Grid>
         </Container>
       </form>
+      {isFormSend ? <Navigate to="/my-lessons" /> : ''}
+      {location.pathname !== '/create-lesson' ? <AlertDialog /> : ''}
     </LocalizationProvider>
   );
 };

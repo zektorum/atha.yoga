@@ -85,7 +85,13 @@ const OnceLesson = ({
         value={time}
         id="lesson_time"
         onChange={newValue => setTime(newValue)}
-        renderInput={params => <TextField {...params} sx={{ width: '35%' }} required error={ !!errorTime } helperText={errorTime}/>}
+        renderInput={params => <TextField
+          {...params}
+          sx={{ width: '35%' }}
+          required
+          error={ !!errorTime }
+          helperText={errorTime}
+        />}
       />
     </Grid>
   );
