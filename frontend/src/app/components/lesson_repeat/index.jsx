@@ -10,6 +10,7 @@ import {
     Button,
     FormControl,
     FormControlLabel,
+    FormHelperText,
     Grid,
     InputLabel,
     MenuItem,
@@ -91,7 +92,7 @@ const OnceLesson = ({
 };
 
 const RegularLessons = ({
-  lessons, start_datetime, deadline_datetime, lessonData, setLessonData,
+  lessons, start_datetime, deadline_datetime, lessonData, setLessonData, errorStartDate, errorFinishDate, errorLessons
 }) => {
   const [regularLessonDay, setRegularLessonDay] = useState('');
   const [redularLessonTime, setRegularLessonTime] = useState(null);
@@ -113,7 +114,7 @@ const RegularLessons = ({
   const getLessonInfo = () => {
     const time = dayjs(redularLessonTime).minute() > 9 ? `${dayjs(redularLessonTime).hour()}:${dayjs(redularLessonTime).minute()}` : `${dayjs(redularLessonTime).hour()}:0${dayjs(redularLessonTime).minute()}`;
     const copyRegularLessons = [...lessons];
-    copyRegularLessons.push({ day: dateRange[regularLessonDay], start_time: time });
+    copyRegularLessons.push({ weekday: dateRange[regularLessonDay], start_time: time });
     setLessonData({
       ...lessonData,
       lessons: copyRegularLessons,
@@ -141,7 +142,7 @@ const RegularLessons = ({
           value={start_datetime}
           minDate={dayjs(Date())}
           onChange={newValue => setStartDate(newValue)}
-          renderInput={params => <TextField {...params} sx={{ width: '35%' }} required />}
+          renderInput={params => <TextField {...params} sx={{ width: '35%' }} required error={ !!errorStartDate } helperText={errorStartDate}/>}
         />
         <DatePicker
           label="Окончание"
@@ -150,7 +151,7 @@ const RegularLessons = ({
           minDate={start_datetime}
           maxDate={dayjs(start_datetime).add(2, 'month')}
           onChange={newValue => setFinishDate(newValue)}
-          renderInput={params => <TextField {...params} sx={{ width: '35%' }} required />}
+          renderInput={params => <TextField {...params} sx={{ width: '35%' }} required error={ !!errorFinishDate } helperText={errorFinishDate}/>}
         />
 
         <Typography
@@ -175,7 +176,7 @@ const RegularLessons = ({
           borderRadius: '10px',
         }}
       >
-        <FormControl sx={{ width: '30%' }}>
+        <FormControl sx={{ width: '30%' }} error={!!errorLessons}>
           <InputLabel id="demo-simple-select-label">День недели</InputLabel>
           <Select
             labelId="demo-simple-select-label"
@@ -193,6 +194,8 @@ const RegularLessons = ({
             <MenuItem value="Суббота">Суббота</MenuItem>
             <MenuItem value="Воскресенье">Воскресенье</MenuItem>
           </Select>
+          <FormHelperText>{errorLessons}</FormHelperText>
+
         </FormControl>
 
         <TimePicker
@@ -201,7 +204,7 @@ const RegularLessons = ({
           id="regular_lesson_time"
           sx={{ width: '30%' }}
           onChange={newValue => setRegularLessonTime(newValue)}
-          renderInput={params => <TextField {...params} />}
+          renderInput={params => <TextField {...params} error={!!errorLessons} />}
         />
 
         <Button
@@ -240,7 +243,7 @@ const RegularLessons = ({
   );
 };
 
-const RepeatLessons = ({ update, lessonData, setLessonData, errorDateForOnceLesson, errorTimeForOnceLesson, errorMessage }) => (
+const RepeatLessons = ({ update, lessonData, setLessonData, errorDateForOnceLesson, errorTimeForOnceLesson, errorMessage, errorStartForRegularLesson, errorFinishForRegularLesson, errorLessons }) => (
   <>
     <Grid item sx={{ height: '6%' }}>
       <FormControl fullWidth sx={{ paddingLeft: '2%' }}>
@@ -288,6 +291,9 @@ const RepeatLessons = ({ update, lessonData, setLessonData, errorDateForOnceLess
           lessonData={lessonData}
           setLessonData={setLessonData}
           error={errorMessage}
+          errorStartDate={errorStartForRegularLesson}
+          errorFinishDate={errorFinishForRegularLesson}
+          errorLessons={errorLessons}
         />
       )}
   </>

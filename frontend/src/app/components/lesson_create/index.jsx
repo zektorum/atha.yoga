@@ -66,6 +66,9 @@ const LessonCreate = () => {
   const [errorMessageForCost, setErrorMessageForCost] = useState('');
   const [errorMessageForOnceLessonDate, setErrorMessageForOnceLessonDate] = useState('');
   const [errorMessageForOnceLessonTime, setErrorMessageForOnceLessonTime] = useState('');
+  const [errorMessageForStartRegularLessonDate, setErrorMessageForStartRegularLessonDate] = useState('');
+  const [errorMessageForFinishRegularLessonDate, setErrorMessageForFinishRegularLessonDate] = useState('');
+  const [errorMessageForRegularLessons, setErrorMessageForRegularLessons] = useState('');
 
   const getErrorMessageForCost = () => {
     if (lessonData.payment === 'PAYMENT' && lessonData.price.length === 0) {
@@ -87,10 +90,34 @@ const LessonCreate = () => {
   }
 
   const getErrorMessageForOnceLessonTime = () => {
-    if (lessonData.timeForOnceLesson === null && lessonData.repeat === 'once') {
+    if (lessonData.timeForOnceLesson === null && lessonData.repeat !== 'once') {
       setErrorMessageForOnceLessonTime('Это поле не может быть пустым.')
     } else {
       setErrorMessageForOnceLessonTime('')
+    }
+  }
+
+  const getErrorMessageForStartRegularLessonDate = () => {
+    if (lessonData.startDateForRegularLesson === null && lessonData.repeat !== 'once') {
+      setErrorMessageForStartRegularLessonDate('Это поле не может быть пустым.')
+    } else {
+      setErrorMessageForStartRegularLessonDate('')
+    }
+  }
+
+  const getErrorMessageForFinishRegularLessonDate = () => {
+    if (lessonData.finishDateForRegularLesson === null && lessonData.repeat !== 'once') {
+      setErrorMessageForFinishRegularLessonDate('Это поле не может быть пустым.')
+    } else {
+      setErrorMessageForFinishRegularLessonDate('')
+    }
+  }
+
+  const getErrorMessageForRegularLessons = () => {
+    if (lessonData.lessons.length === 0 && lessonData.repeat !== 'once') {
+      setErrorMessageForRegularLessons('Обязательно наличие одного цикла занятий.')
+    } else {
+      setErrorMessageForRegularLessons('')
     }
   }
 
@@ -159,7 +186,7 @@ const LessonCreate = () => {
       setLessonData(lessonData.start_datetime = getStartDate());
       setLessonData(lessonData.deadline_datetime = getFinishDate());
     } else {
-      setLessonData(lessonData.startDate = lessonData?.startDateForRegularLesson?.format());
+      setLessonData(lessonData.start_datetime = lessonData?.startDateForRegularLesson?.format());
       setLessonData(lessonData.deadline_datetime = lessonData?.finishDateForRegularLesson?.format());
     }
   };
@@ -208,6 +235,9 @@ const LessonCreate = () => {
     getErrorMessageForCost();
     getErrorMessageForOnceLessonDate();
     getErrorMessageForOnceLessonTime();
+    getErrorMessageForFinishRegularLessonDate();
+    getErrorMessageForStartRegularLessonDate();
+    getErrorMessageForRegularLessons();
     setLessonData({
       ...lessonData,
       is_draft: false,
@@ -392,6 +422,9 @@ const LessonCreate = () => {
               setLessonData={setLessonData}
               errorDateForOnceLesson={errorMessageForOnceLessonDate}
               errorTimeForOnceLesson={errorMessageForOnceLessonTime}
+              errorStartForRegularLesson={errorMessageForStartRegularLessonDate}
+              errorFinishForRegularLesson={errorMessageForFinishRegularLessonDate}
+              errorLessons={errorMessageForRegularLessons}
               errorMessage={message}
             />
 
