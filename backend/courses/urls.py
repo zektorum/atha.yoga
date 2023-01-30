@@ -77,7 +77,7 @@ urlpatterns = [
         name="favorite_course_remove",
     ),
     path("ticket/buy/", CourseTicketBuyHandler.as_view()),
-    path("enroll/", CourseEnrollHandler.as_view()),
+    path("<int:pk>/enroll/", CourseEnrollHandler.as_view()),
     path(
         "lesson-enrolled-user/activation/<int:lesson_id>/<int:active>/",
         ActivationLessonEnrolledUser.as_view(),
