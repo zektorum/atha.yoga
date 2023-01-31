@@ -79,10 +79,8 @@ const AbonementPage = () => {
                 </Typography>
               </Stack>
             </Stack>
-
             {array.map(el => (<Price key={el.id} el={el} price={price} setAmount={setAmount} amount={amount} />
             ))}
-
           </>
         )}
 

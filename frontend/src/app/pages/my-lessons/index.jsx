@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  Box, Typography, Button, Stack, Container,
+  Box, Typography, Button, Grid, Stack, Container, Backdrop, CircularProgress,
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
@@ -12,8 +12,14 @@ import MyLessonSearch from '../../components/my_lesson_search';
 import MyLessonsEmpty from '../../components/my_lessons_empty';
 
 const MyLessonsPage = () => {
+  const { isLoading } = useSelector(state => state.tickets);
+  const [isOpen, setIsOpen] = React.useState(isLoading);
+  const handleClose = () => {
+    setIsOpen(false);
+  };
   const dispatch = useDispatch();
   const tickets = useSelector(state => state.tickets.tickets?.data);
+
   useEffect(() => {
     dispatch(getTicketsSlice());
   }, [dispatch]);
@@ -21,6 +27,21 @@ const MyLessonsPage = () => {
   return (
     <>
       <Header title="Мои занятия" />
+      {isLoading && (
+        <Backdrop
+          sx={{ color: '#fff', zIndex: theme => theme.zIndex.drawer + 1 }}
+          open={isOpen}
+          onClick={handleClose}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      )}
+      {/* {errorMessage && (
+        <Typography color="error.main">
+          Error:
+          {errorMessage}
+        </Typography>
+      )} */}
       {tickets?.length ? (
         <Box height="100%" display="flex" flexDirection="column" justifyContent="space-between">
           <Container>
@@ -35,17 +56,21 @@ const MyLessonsPage = () => {
                 flexWrap: 'wrap',
               }}
             >
-              {tickets.map(ticket => (
-                <MyLesson
-                  key={ticket.course.id}
-                  title={ticket.course.base_course.name}
-                  ticketsAmount={ticket.amount}
-                  endDate={ticket.course.deadline_datetime}
-                />
-              ))}
-              <MyLessonSearch />
-            </Stack>
-          </Container>
+            
+            
+            {tickets.map(ticket => (
+              <MyLesson
+                key={ticket.course.id}
+                id={ticket.course.id}
+                title={ticket.course.base_course.name}
+                ticketsAmount={ticket.amount}
+                endDate={ticket.course.deadline_datetime}
+                isOneTime={ticket.course.schedule.length === 0}
+              />
+            ))}
+            <MyLessonSearch />
+          </Stack>
+        </Container>
           <Button
             component={Link}
             to="/create-lesson"

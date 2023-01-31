@@ -1,17 +1,30 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  Card, Divider, Grid, Typography,
+  Button,
+  Card, Divider, Grid, Menu, MenuItem, Typography,
 } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import DateRangeOutlinedIcon from '@mui/icons-material/DateRangeOutlined';
 import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
+import LocalLibraryOutlinedIcon from '@mui/icons-material/LocalLibraryOutlined';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import ticket from '../../../assets/public/ticket.svg';
 
-const MyLesson = ({ title, ticketsAmount, endDate }) => {
+const MyLesson = ({
+  title, ticketsAmount, endDate, isOneTime, id,
+}) => {
   const prepareEndDate = date => `${date.split('T')[0].split('-').reverse().join('.')} ${date.split('T')[1].slice(0, 5)}`;
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = event => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   return (
     <div style={{
       padding: '20px 24px 20px 30px',
@@ -23,7 +36,35 @@ const MyLesson = ({ title, ticketsAmount, endDate }) => {
       filter: 'drop-shadow(0px 8px 16px rgba(46, 60, 80, .08))',
     }}
     >
-      <MoreHorizOutlinedIcon color="disabled" sx={{ position: 'absolute', top: '10px', right: '20px' }} />
+      <MoreHorizOutlinedIcon
+        color="disabled"
+        sx={{ position: 'absolute', top: '10px', right: '20px' }}
+        id="basic-button"
+        aria-controls={open ? 'basic-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? 'true' : undefined}
+        onClick={handleClick}
+      />
+      <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        MenuListProps={{
+          'aria-labelledby': 'basic-button',
+        }}
+      >
+        <MenuItem onClick={handleClose} sx={{ fontSize: '16px', minWidth: '220px' }}>
+          <DeleteOutlinedIcon sx={{ marginRight: '19px' }} />
+          {'   '}
+          Удалить
+
+        </MenuItem>
+        <MenuItem onClick={handleClose} sx={{ fontSize: '16px', minWidth: '220px' }}>
+          В архив
+
+        </MenuItem>
+      </Menu>
       <Stack
         direction="row"
         spacing={2}
@@ -78,26 +119,67 @@ const MyLesson = ({ title, ticketsAmount, endDate }) => {
           </Grid>
         </Grid>
         <Divider orientation="vertical" flexItem sx={{ borderStyle: 'dashed', position: 'relative' }} />
-        <Grid container direction="column" gap="12px" alignItems="center" justifyContent="space-between">
-          <Grid item>
-            <Typography variant="body1" sx={{ fontWeight: '500', textAlign: 'center' }}>
-              Осталось посещений:
-            </Typography>
-          </Grid>
-          <Grid item>
-            <Typography variant="h4" color="primary">
-              {ticketsAmount}
-            </Typography>
-          </Grid>
-          <Grid container direction="column" spacing={1} alignItems="center">
-            <Typography variant="body2">
-              Дата окончания:
-            </Typography>
-            <Typography color="primary" variant="body2" sx={{ fontWeight: '500' }}>
-              {prepareEndDate(endDate)}
-            </Typography>
 
-          </Grid>
+        <Grid container direction="column" gap="6px" alignItems="center" justifyContent="center">
+          {isOneTime && (
+            <>
+              <Grid item>
+                <LocalLibraryOutlinedIcon color="primary" fontSize="large" />
+              </Grid>
+              <Grid item>
+                <Typography variant="body1" sx={{ fontWeight: '500', textAlign: 'center' }}>
+                  Разовое занятие
+                </Typography>
+              </Grid>
+            </>
+          )}
+          {!isOneTime && (
+          <>
+
+            {ticketsAmount > 0 && (
+            <>
+              <Grid item>
+                <Typography variant="body1" sx={{ fontWeight: '500', textAlign: 'center' }}>
+                  Осталось посещений:
+                </Typography>
+              </Grid>
+              <Grid item>
+                <Typography variant="h4" color="primary">
+                  {ticketsAmount}
+                </Typography>
+              </Grid>
+            </>
+            )}
+            {!ticketsAmount && (
+            <>
+              <Grid item>
+                <Typography variant="body1" sx={{ fontWeight: '500', textAlign: 'center' }}>
+                  Посещения закончились
+                </Typography>
+              </Grid>
+              <Grid item>
+                <Button
+                  variant="outlined"
+                  component={Link}
+                  to={`/abonement/${id}`}
+                >
+                  приобрести
+                </Button>
+              </Grid>
+            </>
+            )}
+
+            <Grid container direction="column" spacing={1} alignItems="center" sx={{ mt: '4px' }}>
+              <Typography variant="body2">
+                Дата окончания:
+              </Typography>
+              <Typography color="primary" variant="body2" sx={{ fontWeight: '500' }}>
+                {prepareEndDate(endDate)}
+              </Typography>
+            </Grid>
+          </>
+
+          )}
         </Grid>
       </Stack>
     </div>

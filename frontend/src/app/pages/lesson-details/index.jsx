@@ -54,9 +54,10 @@ const LessonDetailsPage = () => {
           isVideo={lesson.data.base_course.course_type === 'VIDEO'}
           isRegular={lesson.data.lessons.length > 1}
           startDate={lesson.data.lessons.start_datetime}
-          duration={lesson.data.base_course.duration}
+          duration={lesson.data.duration}
           isPaid={lesson.data.payment === 'PAYMENT'}
           level={levels[lesson.data.base_course.level[0]]}
+          schedule={lesson.data.schedule}
         />
         )}
       </Box>

@@ -13,10 +13,11 @@ import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
 import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import avatar from '../../../assets/public/profile_avatar.jpg';
+import { scheduleChipContent } from '../../utils/scheduleServices';
 
 const LessonDescription = ({
   title, description, price, level, favorite, comments,
-  rate, votes, isVideo, isRegular, startDate, duration, id, isPaid,
+  rate, votes, isVideo, isRegular, startDate, duration, id, payment, schedule,isPaid,
 }) => (
   <>
     <Box display="flex" alignItems="start" mb="23px">
@@ -45,9 +46,9 @@ const LessonDescription = ({
         {' '}
         {description.length > 600 && (
 
-        <Typography component={Link} fontSize="16px" color="primary" sx={{ textDecoration: 'none' }}>
-          Показать еще
-        </Typography>
+          <Typography component={Link} fontSize="16px" color="primary" sx={{ textDecoration: 'none' }}>
+            Показать еще
+          </Typography>
         )}
       </Typography>
 
@@ -67,43 +68,16 @@ const LessonDescription = ({
         Расписание занятия
       </Typography>
       <Box display="flex" flexDirection="row" gap="8px">
-        <Typography
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          fontSize="13px"
-          sx={{ width: '111px', background: '#EEEEEE', borderRadius: '16px' }}
-        >
-          Пн 14:30-15:30
-        </Typography>
-        <Typography
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          fontSize="13px"
-          sx={{ width: '111px', background: '#EEEEEE', borderRadius: '16px' }}
-        >
-          Пн 15:30-16:30
-        </Typography>
-        <Typography
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          fontSize="13px"
-          sx={{ width: '111px', background: '#EEEEEE', borderRadius: '16px' }}
-        >
-          Пн 17:30-18:30
-        </Typography>
+        {schedule && schedule.map(item => (
+          <Chip
+            key={crypto.randomUUID()}
+            sx={{ fontSize: '13px' }}
+            label={scheduleChipContent(item, duration)}
+          />
+        ))}
+
       </Box>
-      <Typography
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        fontSize="13px"
-        sx={{ width: '111px', background: '#EEEEEE', borderRadius: '16px' }}
-      >
-        Ср 14:30-15:30
-      </Typography>
+
     </Box>
     <Divider flexItem />
     <Box display="flex" alignItems="center" flexWrap="wrap" gap="3px" mb="32px" mt="32px">
@@ -149,5 +123,4 @@ const LessonDescription = ({
     </Box>
   </>
 );
-
 export default LessonDescription;
