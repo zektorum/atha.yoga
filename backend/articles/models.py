@@ -56,7 +56,7 @@ class Article(TimeStampedModel):
     def absolute_url(self) -> str:
         return reverse("article", kwargs={"article_slug": self.slug})
 
-    def get_reading_time(self) -> int:
+    def reading_time(self) -> int:
         time = round(
             len(striptags(self.content).replace("\n", " ").replace("  ", " ").split())
             / settings.READING_SPEED
