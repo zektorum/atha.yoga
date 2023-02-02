@@ -153,7 +153,7 @@ class CourseRepository(BaseRepository):
 
     def already_enrolled(self, user: User, course: Course) -> bool:
         return self.model.objects.filter(
-            pk=course.id, lessons_set__enrolled_users_set__id=user.id
+            pk=course.id, lessons_set__enrolled_users__id=user.id
         ).exists()
 
 
@@ -167,3 +167,6 @@ class BaseCourseRepository(BaseRepository):
         return self.model.objects.filter(
             pk=id_, base_course__teacher_id=teacher_id
         ).first()
+
+    def find_by_id(self, id_: int) -> Optional[BaseCourse]:
+        return self.model.objects.filter(pk=id_).first()
