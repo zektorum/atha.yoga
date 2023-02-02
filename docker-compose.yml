@@ -3,7 +3,7 @@ version: '3'
 services:
   server:
     build: backend/
-    container_name: "backend-${CONTAINER_SUFFIX}"
+    container_name: "backend.${COMPOSE_PROJECT_NAME}"
     env_file:
       - "${ENV_FILE}"
       - ".env/.ci-env.${COMPOSE_PROJECT_NAME}"
@@ -17,7 +17,7 @@ services:
 
   frontend:
     build: frontend/
-    container_name: "frontend-${CONTAINER_SUFFIX}"
+    container_name: "frontend.${COMPOSE_PROJECT_NAME}"
     env_file:
       - ".env/.ci-env.${COMPOSE_PROJECT_NAME}"
     ports:
@@ -25,7 +25,7 @@ services:
 
   cypress:
     build: frontend/tests/
-    container_name: "cypress-${CONTAINER_SUFFIX}"
+    container_name: "cypress.${COMPOSE_PROJECT_NAME}"
     env_file:
       - ".env/.ci-env.${COMPOSE_PROJECT_NAME}"
     environment:
@@ -39,7 +39,7 @@ services:
 
   db:
     image: postgres:14
-    container_name: "db-${CONTAINER_SUFFIX}"
+    container_name: "db.${COMPOSE_PROJECT_NAME}"
     env_file:
       - "${ENV_FILE}"
       - ".env/.ci-env.${COMPOSE_PROJECT_NAME}"
@@ -49,7 +49,7 @@ services:
       - ./db:/var/lib/postgresql/data
 
   dozzle:
-    container_name: "dozzle-${CONTAINER_SUFFIX}"
+    container_name: "dozzle.${COMPOSE_PROJECT_NAME}"
     image: amir20/dozzle:v4.4.1
     env_file:
       - ".env/.ci-env.${COMPOSE_PROJECT_NAME}"
@@ -62,7 +62,7 @@ services:
 
   elasticsearch:
     image: elasticsearch:7.17.5
-    container_name: "elasticsearch-${CONTAINER_SUFFIX}"
+    container_name: "elasticsearch.${COMPOSE_PROJECT_NAME}"
     env_file:
       - "${ENV_FILE}"
       - ".env/.ci-env.${COMPOSE_PROJECT_NAME}"
@@ -79,7 +79,7 @@ services:
 
   redis:
     image: redis:7.0
-    container_name: "redis-${CONTAINER_SUFFIX}"
+    container_name: "redis.${COMPOSE_PROJECT_NAME}"
     command:
       - redis-server
       - --requirepass
@@ -97,7 +97,7 @@ services:
 
   rabbitmq:
     image: rabbitmq:3.11.7-management
-    container_name: "rabbitmq-${CONTAINER_SUFFIX}"
+    container_name: "rabbitmq.${COMPOSE_PROJECT_NAME}"
     env_file:
       - "${ENV_FILE}"
       - ".env/.ci-env.${COMPOSE_PROJECT_NAME}"
@@ -112,7 +112,7 @@ services:
 
   flower:
     image: mher/flower:1.2
-    container_name: "flower-${CONTAINER_SUFFIX}"
+    container_name: "flower.${COMPOSE_PROJECT_NAME}"
     command: "celery flower --broker_api=http://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@\
               ${RABBITMQ_HOST}:${RABBITMQ_MANAGEMENT_PORT}/api/"
     env_file:
