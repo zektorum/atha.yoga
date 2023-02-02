@@ -51,8 +51,8 @@ pipeline {
             steps {
                 script {
                     waitUntil {
-                        EXIT_CODE = getExitCode("cypress-${BRANCH_NAME}")
-                        STATUS = getContainerStatus("cypress-${BRANCH_NAME}")
+                        EXIT_CODE = getExitCode("cypress.${BRANCH_NAME}.test")
+                        STATUS = getContainerStatus("cypress.${BRANCH_NAME}.test")
                         if (STATUS == "exited\n" && EXIT_CODE == "0\n") {
                             return true;
                         } else if (STATUS == "exited\n" && !(EXIT_CODE == "0\n")) {
@@ -74,10 +74,10 @@ pipeline {
                 script {
                    def containers = "backend frontend elasticsearch db redis dozzle rabbitmq flower".split(" ")
                    for (container in containers) {
-                        STATUS = getContainerStatus("${container}-${BRANCH_NAME}")
+                        STATUS = getContainerStatus("${container}.${BRANCH_NAME}.test")
                         if (STATUS == "exited\n") {
                             sh 'COMPOSE_PROJECT_NAME=${BRANCH_NAME}.test docker-compose --env-file backend/.env.${BRANCH_NAME} -p test down'
-                            error "${container}-${BRANCH_NAME} failed. Exiting..."
+                            error "${container}.${BRANCH_NAME}.test failed. Exiting..."
                         }
                    }
                    sh 'COMPOSE_PROJECT_NAME=${BRANCH_NAME}.test docker-compose --env-file backend/.env.${BRANCH_NAME} -p test down'
