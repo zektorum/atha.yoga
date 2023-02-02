@@ -76,6 +76,7 @@ services:
       - ELASTIC_PASSWORD=$ELASTIC_PASSWORD
       - xpack.security.enabled=true
       - ES_JAVA_OPTS=-Xms750m -Xmx750m
+      - ingest.geoip.downloader.enabled=false
 
   redis:
     image: redis:7.0
