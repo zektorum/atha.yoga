@@ -65,7 +65,7 @@ class UserRegister:
                 subject="Регистрация в Atha.Yoga",
                 message=f"Дорогой пользователь, для завершения процедуры регистрации на платформе Atha.Yoga, "
                 f"пожалуйста, перейдите по следующей "
-                f"ссылке:\n{settings.SITE_URL}/verify-email/?token={token}/.\n"
+                f"ссылке:\n{settings.SITE_URL}/verify-email/token/{token}/.\n"
                 f"Если Вы не регистрировались на платформе, просто проигнорируйте это письмо."
                 f"\nС уважением и заботой,\nкоманда ATHAYOGA.",
                 receivers=[self.user.email],
