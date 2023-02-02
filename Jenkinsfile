@@ -44,17 +44,16 @@ pipeline {
         }
         stage('Run') {
             steps {
-                 sh 'COMPOSE_PROJECT_NAME=${BRANCH_NAME}.test docker-compose --env-file backend/.env.${BRANCH_NAME} up -d'
+                 sh 'COMPOSE_PROJECT_NAME=${BRANCH_NAME}.test docker-compose --env-file backend/.env.${BRANCH_NAME} -p test up -d --force-recreate'
             }
         }
         stage('Test') {
             steps {
                 script {
                     waitUntil {
-                        EXIT_CODE = getExitCode("2cypress-${BRANCH_NAME}")
-                        STATUS = getContainerStatus("2cypress-${BRANCH_NAME}")
+                        EXIT_CODE = getExitCode("cypress-${BRANCH_NAME}")
+                        STATUS = getContainerStatus("cypress-${BRANCH_NAME}")
                         if (STATUS == "exited\n" && EXIT_CODE == "0\n") {
-                            sh 'COMPOSE_PROJECT_NAME=${BRANCH_NAME}.test docker-compose --env-file backend/.env.${BRANCH_NAME} down'
                             return true;
                         } else if (STATUS == "exited\n" && !(EXIT_CODE == "0\n")) {
                             publishHTML([
@@ -73,21 +72,21 @@ pipeline {
         stage('Inspect containers') {
             steps {
                 script {
-                   def containers = "2backend 2frontend 2cypress 2elasticsearch 2db 2redis 2dozzle 2rabbitmq 2flower".split(" ")
+                   def containers = "backend frontend elasticsearch db redis dozzle rabbitmq flower".split(" ")
                    for (container in containers) {
                         STATUS = getContainerStatus("${container}-${BRANCH_NAME}")
                         if (STATUS == "exited\n") {
-                            sh 'COMPOSE_PROJECT_NAME=${BRANCH_NAME}.test docker-compose --env-file backend/.env.${BRANCH_NAME} down'
+                            sh 'COMPOSE_PROJECT_NAME=${BRANCH_NAME}.test docker-compose --env-file backend/.env.${BRANCH_NAME} -p test down'
                             error "${container}-${BRANCH_NAME} failed. Exiting..."
                         }
                    }
-                   sh 'COMPOSE_PROJECT_NAME=${BRANCH_NAME}.test docker-compose --env-file backend/.env.${BRANCH_NAME} down'
+                   sh 'COMPOSE_PROJECT_NAME=${BRANCH_NAME}.test docker-compose --env-file backend/.env.${BRANCH_NAME} -p test down'
                 }
             }
         }
         stage('Deploy') {
             steps {
-                sh "COMPOSE_PROJECT_NAME=${BRANCH_NAME} docker-compose --env-file backend/.env.${BRANCH_NAME} up -d"
+                sh "COMPOSE_PROJECT_NAME=${BRANCH_NAME} docker-compose --env-file backend/.env.${BRANCH_NAME} -p ${BRANCH_NAME} up -d --force-recreate"
             }
         }
     }
