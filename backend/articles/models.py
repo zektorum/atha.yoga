@@ -17,7 +17,7 @@ class Tag(models.Model):
         verbose_name = "Тэг"
         verbose_name_plural = "Тэги"
 
-    def get_absolute_url(self) -> str:
+    def absolute_url(self) -> str:
         return reverse("tag", kwargs={"tag_slug": self.slug})
 
     def __str__(self) -> str:
@@ -53,7 +53,7 @@ class Article(TimeStampedModel):
         verbose_name_plural = "Статьи"
         ordering = ["-created_at"]
 
-    def get_absolute_url(self) -> str:
+    def absolute_url(self) -> str:
         return reverse("article", kwargs={"article_slug": self.slug})
 
     def get_reading_time(self) -> int:
@@ -92,7 +92,7 @@ class Category(MPTTModel):
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
 
-    def get_absolute_url(self) -> str:
+    def absolute_url(self) -> str:
         return reverse("category", kwargs={"category_slug": self.slug})
 
     def __str__(self) -> str:
