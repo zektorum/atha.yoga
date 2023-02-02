@@ -29,7 +29,7 @@ services:
     env_file:
       - ".env/.ci-env.${COMPOSE_PROJECT_NAME}"
     environment:
-      - "CYPRESS_baseUrl=http://frontend-${CONTAINER_SUFFIX}:8080"
+      - "CYPRESS_baseUrl=http://frontend.${COMPOSE_PROJECT_NAME}:8080"
       - "BRANCH_NAME=${CONTAINER_SUFFIX}"
     volumes:
       - ./frontend/tests/cypress/reports/:/e2e/cypress/reports/
