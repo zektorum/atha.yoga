@@ -46,7 +46,7 @@ services:
     ports:
       - "${DATABASE_PORT}:5432"
     volumes:
-      - ./db:/var/lib/postgresql/data
+      - "./volumes/db.${COMPOSE_PROJECT_NAME}/:/var/lib/postgresql/data"
 
   dozzle:
     container_name: "dozzle.${COMPOSE_PROJECT_NAME}"
@@ -70,7 +70,7 @@ services:
       - "${ELASTIC_PORT}:9200"
     volumes:
       - .devops/build/hunspell:/usr/share/elasticsearch/config/hunspell
-      - ./elasticsearch/:/usr/share/elasticsearch/data
+      - "./volumes/elasticsearch.${COMPOSE_PROJECT_NAME}/:/usr/share/elasticsearch/data"
     environment:
       - discovery.type=single-node
       - ELASTIC_PASSWORD=$ELASTIC_PASSWORD
@@ -93,7 +93,7 @@ services:
     ports:
       - "${REDIS_PORT}:6379"
     volumes:
-      - ./redis:/data
+      - "./volumes/redis.${COMPOSE_PROJECT_NAME}/:/data"
 
   rabbitmq:
     image: rabbitmq:3.11.7-management
@@ -108,7 +108,7 @@ services:
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
     volumes:
-      - ./rabbitmq/:/var/lib/rabbitmq
+      - "./volumes/rabbitmq.${COMPOSE_PROJECT_NAME}/:/var/lib/rabbitmq"
 
   flower:
     image: mher/flower:1.2
