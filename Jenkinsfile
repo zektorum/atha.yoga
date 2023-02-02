@@ -56,7 +56,12 @@ pipeline {
                         if (STATUS == "exited\n" && EXIT_CODE == "0\n") {
                             return true;
                         } else if (STATUS == "exited\n" && !(EXIT_CODE == "0\n")) {
-                            return true
+                            publishHTML([
+                                alwaysLinkToLastBuild: true, keepAll: true,
+                                reportDir: 'frontend/tests/cypress/reports/html/', reportFiles: 'index.html',
+                                reportName: 'Test report', reportTitles: 'The Report'
+                            ])
+                            return true;
                         } else {
                             return false
                         }
