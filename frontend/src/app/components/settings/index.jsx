@@ -40,7 +40,7 @@ const Settings = () => {
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Header title="Настройки" withBackBtn />
+      <Header withBackBtn />
       <Stack
         direction="column"
         spacing={2}
@@ -50,7 +50,7 @@ const Settings = () => {
           maxWidth: '944px',
         }}
       >
-        <Wpapper link text="Личные данные">
+        <Wpapper link="/person-data" text="Личные данные">
           <PersonOutlineOutlinedIcon sx={{ color: '#9E9E9E' }} />
         </Wpapper>
 

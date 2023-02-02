@@ -1,6 +1,6 @@
-import React from 'react';
-import {Link, NavLink} from 'react-router-dom';
-import {Typography} from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Link, NavLink, useLocation } from 'react-router-dom';
+import { Typography } from '@mui/material';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -27,6 +27,30 @@ const Menu = ({ auth }) => {
       },
     },
   };
+
+  const menuItemOtherStyle = {
+    backgroundColor: 'primary.main',
+    borderRadius: '5px',
+    '& .MuiSvgIcon-root, & .MuiTypography-root': {
+      color: 'common.white',
+    },
+  };
+
+  const currentUrl = useLocation();
+  const [prev, setPrev] = useState('');
+  const menuPath = ['search-lessons', 'favorites', 'my-lessons', 'calendar', 'profile'];
+
+  useEffect(() => {
+    menuPath.map(el => {
+      if (currentUrl.pathname.includes(el)) {
+        setPrev(currentUrl.pathname);
+      } else if (currentUrl.pathname.includes('settings')) {
+        setPrev('');
+      }
+      return null;
+    });
+  }, [currentUrl]);
+
   return (
     <Box sx={{ width: '100%', height: '100vh', backgroundColor: '#F5F5F5' }}>
       <MenuList
@@ -45,7 +69,7 @@ const Menu = ({ auth }) => {
         <MenuItem
           component={NavLink}
           to="search-lessons"
-          sx={{ ...menuItemStyle }}
+          sx={[{ ...menuItemStyle }, prev === '/search-lessons' && { ...menuItemOtherStyle }]}
         >
           <ListItemIcon>
             <SearchIcon color="disabled" fontSize="medium" />
@@ -60,7 +84,11 @@ const Menu = ({ auth }) => {
               )}
           />
         </MenuItem>
-        <MenuItem component={NavLink} to="/favorites" sx={{ ...menuItemStyle }}>
+        <MenuItem
+          component={NavLink}
+          to="/favorites"
+          sx={[{ ...menuItemStyle }, prev === '/favorites' && { ...menuItemOtherStyle }]}
+        >
           <ListItemIcon>
             <FavoriteBorderIcon color="disabled" fontSize="medium" />
           </ListItemIcon>
@@ -74,7 +102,11 @@ const Menu = ({ auth }) => {
               )}
           />
         </MenuItem>
-        <MenuItem component={NavLink} to="/my-lessons" sx={{ ...menuItemStyle }}>
+        <MenuItem
+          component={NavLink}
+          to="/my-lessons"
+          sx={[{ ...menuItemStyle }, prev === '/my-lessons' && { ...menuItemOtherStyle }]}
+        >
           <ListItemIcon>
             <SchoolOutlinedIcon color="disabled" fontSize="medium" />
           </ListItemIcon>
@@ -88,7 +120,11 @@ const Menu = ({ auth }) => {
                 )}
           />
         </MenuItem>
-        <MenuItem component={NavLink} to="/calendar" sx={{ ...menuItemStyle }}>
+        <MenuItem
+          component={NavLink}
+          to="/calendar"
+          sx={[{ ...menuItemStyle }, prev === '/calendar' && { ...menuItemOtherStyle }]}
+        >
           <ListItemIcon>
             <CalendarMonthOutlinedIcon color="disabled" fontSize="medium" />
           </ListItemIcon>
@@ -102,7 +138,11 @@ const Menu = ({ auth }) => {
                 )}
           />
         </MenuItem>
-        <MenuItem component={NavLink} to="/profile" sx={{ ...menuItemStyle }}>
+        <MenuItem
+          component={NavLink}
+          to="/profile"
+          sx={[{ ...menuItemStyle }, prev === '/profile' && { ...menuItemOtherStyle }]}
+        >
           <ListItemIcon>
             <AccountCircleOutlinedIcon color="disabled" fontSize="medium" />
           </ListItemIcon>
@@ -132,7 +172,9 @@ const Menu = ({ auth }) => {
         variant="body2"
         color="text.secondary"
         onClick={auth.logout}
-        sx={{ position: 'absolute', bottom: '20px', left: '20px', cursor: 'pointer' }}
+        sx={{
+          position: 'absolute', bottom: '20px', left: '20px', cursor: 'pointer',
+        }}
       >
         Выход
       </Typography>
