@@ -10,14 +10,29 @@ from courses.models import Course, Lesson, BaseCourse
 
 class LessonResource(ModelSerializer):
     end_at = serializers.DateTimeField(allow_null=True)
+    rate = serializers.DecimalField(
+        default=0, max_digits=None, decimal_places=3, coerce_to_string=False
+    )
 
     class Meta:
         model = Lesson
         fields = [
             "id",
             "course",
+            "rate",
             "start_at",
             "end_at",
+        ]
+
+
+class LessonRatingStarResource(ModelSerializer):
+    class Meta:
+        model = Lesson
+        fields = [
+            "id",
+            "star_rating",
+            "user",
+            "lesson",
         ]
 
 

@@ -1,9 +1,14 @@
+from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
 from core.models import User, QuestionnaireTeacher
 
 
 class TeacherProfileResource(ModelSerializer):
+    rate = serializers.DecimalField(
+        default=0, max_digits=None, decimal_places=3, coerce_to_string=False
+    )
+
     class Meta:
         model = QuestionnaireTeacher
         fields = [
@@ -16,6 +21,7 @@ class TeacherProfileResource(ModelSerializer):
             "work_experience",
             "vk_link",
             "telegram_link",
+            "rate",
         ]
 
 

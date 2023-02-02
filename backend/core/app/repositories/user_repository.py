@@ -1,11 +1,12 @@
 from typing import Optional
 
 from django.db import IntegrityError
-from django.db.models import QuerySet, Prefetch
+from django.db.models import QuerySet, Prefetch, Avg
 from rest_framework.exceptions import ValidationError
 
 from core.app.repositories.base_repository import BaseRepository
 from core.models import User, QuestionnaireTeacher, QuestionnaireTeacherStatuses
+from courses.models import LessonRatingStar
 
 
 class UserRepository(BaseRepository):
@@ -32,6 +33,15 @@ class UserRepository(BaseRepository):
         if fetch_rels:
             query = self.fetch_relations(queryset=query)
         return query.first()
+
+    def update_teacher_rating(self, teacher: User) -> None:
+        teacher.rate = (
+            LessonRatingStar.objects.filter(
+                lesson__course__base_course__teacher=teacher
+            )
+            .aggregate(rate=Avg("star_rating"))
+            .rate
+        )
 
     def fetch_relations(self, queryset: QuerySet[User]) -> QuerySet[User]:
         """
