@@ -1,7 +1,9 @@
 import uuid
+from enum import Enum
 from typing import List, Union
 
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import RegexValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from polymorphic.models import PolymorphicModel
@@ -45,6 +47,10 @@ def user_default_roles() -> List[Union[UserRoles, str]]:
     return [UserRoles.STUDENT]
 
 
+class UserRegions(models.TextChoices):
+    RU = "RU"
+
+
 class User(AbstractUser):
     first_name = models.CharField(_("first name"), max_length=100, blank=True)
     last_name = models.CharField(_("last name"), max_length=100, blank=True)
@@ -59,6 +65,7 @@ class User(AbstractUser):
     pwd_reset_token = models.CharField(
         _("pwd reset token"), max_length=300, blank=True, null=True
     )
+    region = models.CharField(max_length=10, default=UserRegions.RU)
     rate = models.FloatField(default=5)
 
     def has_role(self, role: UserRoles) -> bool:
@@ -154,6 +161,42 @@ class QuestionnaireTeacher(TimeStampedModel):
     class Meta:
         verbose_name = "Анкета преподавателя"
         verbose_name_plural = "Анкеты преподавателей"
+
+
+class BillingInfoRegexes(Enum):
+    INN_RU = r"^\d{10}$"
+    PRC_RU = r"^\d{10}$"
+    ACCOUNT_NUMBER_RU = r"^\d{20}$"
+    CORRESPONDENT_ACCOUNT_RU = r"^\d{20}$"
+
+
+class UserBillingInfo(PolymorphicModel):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    organization = models.CharField(max_length=255)
+    bic = models.CharField(max_length=11)
+    bank = models.CharField(max_length=255)
+    organization_address = models.CharField(max_length=255)
+
+
+class UserBillingInfoRU(UserBillingInfo):
+    inn = models.CharField(
+        "ИНН",
+        max_length=10,
+        validators=[RegexValidator(regex=BillingInfoRegexes.INN_RU.value)],
+    )
+    correspondent_account = models.CharField(
+        "Корреспондентский счет",
+        max_length=20,
+        validators=[
+            RegexValidator(regex=BillingInfoRegexes.CORRESPONDENT_ACCOUNT_RU.value)
+        ],
+    )
+    prc = models.CharField(
+        "КПП",
+        max_length=10,
+        validators=[RegexValidator(regex=BillingInfoRegexes.PRC_RU.value)],
+    )
+    account_number = models.CharField("Номер счета", max_length=30)
 
 
 class Comment(PolymorphicModel):
