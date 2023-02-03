@@ -7,6 +7,8 @@ services:
     env_file:
       - "${ENV_FILE}"
       - ".env/.ci-env.${COMPOSE_PROJECT_NAME}"
+    environment:
+      - "REFRESH_DATABASE=${REFRESH_DATABASE}"
     ports:
       - "${BACKEND_PORT}:8000"
     volumes:

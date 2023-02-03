@@ -23,41 +23,78 @@ def getContainerStatus(container_name) {
 
 pipeline {
     agent any
+    parameters {
+        booleanParam(name: 'REFRESH_DATABASE', defaultValue: false,
+            description: 'Fully resets database, migrates and creates test data.')
+        choice(name: 'BUILD_MODE', choices: ['Default', 'Test pipeline'],
+            description: ''
+        )
+    }
     environment {
-        BRANCH_NAME="${env.BRANCH_NAME}"
-        MASTER_ENV_LINK=credentials('MASTER_ENV_LINK')
-        DEVELOP_ENV_LINK=credentials('DEVELOP_ENV_LINK')
-        STAGE_ENV_LINK=credentials('STAGE_ENV_LINK')
+        BRANCH_NAME = "${env.BRANCH_NAME}"
+        MASTER_ENV_LINK = credentials('MASTER_ENV_LINK')
+        DEVELOP_ENV_LINK = credentials('DEVELOP_ENV_LINK')
+        STAGE_ENV_LINK = credentials('STAGE_ENV_LINK')
+        CI_ENV_FILENAME = ""
+        CI_TEST_ENV_FILENAME = ""
+        PROJECT_NAME = ""
+        TESTS_NAME = ""
     }
     stages {
         stage('Build') {
             steps {
                 step([$class: 'GitHubCommitStatusSetter', statusResultSource : [$class: 'DefaultStatusResultSource']])
+                echo 'Downloading env files...'
                 sh '''
                     wget -O backend/.env.master $MASTER_ENV_LINK
                     wget -O backend/.env.develop $DEVELOP_ENV_LINK
                     wget -O backend/.env.stage $STAGE_ENV_LINK
-                    chmod g+w backend/.env.*
-                    cat .env/.ci-env.${BRANCH_NAME}.test > backend/.env.test
-                    cat backend/.env.${BRANCH_NAME} >> backend/.env.test
-                    cat .env/.ci-env.${BRANCH_NAME} > backend/.env
-                    cat backend/.env.${BRANCH_NAME} >> backend/.env
-                    COMPOSE_PROJECT_NAME=${BRANCH_NAME}.test docker-compose --env-file backend/.env.test -p test build
                 '''
+                echo 'Setting up build mode...'
+                script {
+                    if (params.BUILD_MODE == "Default") {
+                        echo 'Build mode: Default'
+                        CI_ENV_FILENAME = ".env/.ci-env.${BRANCH_NAME}"
+                        CI_TEST_ENV_FILENAME = ".env/.ci-env.${BRANCH_NAME}.test"
+                        PROJECT_NAME = "${BRANCH_NAME}"
+                        TESTS_NAME = "test"
+                    } else if (params.BUILD_MODE == "Test pipeline") {
+                        echo 'Build mode: Test pipeline'
+                        BRANCH_NAME = "develop"
+                        CI_ENV_FILENAME = ".env/.ci-testing-env"
+                        CI_TEST_ENV_FILENAME = ".env/.ci-testing-env.test"
+                        PROJECT_NAME = "ci-testing.${BRANCH_NAME}"
+                        TESTS_NAME = "ci-testing.test"
+                    }
+                }
+                echo 'Setting up environment...'
+                sh """
+                    cat $CI_TEST_ENV_FILENAME > backend/.env.test
+                    cat backend/.env.$BRANCH_NAME >> backend/.env.test
+                    cat $CI_ENV_FILENAME > backend/.env
+                    cat backend/.env.$BRANCH_NAME >> backend/.env
+                    echo REFRESH_DATABASE=$REFRESH_DATABASE >> backend/.env
+                    chmod g+w backend/.env.*
+                """
+                echo 'Building test environment...'
+                sh "COMPOSE_PROJECT_NAME=$TESTS_NAME docker-compose --env-file backend/.env.test \
+                    -p $TESTS_NAME build"
             }
         }
         stage('Run') {
             steps {
-                 sh 'COMPOSE_PROJECT_NAME=${BRANCH_NAME}.test docker-compose --env-file backend/.env.test -p test \
-                     up -d --force-recreate'
+                echo 'Running test environment...'
+                 sh "COMPOSE_PROJECT_NAME=$TESTS_NAME docker-compose --env-file backend/.env.test \
+                     -p $TESTS_NAME up -d --force-recreate"
             }
         }
         stage('Test') {
             steps {
                 script {
+                    echo 'Testing started...'
                     waitUntil {
-                        EXIT_CODE = getExitCode("cypress.${BRANCH_NAME}.test")
-                        STATUS = getContainerStatus("cypress.${BRANCH_NAME}.test")
+                        EXIT_CODE = getExitCode("cypress.${TESTS_NAME}")
+                        STATUS = getContainerStatus("cypress.${TESTS_NAME}")
                         if (STATUS == "exited\n" && EXIT_CODE == "0\n") {
                             return true;
                         } else if (STATUS == "exited\n" && !(EXIT_CODE == "0\n")) {
@@ -79,22 +116,24 @@ pipeline {
                 script {
                    def containers = "backend frontend elasticsearch db redis dozzle rabbitmq flower".split(" ")
                    for (container in containers) {
-                        STATUS = getContainerStatus("${container}.${BRANCH_NAME}.test")
+                        STATUS = getContainerStatus("${container}.${TESTS_NAME}")
                         if (STATUS == "exited\n") {
-                            sh 'COMPOSE_PROJECT_NAME=${BRANCH_NAME}.test docker-compose --env-file backend/.env.test \
-                                -p test down'
-                            error "${container}.${BRANCH_NAME}.test failed. Exiting..."
+                            sh "COMPOSE_PROJECT_NAME=$TESTS_NAME docker-compose --env-file backend/.env.test \
+                                -p $TESTS_NAME down"
+                            error "${container}.${TESTS_NAME} failed. Exiting..."
                         }
                    }
-                   sh 'COMPOSE_PROJECT_NAME=${BRANCH_NAME}.test docker-compose --env-file backend/.env.test -p test down'
+                   echo 'Testing was successful. Stopping test environment...'
+                   sh "COMPOSE_PROJECT_NAME=$TESTS_NAME docker-compose --env-file backend/.env.test \
+                       -p $TESTS_NAME down"
                 }
             }
         }
         stage('Deploy') {
             steps {
-                sh 'COMPOSE_PROJECT_NAME=${BRANCH_NAME}.test docker-compose --env-file backend/.env -p ${BRANCH_NAME} build'
-                sh "COMPOSE_PROJECT_NAME=${BRANCH_NAME} docker-compose --env-file backend/.env -p ${BRANCH_NAME} \
-                    up -d --force-recreate"
+                echo 'Building project environment...'
+                sh "COMPOSE_PROJECT_NAME=$PROJECT_NAME docker-compose --env-file backend/.env \
+                    -p $PROJECT_NAME up -d --build --force-recreate"
             }
         }
     }
