@@ -142,7 +142,6 @@ class LessonRatingStarAdmin(admin.ModelAdmin):
         "user",
         "lesson",
     )
-    date_hierarchy = "created_at"
 
 
 @admin.register(Lesson)

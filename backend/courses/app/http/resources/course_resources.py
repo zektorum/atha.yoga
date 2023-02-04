@@ -10,7 +10,7 @@ from courses.models import Course, Lesson, BaseCourse, LessonRatingStar
 
 class LessonResource(ModelSerializer):
     end_at = serializers.DateTimeField(allow_null=True)
-    rate = serializers.DecimalField(
+    rate_mean = serializers.DecimalField(
         default=0, max_digits=None, decimal_places=3, coerce_to_string=False
     )
 
@@ -19,7 +19,7 @@ class LessonResource(ModelSerializer):
         fields = [
             "id",
             "course",
-            "rate",
+            "rate_mean",
             "start_at",
             "end_at",
         ]
@@ -121,7 +121,7 @@ class CourseCardResource(ModelSerializer):
     participant = serializers.BooleanField(default=False)
     favorite = serializers.BooleanField(default=False)
     votes_count = serializers.IntegerField(default=0)
-    rate = serializers.DecimalField(
+    rate_mean = serializers.DecimalField(
         default=0, max_digits=None, decimal_places=3, coerce_to_string=False
     )
     schedule = serializers.SerializerMethodField()
@@ -155,6 +155,6 @@ class CourseCardResource(ModelSerializer):
             "participant",
             "favorite",
             "votes_count",
-            "rate",
+            "rate_mean",
             "schedule",
         ]

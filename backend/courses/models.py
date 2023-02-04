@@ -299,13 +299,17 @@ class CourseAnswer(TimeStampedModel):
         verbose_name_plural = "Ответы на вопрос к курсу"
 
 
-class LessonRatingStar(TimeStampedModel):
+class LessonRatingStar(models.Model):
     star_rating = models.IntegerField(
         "Рейтинг",
         validators=(MinValueValidator(limit_value=1), MaxValueValidator(limit_value=5)),
     )
     user = models.ForeignKey(
-        User, verbose_name="Пользователь", null=True, on_delete=models.SET_NULL
+        User,
+        verbose_name="Пользователь",
+        related_name="lesson_rating_stars",
+        null=True,
+        on_delete=models.SET_NULL,
     )
     lesson = models.ForeignKey(
         Lesson,

@@ -5,7 +5,6 @@ from django.db.models import QuerySet, F, Q, Avg
 from django.utils.timezone import now
 
 from core.app.repositories.base_repository import BaseRepository
-from core.app.repositories.user_repository import UserRepository
 from core.models import User
 from courses.models import Lesson, LessonRatingStar
 
@@ -15,7 +14,8 @@ class LessonRepository(BaseRepository):
 
     def fetch_relations(self, lessons: QuerySet[Lesson]) -> QuerySet[Lesson]:
         return lessons.annotate(
-            end_at=F("start_at") + F("course__duration"), rate=Avg("stars__star_rating")
+            end_at=F("start_at") + F("course__duration"),
+            rate_mean=Avg("stars__star_rating"),
         )
 
     def bulk_create(self, objs: List[Lesson]) -> None:
@@ -35,10 +35,6 @@ class LessonRepository(BaseRepository):
             user_star.star_rating = rating_star.star_rating
             rating_star = user_star
         rating_star.save()
-
-        UserRepository().update_teacher_rating(
-            rating_star.lesson.course.base_course.teacher
-        )
 
     def find_by_course_id(self, course_id: int) -> QuerySet[Lesson]:
         return self.model.objects.filter(course_id=course_id)
