@@ -13,13 +13,20 @@ from core.app.framework.pagination import Pagination
 from core.app.framework.permissions import IsTeacher
 from core.app.framework.queryset import OrderedQuerySet
 from courses.app.http.requests.course_requests import CourseTicketUseRequest
-from courses.app.http.requests.lesson_requests import LessonRescheduleRequest
-from courses.app.http.resources.course_resources import LessonResource
+from courses.app.http.requests.lesson_requests import (
+    LessonRescheduleRequest,
+    LessonRateRequest,
+)
+from courses.app.http.resources.course_resources import (
+    LessonResource,
+    LessonRatingStarResource,
+)
 from courses.app.repositories.lesson_repository import LessonRepository
 from courses.app.services.lessons_service import (
     LessonReschedule,
     LessonCancel,
     LessonParticipation,
+    LessonRate,
 )
 
 
@@ -58,10 +65,27 @@ class LessonRetrieveHandler(Handler):
     def get(
         self, request: Request, lesson_id: int, *args: Any, **kwargs: Any
     ) -> Response:
-        lesson = LessonRepository().find_by_id(id_=lesson_id)
+        lesson = LessonRepository().find_by_id(id_=lesson_id, fetch_rels=True)
         if not lesson:
             raise NotFound(f"Undefined lesson with pk {lesson_id}")
         return Response({"data": LessonResource(lesson).data})
+
+
+@permission_classes([IsAuthenticated])
+class LessonRateHandler(GenericHandler):
+    serializer_class = LessonRateRequest
+
+    def put(
+        self, request: Request, lesson_id: int, *args: Any, **kwargs: Any
+    ) -> Response:
+        data = self.serializer_class(data=request.data)
+        data.is_valid(raise_exception=True)
+        star = LessonRate(
+            lesson_id=lesson_id,
+            user=self.request.user,
+            star_rating=data.validated_data["star_rating"],
+        ).rate()
+        return Response({"data": LessonRatingStarResource(star).data})
 
 
 class LessonListHandler(Handler):

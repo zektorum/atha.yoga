@@ -124,7 +124,7 @@ class CourseRepository(BaseRepository):
             .annotate(
                 reviews_count=Count("base_course__reviews"),
                 comments_count=Count("base_course__comments"),
-                rate=Avg("base_course__reviews__star_rating"),
+                rate_mean=Avg("lessons_set__stars__star_rating"),
             )
         )
         if self.user and self.user.id:

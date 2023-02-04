@@ -28,6 +28,7 @@ from courses.app.handlers.lesson_handlers import (
     UserLessonsParticipatedHandler,
     LessonParticipateHandler,
     UserLessonsEnrolledHandler,
+    LessonRateHandler,
 )
 from courses.app.handlers.question_handlers import (
     CourseQuestionListHandler,
@@ -53,6 +54,9 @@ urlpatterns = [
         "lessons/<int:lesson_id>/",
         LessonRetrieveHandler.as_view(),
         name="lesson_retrieve",
+    ),
+    path(
+        "lessons/<int:lesson_id>/rate/", LessonRateHandler.as_view(), name="lesson_rate"
     ),
     path("<int:course_pk>/lessons/", LessonListHandler.as_view(), name="lesson_list"),
     path(
