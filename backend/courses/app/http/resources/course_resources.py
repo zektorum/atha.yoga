@@ -5,7 +5,7 @@ from rest_framework.serializers import ModelSerializer
 
 from core.models import QuestionnaireTeacher, User
 from courses.app.http.resources.context import BaseCourseResourceContext
-from courses.models import Course, Lesson, BaseCourse
+from courses.models import Course, Lesson, BaseCourse, LessonRatingStar
 
 
 class LessonResource(ModelSerializer):
@@ -27,7 +27,7 @@ class LessonResource(ModelSerializer):
 
 class LessonRatingStarResource(ModelSerializer):
     class Meta:
-        model = Lesson
+        model = LessonRatingStar
         fields = [
             "id",
             "star_rating",

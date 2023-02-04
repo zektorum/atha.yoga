@@ -5,10 +5,6 @@ from core.models import User, QuestionnaireTeacher
 
 
 class TeacherProfileResource(ModelSerializer):
-    rate = serializers.DecimalField(
-        default=0, max_digits=None, decimal_places=3, coerce_to_string=False
-    )
-
     class Meta:
         model = QuestionnaireTeacher
         fields = [
@@ -21,12 +17,14 @@ class TeacherProfileResource(ModelSerializer):
             "work_experience",
             "vk_link",
             "telegram_link",
-            "rate",
         ]
 
 
 class UserResource(ModelSerializer):
     public_teacher_profiles = TeacherProfileResource(many=True, allow_null=True)
+    rate = serializers.DecimalField(
+        default=0, max_digits=None, decimal_places=3, coerce_to_string=False
+    )
 
     class Meta:
         model = User
@@ -39,4 +37,5 @@ class UserResource(ModelSerializer):
             "about",
             "avatar",
             "public_teacher_profiles",
+            "rate",
         ]

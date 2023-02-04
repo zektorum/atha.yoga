@@ -35,13 +35,10 @@ class UserRepository(BaseRepository):
         return query.first()
 
     def update_teacher_rating(self, teacher: User) -> None:
-        teacher.rate = (
-            LessonRatingStar.objects.filter(
-                lesson__course__base_course__teacher=teacher
-            )
-            .aggregate(rate=Avg("star_rating"))
-            .rate
-        )
+        teacher.rate = LessonRatingStar.objects.filter(
+            lesson__course__base_course__teacher=teacher,
+        ).aggregate(rate=Avg("star_rating"))["rate"]
+        teacher.save()
 
     def fetch_relations(self, queryset: QuerySet[User]) -> QuerySet[User]:
         """
