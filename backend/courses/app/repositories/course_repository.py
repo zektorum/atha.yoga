@@ -156,6 +156,9 @@ class CourseRepository(BaseRepository):
             pk=course.id, lessons_set__enrolled_users_set__id=user.id
         ).exists()
 
+    def delete(self, course: Course) -> Course:
+        return course.delete()
+
 
 class BaseCourseRepository(BaseRepository):
     model = BaseCourse

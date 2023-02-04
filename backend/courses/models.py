@@ -78,6 +78,7 @@ class CourseStatuses(models.TextChoices):
     CANCELED = "CANCELED"
     DRAFT = "DRAFT"
     PUBLISHED = "PUBLISHED"
+    ARCHIVED = "ARCHIVED"
     MODERATION = "MODERATION"
     DECLINED = "DECLINED"
     COMPLETED = "COMPLETED"

@@ -12,6 +12,7 @@ from courses.models import (
     CourseLevels,
     CoursePaymentTypes,
     RepetitionWeekdays,
+    CourseStatuses,
 )
 
 
@@ -97,3 +98,9 @@ class CourseTicketBuyRequest(UnimplementedSerializer):
 
 class CourseTicketUseRequest(UnimplementedSerializer):
     lesson_id = serializers.IntegerField(min_value=1)
+
+
+class ChangeCourseStateRequest(UnimplementedSerializer):
+    status = serializers.ChoiceField(
+        choices=[CourseStatuses.MODERATION, CourseStatuses.ARCHIVED]
+    )

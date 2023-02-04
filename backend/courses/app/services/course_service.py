@@ -5,7 +5,12 @@ from django.conf import settings
 from django.db import transaction
 from django.utils.timezone import now
 from furl import furl
-from rest_framework.exceptions import NotFound, ValidationError, PermissionDenied
+from rest_framework.exceptions import (
+    NotFound,
+    ValidationError,
+    PermissionDenied,
+    NotAcceptable,
+)
 
 from core.app.framework.queryset import ChunkedQuerySet
 from core.app.services.payment_service import TinkoffPaymentService
@@ -42,6 +47,7 @@ from courses.models import (
 )
 
 
+# TODO refactor to aggregate
 class CourseCreator:
     repos = CourseRepository()
     base_course_repos = BaseCourseRepository()
@@ -146,7 +152,7 @@ class BaseCourseUpdator:
         return base_course
 
 
-class FavoriteCoursesWork:
+class UserFavoriteCourses:
     repository = CourseRepository()
 
     def __init__(self, user: User, course_id: int):
@@ -267,27 +273,6 @@ class TicketBuy:
             return furl(settings.SITE_URL).join("success-payment").url
 
 
-class CourseCompletionError(Exception):
-    pass
-
-
-class CourseComplete:
-    def __init__(self, course: Course):
-        self.course = course
-
-    def complete(self) -> None:
-        if self.course.deadline_datetime.date() > now().date():
-            raise CourseCompletionError(
-                f"Course can complete after {self.course.deadline_datetime.date()}"
-            )
-        if self.course.status != CourseStatuses.PUBLISHED:
-            raise CourseCompletionError(
-                f"Course `{self.course.id}` must be with `{CourseStatuses.PUBLISHED}` status for completion"
-            )
-        self.course.status = CourseStatuses.COMPLETED
-        CourseRepository().store(course=self.course)
-
-
 class CourseEnroll:
     SCHEDULE_LESSON_CHUNK_SIZE = 50
 
@@ -327,3 +312,96 @@ class CourseEnroll:
             raise ValidationError("User already enrolled")
         with transaction.atomic():
             self._register_user_course_schedule()
+
+
+class CourseDelete:
+    def __init__(self, course: Course, user: User):
+        self._course = course
+        self._user = user
+        self.repository = CourseRepository()
+
+    def delete(self) -> None:
+        if any(
+            [
+                self._course.status != CourseStatuses.DRAFT,
+                self._course.base_course.teacher != self._user,
+            ]
+        ):
+            raise PermissionDenied(
+                "The course must be in draft status and only teacher can delete it."
+            )
+        self.repository.delete(course=self._course)
+
+
+class CourseCompletionError(Exception):
+    pass
+
+
+class CourseState:
+    def __init__(self, course: Course):
+        self._course = course
+        self.repository = CourseRepository()
+
+    def to_archive(self) -> Course:
+        if self._course.status not in (
+            CourseStatuses.COMPLETED,
+            CourseStatuses.CANCELED,
+        ):
+            raise NotAcceptable(
+                f"Course must be in {(CourseStatuses.COMPLETED, CourseStatuses.CANCELED)} "
+                f"statuses to archive it"
+            )
+        self._course.status = CourseStatuses.ARCHIVED
+        self.repository.store(course=self._course)
+        return self._course
+
+    def complete(self) -> Course:
+        if self._course.deadline_datetime.date() > now().date():
+            raise CourseCompletionError(
+                f"Course can complete after {self._course.deadline_datetime.date()}"
+            )
+        if self._course.status != CourseStatuses.PUBLISHED:
+            raise CourseCompletionError(
+                f"Course `{self._course.id}` must be with `{CourseStatuses.PUBLISHED}` status for completion"
+            )
+        self._course.status = CourseStatuses.COMPLETED
+        self.repository.store(course=self._course)
+        return self._course
+
+    def publish(self) -> Course:
+        if self._course.status != CourseStatuses.MODERATION:
+            raise NotAcceptable("Course must be on moderation to publish it")
+        self._course.status = CourseStatuses.PUBLISHED
+        self.repository.store(course=self._course)
+        return self._course
+
+    def to_moderation(self) -> Course:
+        if self._course.status != CourseStatuses.DRAFT:
+            raise NotAcceptable("Course must be in draft status to moderate it")
+        self._course.status = CourseStatuses.MODERATION
+        self.repository.store(course=self._course)
+        return self._course
+
+
+class TeacherCourseStatus:
+    def __init__(
+        self,
+        course: Course,
+        user: User,
+    ):
+        self._course = course
+        self._user = user
+
+    def change_course_status(self, to: CourseStatuses) -> None:
+        if self._course.base_course.teacher.id != self._user.id:
+            raise PermissionDenied("Only creator can change statuses")
+
+        state_machine = CourseState(course=self._course)
+        switch = {
+            CourseStatuses.ARCHIVED: state_machine.to_archive,
+            CourseStatuses.MODERATION: state_machine.to_moderation,
+        }
+        transition_method = switch.get(to)
+        if not transition_method:
+            raise NotFound(f"You can switch only to {list(switch.keys())} statuses")
+        transition_method()
