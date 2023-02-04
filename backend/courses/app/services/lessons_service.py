@@ -4,10 +4,10 @@ from functools import cached_property
 
 import math
 from django.conf import settings
-from django.db import transaction
 from django.utils.timezone import now
 from rest_framework.exceptions import NotFound, ValidationError
 
+from core.app.framework.unit_of_work import UnitOfWork
 from core.app.repositories.user_repository import UserRepository
 from core.app.services.email_services import SimpleEmailTextService
 from core.app.services.types import TextMailData
@@ -103,7 +103,7 @@ class LessonCancel(LessonRescheduleCancel):
             raise ValidationError("Lesson not active")
         if not self._can_process():
             raise ValidationError("Cannot cancel lesson in current cycle")
-        with transaction.atomic():
+        with UnitOfWork():
             self._reduce_user_coef()
             self.lesson.status = LessonStatuses.CANCELED
             self.lesson_repos.store(lesson=self.lesson)
@@ -135,7 +135,7 @@ class LessonReschedule(LessonRescheduleCancel):
             end_at=self.reschedule_to + self.lesson.course.duration,
         ):
             raise ValidationError(f"User has lesson at {overlap_lesson.start_at}")
-        with transaction.atomic():
+        with UnitOfWork():
             self._reduce_user_coef()
             self._send_reschedule_message()
 
@@ -171,12 +171,11 @@ class LessonParticipation:
         if participant:
             return self.lesson.course.link
 
-        with transaction.atomic():
+        with UnitOfWork():
             if self.lesson.course.payment == CoursePaymentTypes.PAYMENT:
                 self.reduce_tickets()
 
             self.lesson_repository.add_participant(lesson=self.lesson, user=self._user)
-
         return self.lesson.course.link
 
 

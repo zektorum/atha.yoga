@@ -16,7 +16,7 @@ from elasticsearch_dsl import Q as EQ
 from rest_framework.exceptions import NotFound
 
 from core.app.repositories.base_repository import BaseRepository
-from core.models import User, QuestionnaireTeacher, QuestionnaireTeacherStatuses
+from core.models import User, TeacherProfileDB, TeacherProfileStatuses
 from courses.app.repositories.types import CourseFilterData
 from courses.documents import BaseCourseDocument
 from courses.models import Course, Lesson, BaseCourse, CourseStatuses, Ticket
@@ -113,9 +113,9 @@ class CourseRepository(BaseRepository):
                     ).prefetch_related(
                         Prefetch(
                             "teacher_profiles",
-                            queryset=QuestionnaireTeacher.objects.filter(
+                            queryset=TeacherProfileDB.objects.filter(
                                 user_id=OuterRef("id"),
-                                status=QuestionnaireTeacherStatuses.ACCEPTED,
+                                status=TeacherProfileStatuses.ACCEPTED,
                             ),
                         )
                     ),

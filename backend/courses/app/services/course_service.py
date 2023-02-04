@@ -2,12 +2,12 @@ import logging
 from functools import cached_property
 
 from django.conf import settings
-from django.db import transaction
 from django.utils.timezone import now
 from furl import furl
 from rest_framework.exceptions import NotFound, ValidationError, PermissionDenied
 
 from core.app.framework.queryset import ChunkedQuerySet
+from core.app.framework.unit_of_work import UnitOfWork, transaction_method
 from core.app.services.payment_service import TinkoffPaymentService
 from core.app.services.types import PaymentStatuses
 from core.app.utils.util import setup_resource_attributes
@@ -238,13 +238,13 @@ class TicketBuy:
             raise TicketBuyConfirmError
         return ticket_transaction
 
+    @transaction_method
     def update_tickets_amount(self, ticket_transaction: TicketTransaction) -> None:
-        with transaction.atomic():
-            ticket = self.repository.find_by_id_to_update(
-                id_=ticket_transaction.ticket_id, user=ticket_transaction.user
-            )
-            ticket.amount += ticket_transaction.ticket_amount
-            self.repository.store(ticket=ticket)
+        ticket = self.repository.find_by_id_to_update(
+            id_=ticket_transaction.ticket_id, user=ticket_transaction.user
+        )
+        ticket.amount += ticket_transaction.ticket_amount
+        self.repository.store(ticket=ticket)
 
     def confirm(self, transaction_id: str) -> str:
         try:
@@ -325,5 +325,5 @@ class CourseEnroll:
             user=self._user, course=self._course
         ):
             raise ValidationError("User already enrolled")
-        with transaction.atomic():
+        with UnitOfWork():
             self._register_user_course_schedule()
