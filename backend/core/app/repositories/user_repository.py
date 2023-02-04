@@ -22,14 +22,14 @@ class UserRepository(BaseRepository):
         except IntegrityError:
             raise ValidationError(f"User with username {username} already exists")
 
-    def find_by_email(self, email: str, fetch_rels: bool = True) -> Optional[User]:
+    def find_by_email(self, email: str, fetch_rels: bool = False) -> Optional[User]:
         query = User.objects.filter(email=email)
         if fetch_rels:
             query = self.fetch_relations(queryset=query)
         return query.first()
 
     def find_by_username(
-        self, username: str, fetch_rels: bool = True
+        self, username: str, fetch_rels: bool = False
     ) -> Optional[User]:
         query = User.objects.filter(username=username)
         if fetch_rels:
