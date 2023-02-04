@@ -29,7 +29,7 @@ services:
     env_file:
       - ".env/.ci-env.${COMPOSE_PROJECT_NAME}"
     environment:
-      - "CYPRESS_baseUrl=http://frontend-${CONTAINER_SUFFIX}:8080"
+      - "CYPRESS_baseUrl=http://frontend.${COMPOSE_PROJECT_NAME}:8080"
       - "BRANCH_NAME=${CONTAINER_SUFFIX}"
     volumes:
       - ./frontend/tests/cypress/reports/:/e2e/cypress/reports/
@@ -46,7 +46,7 @@ services:
     ports:
       - "${DATABASE_PORT}:5432"
     volumes:
-      - ./db:/var/lib/postgresql/data
+      - "./volumes/db.${COMPOSE_PROJECT_NAME}/:/var/lib/postgresql/data"
 
   dozzle:
     container_name: "dozzle.${COMPOSE_PROJECT_NAME}"
@@ -70,12 +70,13 @@ services:
       - "${ELASTIC_PORT}:9200"
     volumes:
       - .devops/build/hunspell:/usr/share/elasticsearch/config/hunspell
-      - ./elasticsearch/:/usr/share/elasticsearch/data
+      - "./volumes/elasticsearch.${COMPOSE_PROJECT_NAME}/:/usr/share/elasticsearch/data"
     environment:
       - discovery.type=single-node
       - ELASTIC_PASSWORD=$ELASTIC_PASSWORD
       - xpack.security.enabled=true
       - ES_JAVA_OPTS=-Xms750m -Xmx750m
+      - ingest.geoip.downloader.enabled=false
 
   redis:
     image: redis:7.0
@@ -93,7 +94,7 @@ services:
     ports:
       - "${REDIS_PORT}:6379"
     volumes:
-      - ./redis:/data
+      - "./volumes/redis.${COMPOSE_PROJECT_NAME}/:/data"
 
   rabbitmq:
     image: rabbitmq:3.11.7-management
@@ -108,7 +109,7 @@ services:
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
     volumes:
-      - ./rabbitmq/:/var/lib/rabbitmq
+      - "./volumes/rabbitmq.${COMPOSE_PROJECT_NAME}/:/var/lib/rabbitmq"
 
   flower:
     image: mher/flower:1.2
