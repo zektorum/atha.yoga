@@ -16,6 +16,8 @@ from courses.app.handlers.course_handlers import (
     CourseRetrieveHandler,
     SuccessTicketPaymentHandler,
     CourseEnrollHandler,
+    CourseDeleteHandler,
+    CourseStatusChangeHandler,
 )
 from courses.app.handlers.lesson_enrolled_users_handlers import (
     ActivationLessonEnrolledUser,
@@ -48,6 +50,11 @@ from courses.app.handlers.ticket_handlers import TicketListHandler
 urlpatterns = [
     path("", CourseCreateHandler.as_view(), name="course_create"),
     path("<int:pk>/", CourseRetrieveHandler.as_view(), name="course_retrieve"),
+    path(
+        "<int:pk>/change-status",
+        CourseStatusChangeHandler.as_view(),
+        name="course_status_change",
+    ),
     path("<int:pk>/update/", BaseCourseUpdateHandler.as_view(), name="course_update"),
     path("filter/", CourseFilterHandler.as_view(), name="courses_filter"),
     path(
@@ -81,6 +88,8 @@ urlpatterns = [
         name="favorite_course_remove",
     ),
     path("ticket/buy/", CourseTicketBuyHandler.as_view()),
+    path("enroll/", CourseEnrollHandler.as_view()),
+    path("destroy/", CourseDeleteHandler.as_view()),
     path("<int:pk>/enroll/", CourseEnrollHandler.as_view()),
     path(
         "lesson-enrolled-user/activation/<int:lesson_id>/<int:active>/",
