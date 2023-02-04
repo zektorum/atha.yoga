@@ -33,7 +33,7 @@ class BaseCourseSeeder:
             description=self.faker.sentence(),
             course_type=random.choice([i[0] for i in CourseTypes.choices]),
             complexity=random.choice([i[0] for i in CourseComplexities.choices]),
-            level=random.choice([i[0] for i in CourseLevels.choices]),
+            level=[random.choice([i[0] for i in CourseLevels.choices])],
             teacher=self.user,
         )
 
@@ -45,19 +45,23 @@ class CourseSeeder:
 
     def seed(self) -> Course:
         random.seed(time.time())
-        start_datetime = self.faker.date_time(tzinfo=pytz.UTC)
+        start_datetime = self.faker.date_time_between(
+            now() + timedelta(days=1), now() + timedelta(days=30), tzinfo=pytz.UTC
+        )
         return Course(
             start_datetime=start_datetime,
             duration=timedelta(minutes=random.randint(60, 300)),
             price=random.randint(1000, 100000),
             deadline_datetime=self.faker.date_time_between(
-                start_datetime, now() + timedelta(days=30), tzinfo=pytz.UTC
+                start_datetime + timedelta(days=10),
+                start_datetime + timedelta(days=30),
+                tzinfo=pytz.UTC,
             ),
             base_course_id=self.base_course.id,
             link=self.faker.url(),
             link_info=self.faker.sentence()[:100],
             payment=random.choice([i[0] for i in CoursePaymentTypes.choices]),
-            status="PUBLISHED"
+            status="PUBLISHED",
         )
 
 
@@ -93,7 +97,6 @@ class CourseReviewSeeder:
     def seed(self) -> CourseReview:
         return CourseReview(
             text=self.faker.sentence(),
-            star_rating=random.randint(1, 5),
             user=self.user,
             base_course=self.course.base_course,
         )

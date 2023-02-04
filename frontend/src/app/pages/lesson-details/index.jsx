@@ -1,11 +1,9 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  Box, Typography, Stack, Badge,
+  Backdrop,
+  Box, CircularProgress, Typography,
 } from '@mui/material';
-import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
-import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Link, useParams } from 'react-router-dom';
 import LessonDescription from '../../components/lesson-description';
 import getLessonSlice from '../../core/slices/lesson/getLesson';
@@ -21,7 +19,7 @@ const LessonDetailsPage = () => {
   const { id } = useParams();
 
   const dispatch = useDispatch();
-  const { lesson, errorMessage } = useSelector(state => state.lesson);
+  const { lesson, errorMessage, isLoading } = useSelector(state => state.lesson);
 
   console.log(lesson);
 
@@ -30,11 +28,11 @@ const LessonDetailsPage = () => {
   }, []);
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <>
       <Header withBackBtn />
       <Box
         display="flex"
-        margin="0 auto"
+        margin="40px auto"
         justifyContent="center"
         flexDirection="column"
         maxWidth="982px"
@@ -42,11 +40,18 @@ const LessonDetailsPage = () => {
       >
         {errorMessage && (
         <Typography color="error.main">
-          Error:
-          {errorMessage}
+          {`Error: ${errorMessage.errors.not_found[0]}`}
         </Typography>
         )}
-        {lesson && console.log(lesson.data.base_course.level)}
+        {isLoading && (
+        <Backdrop
+          sx={{ color: '#fff', zIndex: theme => theme.zIndex.drawer + 1 }}
+          open={isLoading}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
+        )}
+
         {lesson && (
         <LessonDescription
           id={lesson.data.id}
@@ -58,15 +63,16 @@ const LessonDetailsPage = () => {
           rate={lesson.data.rate}
           votes={lesson.data.votes_count}
           isVideo={lesson.data.base_course.course_type === 'VIDEO'}
-          isRegular={lesson.data.lessons.length > 1}
-          startDate={lesson.data.lessons.start_datetime}
-          duration={lesson.data.base_course.duration}
+          isRegular={lesson.data.schedule.length > 0}
+          startDate={lesson.data.start_datetime}
+          duration={lesson.data.duration}
           isPaid={lesson.data.payment === 'PAYMENT'}
-          level={(lesson.data.base_course.level).split().map(lvl => levels[lvl])} // убрать split
+          level={levels[lesson.data.base_course.level[0]]}
+          schedule={lesson.data.schedule}
         />
         )}
       </Box>
-    </Box>
+    </>
   );
 };
 

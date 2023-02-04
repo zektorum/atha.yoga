@@ -13,9 +13,10 @@ import StarBorderIcon from '@mui/icons-material/StarBorder';
 import ModeCommentOutlinedIcon from '@mui/icons-material/ModeCommentOutlined';
 import addFavoritesSlice from '../../core/slices/favorites/addFavorites';
 import removeFavoritesSlice from '../../core/slices/favorites/removeFavorites';
+import { scheduleChipContent } from '../../utils/scheduleServices';
 
 const LessonCard = ({
-  title, description, price, level, id, favorite, isParticipant, comments, rate, votes,
+  title, description, price, level, id, favorite, isParticipant, comments, rate, votes, duration, schedule,
 
 }) => {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ const LessonCard = ({
     CONTINUER: 'Средний',
     ADVANCED: 'Продвинутый',
   };
+
   const dispatch = useDispatch();
   const setFavorite = e => {
     e.stopPropagation();
@@ -47,12 +49,13 @@ const LessonCard = ({
             <Typography variant="h6">
               {title}
             </Typography>
-            <Stack direction="row" spacing={2}>
-              {isParticipant && <Chip color="success" size="small" label="Вы участник" />}
-              {favorite
-                ? <FavoriteIcon onClick={setFavorite} fontSize="medium" sx={{ color: '#E91E63', '&:hover': { cursor: 'pointer' } }} />
-                : <FavoriteBorderOutlinedIcon onClick={setFavorite} fontSize="medium" sx={{ color: '#9E9E9E', '&:hover': { cursor: 'pointer' } }} />}
-            </Stack>
+            <FavoriteIcon
+              onClick={setFavorite}
+              fontSize="medium"
+              sx={favorite
+                ? { color: '#E91E63', '&:hover': { cursor: 'pointer' } }
+                : { color: '#9E9E9E', '&:hover': { cursor: 'pointer' } }}
+            />
           </Grid>
           <Grid item sx={{ flex: '1 0 auto' }}>
             <Typography
@@ -102,11 +105,12 @@ const LessonCard = ({
             </Typography>
           </Grid>
           <Grid item xs container gap="8px" sx={{ mb: '28px' }}>
-            <Chip size="small" label="Пн 14:30-15:30" />
-            <Chip size="small" label="Вт 14:30-15:30" />
+            {schedule && schedule.map(item => (
+              <Chip key={crypto.randomUUID()} size="small" sx={{ fontSize: '13px' }} label={scheduleChipContent(item, duration)} />
+            )) }
           </Grid>
           <Grid item xs container gap="6px" alignItems="center">
-            <Avatar alt="name" src="avatar" />
+            <Avatar alt="name" src="avatar" sx={{ width: 32, height: 32 }} />
             <Typography variant="body1">
               Виктор Васильев
             </Typography>

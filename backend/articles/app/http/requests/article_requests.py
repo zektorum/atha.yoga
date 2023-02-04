@@ -5,5 +5,5 @@ from core.app.framework.serializers import UnimplementedSerializer
 
 class ArticleSearchRequest(UnimplementedSerializer):
     query = serializers.CharField(
-        allow_blank=True, style={"placeholder": "Поиск статей..."}
+        style={"placeholder": "Поиск статей..."}, required=False, allow_blank=True
     )

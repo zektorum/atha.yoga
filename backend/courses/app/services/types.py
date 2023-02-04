@@ -11,7 +11,6 @@ from courses.models import (
 
 
 class CourseReviewCreateData(TypedDict):
-    star_rating: int
     text: str
 
 
@@ -31,7 +30,7 @@ class CourseCreateData(TypedDict):
     start_datetime: datetime.datetime
     deadline_datetime: Optional[datetime.datetime]
     payment: CoursePaymentTypes
-    price: int
+    price: float
     complexity: CourseComplexities
     lessons: Optional[List[LessonCreateData]]
     is_draft: bool

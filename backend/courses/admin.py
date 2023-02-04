@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from django import forms
 from django.contrib import admin
 from django.db import models
 from django_json_widget.widgets import JSONEditorWidget
@@ -13,6 +14,7 @@ from .models import (
     CourseComment,
     Ticket,
     TicketTransaction,
+    LessonRatingStar,
 )
 
 
@@ -38,8 +40,25 @@ class BaseCourseAdmin(admin.ModelAdmin):
     }
 
 
+class CourseAdminForm(forms.ModelForm):
+    class Meta:
+        model = Course
+        fields = [
+            "base_course",
+            "duration",
+            "start_datetime",
+            "deadline_datetime",
+            "link",
+            "link_info",
+            "payment",
+            "price",
+            "status",
+        ]
+
+
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
+    form = CourseAdminForm
     list_display = (
         "id",
         "created_at",
@@ -94,7 +113,6 @@ class ReviewAdmin(admin.ModelAdmin):
         "created_at",
         "updated_at",
         "text",
-        "star_rating",
         "user",
     )
     list_filter = ("created_at", "updated_at")
@@ -109,12 +127,21 @@ class CourseReviewAdmin(admin.ModelAdmin):
         "created_at",
         "updated_at",
         "text",
-        "star_rating",
         "user",
         "base_course",
     )
     list_filter = ("created_at", "updated_at")
     date_hierarchy = "created_at"
+
+
+@admin.register(LessonRatingStar)
+class LessonRatingStarAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "star_rating",
+        "user",
+        "lesson",
+    )
 
 
 @admin.register(Lesson)

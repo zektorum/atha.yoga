@@ -1,3 +1,4 @@
+from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
 from core.models import User, QuestionnaireTeacher
@@ -21,6 +22,9 @@ class TeacherProfileResource(ModelSerializer):
 
 class UserResource(ModelSerializer):
     public_teacher_profiles = TeacherProfileResource(many=True, allow_null=True)
+    rate = serializers.DecimalField(
+        default=0, max_digits=None, decimal_places=3, coerce_to_string=False
+    )
 
     class Meta:
         model = User
@@ -33,4 +37,5 @@ class UserResource(ModelSerializer):
             "about",
             "avatar",
             "public_teacher_profiles",
+            "rate",
         ]
