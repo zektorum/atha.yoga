@@ -101,9 +101,7 @@ class CourseTicketUseRequest(UnimplementedSerializer):
 
 
 class ChangeCourseStateRequest(UnimplementedSerializer):
-    status = serializers.ChoiceField(
-        choices=[CourseStatuses.MODERATION, CourseStatuses.ARCHIVED]
-    )
+    status = serializers.ChoiceField(choices=[CourseStatuses.MODERATION])
 
 
 class CourseQuestionCreateRequest(UnimplementedSerializer):
@@ -113,3 +111,8 @@ class CourseQuestionCreateRequest(UnimplementedSerializer):
 
 class CourseAnswerCreateRequest(UnimplementedSerializer):
     text = serializers.CharField(max_length=1000)
+
+
+class CourseArchivingRequest(UnimplementedSerializer):
+    course_id = serializers.IntegerField()
+    archived = serializers.BooleanField()

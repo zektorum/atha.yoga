@@ -18,6 +18,7 @@ from courses.app.handlers.course_handlers import (
     CourseEnrollHandler,
     CourseDeleteHandler,
     CourseStatusChangeHandler,
+    CourseArchivingHandler,
 )
 from courses.app.handlers.lesson_enrolled_users_handlers import (
     ActivationLessonEnrolledUser,
@@ -66,6 +67,11 @@ urlpatterns = [
         "lessons/<int:lesson_id>/rate/", LessonRateHandler.as_view(), name="lesson_rate"
     ),
     path("<int:course_pk>/lessons/", LessonListHandler.as_view(), name="lesson_list"),
+    path(
+        "<int:course_pk>/archiving/",
+        CourseArchivingHandler.as_view(),
+        name="archiving_course",
+    ),
     path(
         "im/participated-lessons/",
         UserLessonsParticipatedHandler.as_view(),

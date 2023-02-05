@@ -20,6 +20,7 @@ from courses.app.http.requests.course_requests import (
     FavoriteCourseAddRemoveRequest,
     CourseTicketBuyRequest,
     ChangeCourseStateRequest,
+    CourseArchivingRequest,
 )
 from courses.app.http.resources.context import BaseCourseResourceContext
 from courses.app.http.resources.course_resources import (
@@ -33,6 +34,7 @@ from courses.app.services.course_service import (
     CourseEnroll,
     CourseDelete,
     TeacherCourseStatus,
+    CourseArchiving,
 )
 from courses.app.services.course_service import (
     CourseCreator,
@@ -239,4 +241,24 @@ class CourseStatusChangeHandler(GenericHandler):
         TeacherCourseStatus(course=course, user=request.user).change_course_status(
             to=data.validated_data.get("status")
         )
+        return Response(status=status.HTTP_200_OK)
+
+
+@permission_classes([IsAuthenticated])
+class CourseArchivingHandler(GenericHandler):
+    serializer_class = CourseArchivingRequest
+
+    def post(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        data = self.serializer_class(data=self.request.data)
+        data.is_valid(raise_exception=True)
+
+        course = CourseRepository().find_by_id(
+            id_=data.validated_data.get("course_id"), raise_exception=True
+        )
+        CourseArchiving(
+            course=course,
+            user=self.request.user,
+            archive=data.validated_data.get("archived"),
+        ).archive()
+
         return Response(status=status.HTTP_200_OK)

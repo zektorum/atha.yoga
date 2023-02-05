@@ -5,7 +5,7 @@ import pytest
 from PIL import Image
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from faker import Faker
-from rest_framework.exceptions import NotAcceptable
+from rest_framework.exceptions import ValidationError
 
 from core.app.aggregates.teacher_profile_aggregate import TeacherProfileAggregate
 from core.app.aggregates.types import TeacherProfileCreateContext
@@ -67,7 +67,7 @@ def test_teacher_profile_create() -> None:
     user.save()
     profile_aggregate = TeacherProfileAggregate(user=user)
 
-    with pytest.raises(NotAcceptable):
+    with pytest.raises(ValidationError):
         profile_aggregate._can_create()
 
     user.roles = []
@@ -80,5 +80,5 @@ def test_teacher_profile_create() -> None:
     )
     assert profile.id is not None
 
-    with pytest.raises(NotAcceptable):
+    with pytest.raises(ValidationError):
         profile_aggregate._can_create()

@@ -8,7 +8,6 @@ from rest_framework.exceptions import (
     NotFound,
     ValidationError,
     PermissionDenied,
-    NotAcceptable,
 )
 
 from core.app.framework.queryset import ChunkedQuerySet
@@ -342,19 +341,6 @@ class CourseState:
         self._course = course
         self.repository = CourseRepository()
 
-    def to_archive(self) -> Course:
-        if self._course.status not in (
-            CourseStatuses.COMPLETED,
-            CourseStatuses.CANCELED,
-        ):
-            raise NotAcceptable(
-                f"Course must be in {(CourseStatuses.COMPLETED, CourseStatuses.CANCELED)} "
-                f"statuses to archive it"
-            )
-        self._course.status = CourseStatuses.ARCHIVED
-        self.repository.store(course=self._course)
-        return self._course
-
     def complete(self) -> Course:
         if self._course.deadline_datetime.date() > now().date():
             raise CourseCompletionError(
@@ -370,14 +356,14 @@ class CourseState:
 
     def publish(self) -> Course:
         if self._course.status != CourseStatuses.MODERATION:
-            raise NotAcceptable("Course must be on moderation to publish it")
+            raise ValidationError("Course must be on moderation to publish it")
         self._course.status = CourseStatuses.PUBLISHED
         self.repository.store(course=self._course)
         return self._course
 
     def to_moderation(self) -> Course:
         if self._course.status != CourseStatuses.DRAFT:
-            raise NotAcceptable("Course must be in draft status to moderate it")
+            raise ValidationError("Course must be in draft status to moderate it")
         self._course.status = CourseStatuses.MODERATION
         self.repository.store(course=self._course)
         return self._course
@@ -398,10 +384,37 @@ class TeacherCourseStatus:
 
         state_machine = CourseState(course=self._course)
         switch = {
-            CourseStatuses.ARCHIVED: state_machine.to_archive,
             CourseStatuses.MODERATION: state_machine.to_moderation,
         }
         transition_method = switch.get(to)
         if not transition_method:
             raise NotFound(f"You can switch only to {list(switch.keys())} statuses")
         transition_method()
+
+
+class CourseArchiving:
+    def __init__(self, course: Course, user: User, archive: bool):
+        self._course = course
+        self._user = user
+        self._archive = archive
+        self.repository = CourseRepository()
+
+    def archive(self) -> None:
+        if self._course.status not in (
+            CourseStatuses.COMPLETED,
+            CourseStatuses.CANCELED,
+        ):
+            raise ValidationError(
+                f"Course must be in {(CourseStatuses.COMPLETED, CourseStatuses.CANCELED)} "
+                f"statuses to zip or unzip it"
+            )
+        if (
+            self._user.id != self._course.base_course.teacher_id
+            and not self._user.is_staff
+        ):
+            raise ValidationError(
+                "User must be administrator or course teacher to zip or unzip it"
+            )
+
+        self._course.archived = self._archive
+        self.repository.store(course=self._course)

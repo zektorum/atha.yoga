@@ -1,4 +1,4 @@
-from rest_framework.exceptions import NotAcceptable
+from rest_framework.exceptions import ValidationError
 
 from core.app.aggregates.types import TeacherProfileCreateContext
 from core.app.framework.unit_of_work import transaction_method
@@ -22,9 +22,9 @@ class TeacherProfileAggregate:
 
     def _can_create(self) -> None:
         if self._user.has_role(UserRoles.TEACHER):
-            raise NotAcceptable("User already has teacher role")
+            raise ValidationError("User already has teacher role")
         if self.repository.has_moderate_profile(user=self._user):
-            raise NotAcceptable("User already has profile on moderation")
+            raise ValidationError("User already has profile on moderation")
 
     @transaction_method
     def create(self, ctx: TeacherProfileCreateContext) -> TeacherProfileDB:
