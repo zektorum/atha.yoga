@@ -1,3 +1,5 @@
+from typing import Dict
+
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
@@ -75,6 +77,9 @@ class UserDetailedProfile(ModelSerializer):
             "about",
             "avatar",
             "public_teacher_profiles",
+            "gender",
+            "birthday",
+            "hide_birthday",
         ]
 
 
@@ -83,6 +88,12 @@ class UserResource(ModelSerializer):
     rate = serializers.DecimalField(
         default=0, max_digits=None, decimal_places=3, coerce_to_string=False
     )
+
+    def to_representation(self, instance: User) -> Dict:
+        data = super().to_representation(instance=instance)
+        if instance.hide_birthday:
+            data["birthday"] = None
+        return data
 
     class Meta:
         model = User
@@ -96,4 +107,6 @@ class UserResource(ModelSerializer):
             "avatar",
             "public_teacher_profiles",
             "rate",
+            "gender",
+            "birthday",
         ]

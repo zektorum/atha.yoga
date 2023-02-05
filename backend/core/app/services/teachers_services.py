@@ -133,6 +133,7 @@ class TeacherProfileAccept:
     def _user_settings_update(self) -> None:
         user = self._profile.user
         user.add_roles([UserRoles.TEACHER])
+        user.gender = self._profile.questionnaire.gender
         self.user_repo.store(user=user)
 
     @transaction_method

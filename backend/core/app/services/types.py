@@ -1,3 +1,4 @@
+import datetime
 from dataclasses import dataclass
 from enum import Enum
 from typing import TypedDict, NamedTuple, List
@@ -101,6 +102,9 @@ class UserProfileUpdateData(TypedDict, total=False):
     last_name: str
     about: str
     avatar: InMemoryUploadedFile
+    birthday: datetime.date
+    gender: GenderTypes
+    hide_birthday: bool
 
 
 class TeacherBillingInfoData(TypedDict):
