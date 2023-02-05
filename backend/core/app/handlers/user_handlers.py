@@ -2,6 +2,7 @@ from typing import Any
 
 from rest_framework.decorators import permission_classes
 from rest_framework.exceptions import NotFound
+from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -129,6 +130,7 @@ class UserProfileHandler(Handler):
 @permission_classes([IsAuthenticated])
 class UserProfileUpdateHandler(GenericHandler):
     serializer_class = UserProfileUpdateRequest
+    parser_classes = [MultiPartParser]
 
     def patch(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         data = self.serializer_class(data=request.data, partial=True)

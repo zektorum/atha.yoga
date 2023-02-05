@@ -1,5 +1,4 @@
 import uuid
-
 from enum import Enum
 from typing import List, Union, Optional
 
@@ -54,6 +53,12 @@ class UserRegions(models.TextChoices):
     RU = "RU"
 
 
+class GenderTypes(models.TextChoices):
+    MALE = "MALE"
+    FEMALE = "FEMALE"
+    EMPTY = ""
+
+
 class User(AbstractUser):
     first_name = models.CharField(_("first name"), max_length=100, blank=True)
     last_name = models.CharField(_("last name"), max_length=100, blank=True)
@@ -68,6 +73,12 @@ class User(AbstractUser):
     pwd_reset_token = models.CharField(
         _("pwd reset token"), max_length=300, blank=True, null=True
     )
+    gender = models.CharField(
+        max_length=20, choices=GenderTypes.choices, default=GenderTypes.EMPTY
+    )
+    birthday = models.DateField(null=True)
+    hide_birthday = models.BooleanField(default=False)
+
     rate_mean: Optional[float] = None
 
     @property
@@ -120,11 +131,6 @@ class Transaction(PolymorphicModel):
     class Meta:
         verbose_name = "Транзакция"
         verbose_name_plural = "Транзакции"
-
-
-class GenderTypes(models.TextChoices):
-    MALE = "MALE"
-    FEMALE = "FEMALE"
 
 
 class QuestionnaireTeacher(TimeStampedModel):
