@@ -7,6 +7,7 @@ import {
 import { Link } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add';
 import Header from '../../components/header';
+import LayoutContainer from '../../components/layout-container';
 import getTicketsSlice from '../../core/slices/tickets/getTickets';
 import MyLesson from '../../components/my_lesson';
 import MyLessonSearch from '../../components/my_lesson_search';
@@ -25,49 +26,49 @@ const MyLessonsPage = () => {
   return (
     <>
       <Header title="Мои занятия" />
-      {isLoading && (
+      <LayoutContainer>
+        {isLoading && (
         <Backdrop
           sx={{ color: '#fff', zIndex: theme => theme.zIndex.drawer + 1 }}
           open={isLoading}
         >
           <CircularProgress color="inherit" />
         </Backdrop>
-      )}
-      {errorMessage && (
+        )}
+        {errorMessage && (
         <Typography color="error.main">
           {`Error: ${errorMessage.errors.not_found[0]}`}
         </Typography>
-      )}
-      {!isLoading && (
+        )}
+
+        {!isLoading && (
         <>
           {tickets?.length ? (
-            <Box height="100%" display="flex" flexDirection="column" justifyContent="space-between">
-              <Container>
-                <Stack
-                  direction="row"
-                  sx={{
-                    margin: '32px auto',
-                    padding: '0 29px',
-                    width: '100%',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexWrap: 'wrap',
-                  }}
-                >
+            <>
+              <Stack
+                direction="row"
+                sx={{
+                  padding: '0 29px',
+                  maxWidth: '100%',
+                  maxHeight: '100%',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexWrap: 'wrap',
+                }}
+              >
+                {tickets.map(ticket => (
+                  <MyLesson
+                    key={ticket.course.id}
+                    id={ticket.course.id}
+                    title={ticket.course.base_course.name}
+                    ticketsAmount={ticket.amount}
+                    endDate={ticket.course.deadline_datetime}
+                    isOneTime={ticket.course.schedule.length === 0}
+                  />
+                ))}
+                <MyLessonSearch />
+              </Stack>
 
-                  {tickets.map(ticket => (
-                    <MyLesson
-                      key={ticket.course.id}
-                      id={ticket.course.id}
-                      title={ticket.course.base_course.name}
-                      ticketsAmount={ticket.amount}
-                      endDate={ticket.course.deadline_datetime}
-                      isOneTime={ticket.course.schedule.length === 0}
-                    />
-                  ))}
-                  <MyLessonSearch />
-                </Stack>
-              </Container>
               <Button
                 component={Link}
                 to="/create-lesson"
@@ -85,12 +86,13 @@ const MyLessonsPage = () => {
                 <Typography sx={{ mr: '8px', fontSize: '15px', lineHeight: '26px' }}>Создать занятие</Typography>
                 <AddIcon />
               </Button>
-            </Box>
+            </>
           ) : (
             <MyLessonsEmpty />
           )}
         </>
-      )}
+        )}
+      </LayoutContainer>
     </>
   );
 };
