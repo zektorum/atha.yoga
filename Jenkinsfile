@@ -1,5 +1,5 @@
 def sendEmail(message) {
-    emailext body: 'Project built and deployed successfully.',
+    emailext body: message,
         subject: 'Atha.Yoga: CI/CD',
         from: 'Jenkins (Atha.Yoga Master Node)',
         to: '${DEFAULT_RECIPIENTS}'
@@ -24,7 +24,7 @@ def getContainerStatus(container_name) {
 pipeline {
     agent any
     environment {
-        BRANCH_NAME="develop"
+        BRANCH_NAME="${env.BRANCH_NAME}"
         MASTER_ENV_LINK=credentials('MASTER_ENV_LINK')
         DEVELOP_ENV_LINK=credentials('DEVELOP_ENV_LINK')
         STAGE_ENV_LINK=credentials('STAGE_ENV_LINK')
@@ -42,7 +42,7 @@ pipeline {
                     cat backend/.env.${BRANCH_NAME} >> backend/.env.test
                     cat .env/.ci-env.${BRANCH_NAME} > backend/.env
                     cat backend/.env.${BRANCH_NAME} >> backend/.env
-                    COMPOSE_PROJECT_NAME=${BRANCH_NAME}.test docker-compose --env-file backend/.env.test build
+                    COMPOSE_PROJECT_NAME=${BRANCH_NAME}.test docker-compose --env-file backend/.env.test -p test build
                 '''
             }
         }
@@ -92,7 +92,7 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                sh 'COMPOSE_PROJECT_NAME=${BRANCH_NAME}.test docker-compose --env-file backend/.env build'
+                sh 'COMPOSE_PROJECT_NAME=${BRANCH_NAME}.test docker-compose --env-file backend/.env -p ${BRANCH_NAME} build'
                 sh "COMPOSE_PROJECT_NAME=${BRANCH_NAME} docker-compose --env-file backend/.env -p ${BRANCH_NAME} \
                     up -d --force-recreate"
             }
@@ -103,7 +103,7 @@ pipeline {
             sendEmail('Project built and deployed successfully.')
         }
         failure {
-            sendEmail('Something went wrong.')
+            sendEmail('Something went wrong.\n\nProject: $JOB_NAME\nBuild Number: $BUILD_NUMBER\nURL: $BUILD_URL')
         }
         always {
             step([$class: 'GitHubCommitStatusSetter', statusResultSource : [$class: 'DefaultStatusResultSource']])
