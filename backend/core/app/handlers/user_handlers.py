@@ -1,7 +1,5 @@
 from typing import Any
 
-from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import extend_schema
 from rest_framework.decorators import permission_classes
 from rest_framework.exceptions import NotFound
 from rest_framework.permissions import IsAuthenticated
@@ -112,7 +110,6 @@ class UserResetPassHandler(GenericHandler):
 class LoggedUserProfileHandler(Handler):
     repository = UserRepository()
 
-    @extend_schema(responses=OpenApiTypes.OBJECT)
     def get(self, *args: Any, **kwargs: Any) -> Response:
         user = self.repository.find_by_id(id_=self.request.user.id, fetch_rels=True)
         return Response({"data": UserDetailedProfile(user).data})
@@ -121,7 +118,6 @@ class LoggedUserProfileHandler(Handler):
 class UserProfileHandler(Handler):
     repository = UserRepository()
 
-    @extend_schema(responses=OpenApiTypes.OBJECT)
     def get(self, request: Request, pk: int, *args: Any, **kwargs: Any) -> Response:
         user = self.repository.find_by_id(id_=pk, fetch_rels=True)
         if not user:
@@ -134,7 +130,6 @@ class UserProfileHandler(Handler):
 class UserProfileUpdateHandler(GenericHandler):
     serializer_class = UserProfileUpdateRequest
 
-    @extend_schema(responses=OpenApiTypes.OBJECT)
     def patch(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         data = self.serializer_class(data=request.data, partial=True)
         data.is_valid(raise_exception=True)

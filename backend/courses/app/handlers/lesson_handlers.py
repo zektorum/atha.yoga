@@ -1,7 +1,5 @@
 from typing import Any
 
-from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import extend_schema
 from rest_framework.decorators import permission_classes
 from rest_framework.exceptions import NotFound
 from rest_framework.permissions import IsAuthenticated
@@ -51,7 +49,6 @@ class LessonRescheduleHandler(GenericHandler):
 
 @permission_classes([IsTeacher])
 class LessonCancelHandler(Handler):
-    @extend_schema(responses=OpenApiTypes.OBJECT)
     def post(
         self, request: Request, lesson_id: int, *args: Any, **kwargs: Any
     ) -> Response:
@@ -61,7 +58,6 @@ class LessonCancelHandler(Handler):
 
 
 class LessonRetrieveHandler(Handler):
-    @extend_schema(responses=OpenApiTypes.OBJECT)
     def get(
         self, request: Request, lesson_id: int, *args: Any, **kwargs: Any
     ) -> Response:
@@ -91,7 +87,6 @@ class LessonRateHandler(GenericHandler):
 class LessonListHandler(Handler):
     repository = LessonRepository()
 
-    @extend_schema(responses=OpenApiTypes.OBJECT)
     def get(
         self, request: Request, course_pk: int, *args: Any, **kwargs: Any
     ) -> Response:
@@ -109,7 +104,6 @@ class LessonListHandler(Handler):
 class UserLessonsParticipatedHandler(Handler):
     repository = LessonRepository()
 
-    @extend_schema(responses=OpenApiTypes.OBJECT)
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         lessons = OrderedQuerySet(
             queryset=self.repository.fetch_relations(
@@ -129,7 +123,6 @@ class UserLessonsParticipatedHandler(Handler):
 class UserLessonsEnrolledHandler(Handler):
     repository = LessonRepository()
 
-    @extend_schema(responses=OpenApiTypes.OBJECT)
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         lessons = OrderedQuerySet(
             queryset=self.repository.fetch_relations(
