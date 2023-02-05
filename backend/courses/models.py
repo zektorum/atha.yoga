@@ -78,7 +78,6 @@ class CourseStatuses(models.TextChoices):
     CANCELED = "CANCELED"
     DRAFT = "DRAFT"
     PUBLISHED = "PUBLISHED"
-    ARCHIVED = "ARCHIVED"
     MODERATION = "MODERATION"
     DECLINED = "DECLINED"
     COMPLETED = "COMPLETED"
@@ -114,6 +113,7 @@ class Course(TimeStampedModel):
         choices=CourseStatuses.choices,
         default=CourseStatuses.MODERATION,
     )
+    archived = models.BooleanField("Архивирован", default=False)
 
     def primitive_schedule_value(self) -> List[Dict]:
         return Course.schedule.field.convert_to_primitive(value=self.schedule) or []
