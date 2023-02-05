@@ -42,7 +42,7 @@ pipeline {
                     cat backend/.env.${BRANCH_NAME} >> backend/.env.test
                     cat .env/.ci-env.${BRANCH_NAME} > backend/.env
                     cat backend/.env.${BRANCH_NAME} >> backend/.env
-                    COMPOSE_PROJECT_NAME=${BRANCH_NAME}.test docker-compose --env-file backend/.env.test build
+                    COMPOSE_PROJECT_NAME=${BRANCH_NAME}.test docker-compose --env-file backend/.env.test -p test build
                 '''
             }
         }
@@ -92,7 +92,7 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                sh 'COMPOSE_PROJECT_NAME=${BRANCH_NAME}.test docker-compose --env-file backend/.env build'
+                sh 'COMPOSE_PROJECT_NAME=${BRANCH_NAME}.test docker-compose --env-file backend/.env -p ${BRANCH_NAME} build'
                 sh "COMPOSE_PROJECT_NAME=${BRANCH_NAME} docker-compose --env-file backend/.env -p ${BRANCH_NAME} \
                     up -d --force-recreate"
             }
