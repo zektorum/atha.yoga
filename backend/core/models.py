@@ -5,7 +5,7 @@ from typing import List, Union, Optional
 from django.contrib.auth.models import AbstractUser
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.core.validators import RegexValidator
+from django.core.validators import RegexValidator, MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from polymorphic.models import PolymorphicModel
@@ -78,7 +78,9 @@ class User(AbstractUser):
     )
     birthday = models.DateField(null=True)
     hide_birthday = models.BooleanField(default=False)
-
+    sys_rate = models.FloatField(
+        default=0, validators=[MaxValueValidator(5), MinValueValidator(0)]
+    )
     rate_mean: Optional[float] = None
 
     @property

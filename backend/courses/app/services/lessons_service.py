@@ -82,7 +82,7 @@ class LessonRescheduleCancel(ABC):
         return settings.MAX_FINE
 
     def _reduce_user_coef(self) -> None:
-        self.user.rate = round(self.user.rate - self._fine_coef(), 4)
+        self.user.sys_rate = round(self.user.rate - self._fine_coef(), 4)
         self.user_repos.store(user=self.user)
 
 
