@@ -24,7 +24,7 @@ def getContainerStatus(container_name) {
 pipeline {
     agent any
     environment {
-        BRANCH_NAME="develop"
+        BRANCH_NAME="${env.BRANCH_NAME}"
         MASTER_ENV_LINK=credentials('MASTER_ENV_LINK')
         DEVELOP_ENV_LINK=credentials('DEVELOP_ENV_LINK')
         STAGE_ENV_LINK=credentials('STAGE_ENV_LINK')
