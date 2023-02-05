@@ -2,8 +2,6 @@ from typing import Any
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
-from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -66,7 +64,6 @@ class CourseFilterHandler(GenericHandler):
 
 
 class CourseRetrieveHandler(Handler):
-    @extend_schema(responses=OpenApiTypes.OBJECT)
     def get(self, request: Request, pk: int, *args: Any, **kwargs: Any) -> Response:
         repository = CourseRepository(user=request.user)
         course = repository.find_by_id(id_=pk, raise_exception=True, fetch_rels=True)
@@ -165,7 +162,6 @@ class FavoriteCourseRemoveHandler(GenericHandler):
 
 @permission_classes([IsAuthenticated])
 class FavoriteCourseListHandler(Handler):
-    @extend_schema(responses=OpenApiTypes.OBJECT)
     def get(self, *args: Any, **kwargs: Any) -> Response:
         repository = CourseRepository(user=self.request.user)
         courses = repository.fetch_relations(
@@ -201,7 +197,6 @@ class CourseTicketBuyHandler(GenericHandler):
 class SuccessTicketPaymentHandler(Handler):
     repos = TicketTransactionRepository()
 
-    @extend_schema(responses=OpenApiTypes.OBJECT)
     def get(self, request: Request, transaction_id: str) -> HttpResponseRedirect:
         redirect_url = TicketBuy().confirm(transaction_id=transaction_id)
         return redirect(redirect_url)
