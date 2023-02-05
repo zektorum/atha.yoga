@@ -18,6 +18,7 @@ from courses.app.http.requests.lesson_requests import (
 from courses.app.http.resources.course_resources import (
     LessonResource,
     LessonRatingStarResource,
+    LessonDetailResource,
 )
 from courses.app.repositories.lesson_repository import LessonRepository
 from courses.app.services.lessons_service import (
@@ -114,7 +115,7 @@ class UserLessonsParticipatedHandler(Handler):
         ).order_by(columns=["start_at"])
         return Response(
             Pagination(
-                data=lessons, request=request, resource=LessonResource
+                data=lessons, request=request, resource=LessonDetailResource
             ).paginate()
         )
 
@@ -133,7 +134,7 @@ class UserLessonsEnrolledHandler(Handler):
         ).order_by(columns=["start_at"])
         return Response(
             Pagination(
-                data=lessons, request=request, resource=LessonResource
+                data=lessons, request=request, resource=LessonDetailResource
             ).paginate()
         )
 

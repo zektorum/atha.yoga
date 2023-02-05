@@ -8,6 +8,30 @@ from courses.app.http.resources.context import BaseCourseResourceContext
 from courses.models import Course, Lesson, BaseCourse, LessonRatingStar
 
 
+class DetailedLessonCourseResource(ModelSerializer):
+    class Meta:
+        model = Course
+        fields = ["id", "name"]
+
+
+class LessonDetailResource(ModelSerializer):
+    end_at = serializers.DateTimeField(allow_null=True)
+    rate_mean = serializers.DecimalField(
+        default=0, max_digits=None, decimal_places=3, coerce_to_string=False
+    )
+    course = DetailedLessonCourseResource()
+
+    class Meta:
+        model = Lesson
+        fields = [
+            "id",
+            "course",
+            "rate_mean",
+            "start_at",
+            "end_at",
+        ]
+
+
 class LessonResource(ModelSerializer):
     end_at = serializers.DateTimeField(allow_null=True)
     rate_mean = serializers.DecimalField(
