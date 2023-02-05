@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema
+from rest_framework import status
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
@@ -18,6 +19,7 @@ from courses.app.http.requests.course_requests import (
     BaseCourseUpdateRequest,
     FavoriteCourseAddRemoveRequest,
     CourseTicketBuyRequest,
+    ChangeCourseStateRequest,
 )
 from courses.app.http.resources.context import BaseCourseResourceContext
 from courses.app.http.resources.course_resources import (
@@ -29,10 +31,12 @@ from courses.app.repositories.transaction_repository import TicketTransactionRep
 from courses.app.services.course_service import (
     BaseCourseUpdator,
     CourseEnroll,
+    CourseDelete,
+    TeacherCourseStatus,
 )
 from courses.app.services.course_service import (
     CourseCreator,
-    FavoriteCoursesWork,
+    UserFavoriteCourses,
     TicketBuy,
 )
 
@@ -123,7 +127,7 @@ class FavoriteCourseAddHandler(GenericHandler):
         data = self.serializer_class(data=request.data)
         data.is_valid(raise_exception=True)
 
-        course = FavoriteCoursesWork(
+        course = UserFavoriteCourses(
             user=request.user, course_id=data.validated_data["course_id"]
         ).add()
 
@@ -144,7 +148,7 @@ class FavoriteCourseRemoveHandler(GenericHandler):
         data = self.serializer_class(data=request.data)
         data.is_valid(raise_exception=True)
 
-        course = FavoriteCoursesWork(
+        course = UserFavoriteCourses(
             user=self.request.user, course_id=data.validated_data["course_id"]
         ).remove()
 
@@ -209,3 +213,30 @@ class CourseEnrollHandler(Handler):
             course=CourseRepository().find_by_id(id_=pk, raise_exception=True),
         ).enroll()
         return Response({"data": "Success"})
+
+
+@permission_classes([IsAuthenticated])
+class CourseDeleteHandler(Handler):
+    def delete(self, request: Request, pk: int, *args: Any, **kwargs: Any) -> Response:
+        CourseDelete(
+            course=CourseRepository().find_by_id(id_=pk, raise_exception=True),
+            user=self.request.user,
+        ).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@permission_classes([IsAuthenticated])
+class CourseStatusChangeHandler(GenericHandler):
+    serializer_class = ChangeCourseStateRequest
+
+    def put(
+        self, request: Request, course_pk: int, *args: Any, **kwargs: Any
+    ) -> Response:
+        data = self.serializer_class(data=self.request.data)
+        data.is_valid(raise_exception=True)
+
+        course = CourseRepository().find_by_id(id_=course_pk, raise_exception=True)
+        TeacherCourseStatus(course=course, user=request.user).change_course_status(
+            to=data.validated_data.get("status")
+        )
+        return Response(status=status.HTTP_200_OK)

@@ -26,6 +26,7 @@ from courses.models import (
     Course,
     CoursePaymentTypes,
     LessonEnrolledUser,
+    LessonRatingStar,
 )
 
 
@@ -188,3 +189,29 @@ class LessonEnrolledUserWork:
     def activation(self, active: bool) -> None:
         self._enrolled_user.active = active
         self.repository.store(enrolled_user=self._enrolled_user)
+
+
+class LessonRate:
+    repository = LessonRepository()
+
+    def __init__(self, lesson_id: int, user: User, star_rating: int):
+        self.star_rating = star_rating
+        self.user = user
+        self.lesson_id = lesson_id
+
+    @cached_property
+    def rating_star(self) -> LessonRatingStar:
+        lesson = self.repository.find_by_id(id_=self.lesson_id)
+        if not lesson:
+            raise NotFound(f"Undefined lesson with id {self.lesson_id}")
+
+        star = LessonRatingStar()
+        star.user = self.user
+        star.lesson = lesson
+        star.star_rating = self.star_rating
+
+        return star
+
+    def rate(self) -> LessonRatingStar:
+        self.repository.rate_lesson(rating_star=self.rating_star)
+        return self.rating_star

@@ -1,6 +1,7 @@
 import uuid
+
 from enum import Enum
-from typing import List, Union
+from typing import List, Union, Optional
 
 from django.contrib.auth.models import AbstractUser
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -67,8 +68,13 @@ class User(AbstractUser):
     pwd_reset_token = models.CharField(
         _("pwd reset token"), max_length=300, blank=True, null=True
     )
-    region = models.CharField(max_length=10, default=UserRegions.RU)
-    rate = models.FloatField(default=5)
+    rate_mean: Optional[float] = None
+
+    @property
+    def rate(self) -> Optional[float]:
+        if self.rate_mean is None:
+            raise ValueError("rate_mean is not calculated")
+        return self.rate_mean
 
     def has_role(self, role: UserRoles) -> bool:
         return role in self.roles
