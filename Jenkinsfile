@@ -1,5 +1,5 @@
 def sendEmail(message) {
-    emailext body: 'Project built and deployed successfully.',
+    emailext body: message,
         subject: 'Atha.Yoga: CI/CD',
         from: 'Jenkins (Atha.Yoga Master Node)',
         to: '${DEFAULT_RECIPIENTS}'
