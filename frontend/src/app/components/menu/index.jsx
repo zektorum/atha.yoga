@@ -3,17 +3,13 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import { Typography } from '@mui/material';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import SearchIcon from '@mui/icons-material/Search';
 import ListItemText from '@mui/material/ListItemText';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
-import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import Box from '@mui/material/Box';
-import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
+
+import ListItemIcon from '@mui/material/ListItemIcon';
 import menuLogo from '../../../assets/public/menu_logo.svg';
 
-const Menu = ({ auth }) => {
+const Menu = ({ auth, menuItems }) => {
   const menuItemStyle = {
     minHeight: '36px',
     '& .MuiTypography-root': {
@@ -52,7 +48,7 @@ const Menu = ({ auth }) => {
   }, [currentUrl]);
 
   return (
-    <Box sx={{ width: '100%', height: '100vh', backgroundColor: '#F5F5F5' }}>
+    <Box sx={{ width: '100%', height: '100vh', backgroundColor: 'grey.A100' }}>
       <MenuList
         sx={{
           display: 'flex',
@@ -66,97 +62,29 @@ const Menu = ({ auth }) => {
         <div style={{ textAlign: 'center', marginBottom: '10px' }}>
           <img src={menuLogo} alt="atha yoga logo" style={{ width: '103px', height: '26px' }} />
         </div>
-        <MenuItem
-          component={NavLink}
-          to="search-lessons"
-          sx={[{ ...menuItemStyle }, prev === '/search-lessons' && { ...menuItemOtherStyle }]}
-        >
-          <ListItemIcon>
-            <SearchIcon color="disabled" fontSize="medium" />
-          </ListItemIcon>
-          <ListItemText
-            primary={(
-              <Typography
-                variant="body2"
-              >
-                Поиск
-              </Typography>
-              )}
-          />
-        </MenuItem>
-        <MenuItem
-          component={NavLink}
-          to="/favorites"
-          sx={[{ ...menuItemStyle }, prev === '/favorites' && { ...menuItemOtherStyle }]}
-        >
-          <ListItemIcon>
-            <FavoriteBorderIcon color="disabled" fontSize="medium" />
-          </ListItemIcon>
-          <ListItemText
-            primary={(
-              <Typography
-                variant="body2"
-              >
-                Избранное
-              </Typography>
-              )}
-          />
-        </MenuItem>
-        <MenuItem
-          component={NavLink}
-          to="/my-lessons"
-          sx={[{ ...menuItemStyle }, prev === '/my-lessons' && { ...menuItemOtherStyle }]}
-        >
-          <ListItemIcon>
-            <SchoolOutlinedIcon color="disabled" fontSize="medium" />
-          </ListItemIcon>
-          <ListItemText
-            primary={(
-              <Typography
-                variant="body2"
-              >
-                Мои занятия
-              </Typography>
+        {menuItems.map(({ link, title, icon }) => (
+          <MenuItem
+            component={NavLink}
+            to={link}
+            sx={[{ ...menuItemStyle }, prev === link && { ...menuItemOtherStyle }]}
+            key={title}
+          >
+            <ListItemIcon>
+              {icon}
+            </ListItemIcon>
+            <ListItemText
+              primary={(
+                <Typography
+                  variant="body2"
+                >
+                  {title}
+                </Typography>
                 )}
-          />
-        </MenuItem>
-        <MenuItem
-          component={NavLink}
-          to="/calendar"
-          sx={[{ ...menuItemStyle }, prev === '/calendar' && { ...menuItemOtherStyle }]}
-        >
-          <ListItemIcon>
-            <CalendarMonthOutlinedIcon color="disabled" fontSize="medium" />
-          </ListItemIcon>
-          <ListItemText
-            primary={(
-              <Typography
-                variant="body2"
-              >
-                Календарь
-              </Typography>
-                )}
-          />
-        </MenuItem>
-        <MenuItem
-          component={NavLink}
-          to="/profile"
-          sx={[{ ...menuItemStyle }, prev === '/profile' && { ...menuItemOtherStyle }]}
-        >
-          <ListItemIcon>
-            <AccountCircleOutlinedIcon color="disabled" fontSize="medium" />
-          </ListItemIcon>
-          <ListItemText
-            primary={(
-              <Typography
-                variant="body2"
-              >
-                Профиль
-              </Typography>
-                )}
-          />
-        </MenuItem>
+            />
+          </MenuItem>
+        ))}
       </MenuList>
+
       <Typography
         component={Link}
         variant="body2"
