@@ -47,7 +47,7 @@ class TeacherPrivateProfileResource(ModelSerializer):
 
     class Meta:
         model = TeacherProfileDB
-        fields = ["id", "questionnaire", "billing_info"]
+        fields = ["id", "questionnaire", "billing_info", "status"]
 
 
 class TeacherPublicProfileResource(ModelSerializer):
