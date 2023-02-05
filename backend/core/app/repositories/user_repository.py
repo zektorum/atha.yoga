@@ -6,7 +6,7 @@ from django.db.models.functions import Coalesce
 from rest_framework.exceptions import ValidationError
 
 from core.app.repositories.base_repository import BaseRepository
-from core.models import User, QuestionnaireTeacher, QuestionnaireTeacherStatuses
+from core.models import User, TeacherProfileDB, TeacherProfileStatuses
 
 
 class UserRepository(BaseRepository):
@@ -50,8 +50,8 @@ class UserRepository(BaseRepository):
         return queryset.prefetch_related(
             Prefetch(
                 "teacher_profiles",
-                QuestionnaireTeacher.objects.filter(
-                    status=QuestionnaireTeacherStatuses.ACCEPTED.value
+                TeacherProfileDB.objects.filter(
+                    status=TeacherProfileStatuses.ACCEPTED.value
                 ),
                 to_attr="public_teacher_profiles",
             )
