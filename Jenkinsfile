@@ -103,7 +103,7 @@ pipeline {
             sendEmail('Project built and deployed successfully.')
         }
         failure {
-            sendEmail('Something went wrong.')
+            sendEmail('Something went wrong.\n\nProject: $JOB_NAME\nBuild Number: $BUILD_NUMBER\nURL: $BUILD_URL')
         }
         always {
             step([$class: 'GitHubCommitStatusSetter', statusResultSource : [$class: 'DefaultStatusResultSource']])
