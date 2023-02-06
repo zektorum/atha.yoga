@@ -5,7 +5,7 @@ import DateRangeOutlinedIcon from '@mui/icons-material/DateRangeOutlined';
 import AccessTimeOutlinedIcon from '@mui/icons-material/AccessTimeOutlined';
 
 const ScheduleLessonCard = ({ name, weekday, date, timeInterval }) => (
-  <Box width="800px" m="16px" sx={{ border: '1px solid #E0E0E0', borderRadius: '8px' }}>
+  <Box maxWidth="100%" width="800px" m="16px" sx={{ border: '1px solid #E0E0E0', borderRadius: '8px' }}>
     <Grid container alignItems="center" justifyContent="center">
       <Grid item>
         <Typography sx={{ textAlign: 'center', p: '32px 16px 33px 20px', fontSize: '18px' }}>

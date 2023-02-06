@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { Box } from '@mui/material';
 import Header from '../header';
 import ScheduleLessonCard from '../schedule-lesson-card';
+import LayoutContainer from '../layout-container';
 import { useState } from 'react';
 import getDataForSchedule from './helper';
 import getShedule from '../../services/shedule';
@@ -43,6 +44,7 @@ const ScheduleLessons = () => {
   })
 
   return (
+    <LayoutContainer>
     <Box
       sx={{
         display: 'flex',
@@ -53,6 +55,7 @@ const ScheduleLessons = () => {
       <Header title='Календарь' />
       {lessonsData}
     </Box>
+    </LayoutContainer>
   );
 };
 

@@ -13,11 +13,11 @@ import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
 import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import avatar from '../../../assets/public/profile_avatar.jpg';
-import { oneTimeLessonChipContent, scheduleChipContent, weekdays } from '../../utils/scheduleServices';
+import { oneTimeLessonChipContent, scheduleChipContent } from '../../utils/scheduleServices';
 
 const LessonDescription = ({
   title, description, price, level, favorite, comments,
-  rate, votes, isVideo, isRegular, startDate, duration, id, payment, schedule, isPaid,
+  rate, votes, isVideo, isRegular, startDate, duration, id, schedule, isPaid,
 }) => (
   <>
     <Box display="flex" alignItems="start" mb="23px">
