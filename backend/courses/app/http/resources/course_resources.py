@@ -1,21 +1,62 @@
+from typing import Dict, List
+
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
 from core.models import QuestionnaireTeacher, User
 from courses.app.http.resources.context import BaseCourseResourceContext
-from courses.models import Course, Lesson, BaseCourse
+from courses.models import Course, Lesson, BaseCourse, LessonRatingStar
 
 
-class LessonResource(ModelSerializer):
+class DetailedLessonCourseResource(ModelSerializer):
+    class Meta:
+        model = Course
+        fields = ["id", "name"]
+
+
+class LessonDetailResource(ModelSerializer):
     end_at = serializers.DateTimeField(allow_null=True)
+    rate_mean = serializers.DecimalField(
+        default=0, max_digits=None, decimal_places=3, coerce_to_string=False
+    )
+    course = DetailedLessonCourseResource()
 
     class Meta:
         model = Lesson
         fields = [
             "id",
             "course",
+            "rate_mean",
             "start_at",
             "end_at",
+        ]
+
+
+class LessonResource(ModelSerializer):
+    end_at = serializers.DateTimeField(allow_null=True)
+    rate_mean = serializers.DecimalField(
+        default=0, max_digits=None, decimal_places=3, coerce_to_string=False
+    )
+
+    class Meta:
+        model = Lesson
+        fields = [
+            "id",
+            "course",
+            "rate_mean",
+            "start_at",
+            "end_at",
+        ]
+
+
+class LessonRatingStarResource(ModelSerializer):
+    class Meta:
+        model = LessonRatingStar
+        fields = [
+            "id",
+            "star_rating",
+            "user",
+            "lesson",
         ]
 
 
@@ -60,6 +101,10 @@ class BaseCourseResource(ModelSerializer):
 
 class CourseResource(ModelSerializer):
     base_course = BaseCourseResource()
+    schedule = serializers.SerializerMethodField()
+
+    def get_schedule(self, obj: Course) -> List[Dict]:
+        return obj.primitive_schedule_value()
 
     class Meta:
         model = Course
@@ -72,6 +117,7 @@ class CourseResource(ModelSerializer):
             "payment",
             "price",
             "status",
+            "schedule",
         ]
 
 
@@ -92,16 +138,20 @@ class BaseCourseCardResource(ModelSerializer):
 
 class CourseCardResource(ModelSerializer):
     base_course = BaseCourseCardResource()
-    lessons = LessonResource(many=True, allow_null=True)
+    lessons = LessonResource(many=True, allow_null=True, source="lessons_set")
     reviews_count = serializers.IntegerField(allow_null=True, default=0)
     comments_count = serializers.IntegerField(allow_null=True, default=0)
     tickets_amount = serializers.IntegerField(allow_null=True, default=0)
     participant = serializers.BooleanField(default=False)
     favorite = serializers.BooleanField(default=False)
     votes_count = serializers.IntegerField(default=0)
-    rate = serializers.DecimalField(
+    rate_mean = serializers.DecimalField(
         default=0, max_digits=None, decimal_places=3, coerce_to_string=False
     )
+    schedule = serializers.SerializerMethodField()
+
+    def get_schedule(self, obj: Course) -> List[Dict]:
+        return obj.primitive_schedule_value()
 
     def to_representation(self, instance: Course) -> dict:
         result = super().to_representation(instance=instance)
@@ -129,5 +179,6 @@ class CourseCardResource(ModelSerializer):
             "participant",
             "favorite",
             "votes_count",
-            "rate",
+            "rate_mean",
+            "schedule",
         ]

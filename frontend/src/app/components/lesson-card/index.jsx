@@ -1,30 +1,47 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable linebreak-style */
-import React, { useState } from 'react';
+import React from 'react';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { Typography, Box, Grid } from '@mui/material';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import ModeCommentOutlinedIcon from '@mui/icons-material/ModeCommentOutlined';
+import addFavoritesSlice from '../../core/slices/favorites/addFavorites';
+import removeFavoritesSlice from '../../core/slices/favorites/removeFavorites';
+import { scheduleChipContent } from '../../utils/scheduleServices';
 
 const LessonCard = ({
-  title, description, price, level,
+  title, description, price, level, id, favorite, isParticipant, comments, rate, votes, duration, schedule,
+
 }) => {
+  const navigate = useNavigate();
   const levels = {
     STARTING: 'Начинающий',
-    MEDIUM: 'Средний',
+    CONTINUER: 'Средний',
     ADVANCED: 'Продвинутый',
   };
-  const [isFavorite, setIsFavorite] = useState(false);
+
+  const dispatch = useDispatch();
+  const setFavorite = e => {
+    e.stopPropagation();
+    if (favorite) {
+      dispatch(removeFavoritesSlice(id));
+    } else {
+      dispatch(addFavoritesSlice(id));
+    }
+  };
 
   return (
-
     <Box
-      width="100%"
-      sx={{ borderRadius: '8px', boxShadow: '0px 8px 16px rgba(46, 60, 80, 0.1)' }}
+      onClick={() => navigate(`/lesson-details/${id}`)}
+      sx={{
+        mb: '2%', borderRadius: '8px', boxShadow: '0px 8px 16px rgba(46, 60, 80, 0.1)', width: '100%', cursor: 'pointer',
+      }}
     >
       <Grid container alignItems="flex-start" justifyContent="center" height="100%">
         <Grid item xs container direction="column" sx={{ p: '24px' }}>
@@ -32,10 +49,13 @@ const LessonCard = ({
             <Typography variant="h6">
               {title}
             </Typography>
-            <Stack direction="row" spacing={2}>
-              <Chip color="success" size="small" label="Вы участник" />
-              {isFavorite ? <FavoriteIcon fontSize="medium" sx={{ color: '#E91E63' }} /> : <FavoriteBorderIcon fontSize="medium" sx={{ color: '#E91E63' }} />}
-            </Stack>
+            <FavoriteIcon
+              onClick={setFavorite}
+              fontSize="medium"
+              sx={favorite
+                ? { color: '#E91E63', '&:hover': { cursor: 'pointer' } }
+                : { color: '#9E9E9E', '&:hover': { cursor: 'pointer' } }}
+            />
           </Grid>
           <Grid item sx={{ flex: '1 0 auto' }}>
             <Typography
@@ -57,10 +77,13 @@ const LessonCard = ({
             }}
             />
             <Typography variant="body1" sx={{ fontWeight: '500', mr: '3px' }}>
-              4.8
+              {rate}
             </Typography>
             <Typography variant="body1" color="text.disabled" sx={{ mr: '17px' }}>
-              (505 оценок)
+              (
+              {votes}
+              {' '}
+              оценок)
             </Typography>
             <ModeCommentOutlinedIcon
               color="text.secondary"
@@ -69,7 +92,7 @@ const LessonCard = ({
               }}
             />
             <Typography variant="body1" sx={{ fontWeight: '500' }}>
-              505
+              {comments}
             </Typography>
           </Grid>
           <Grid item sx={{ flex: '1 0 auto' }}>
@@ -82,11 +105,12 @@ const LessonCard = ({
             </Typography>
           </Grid>
           <Grid item xs container gap="8px" sx={{ mb: '28px' }}>
-            <Chip size="small" label="Пн 14:30-15:30" />
-            <Chip size="small" label="Вт 14:30-15:30" />
+            {schedule && schedule.map(item => (
+              <Chip key={crypto.randomUUID()} size="small" sx={{ fontSize: '13px' }} label={scheduleChipContent(item, duration)} />
+            )) }
           </Grid>
           <Grid item xs container gap="6px" alignItems="center">
-            <Avatar alt="name" src="avatar" />
+            <Avatar alt="name" src="avatar" sx={{ width: 32, height: 32 }} />
             <Typography variant="body1">
               Виктор Васильев
             </Typography>

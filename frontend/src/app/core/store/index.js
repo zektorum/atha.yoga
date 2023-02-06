@@ -5,6 +5,10 @@ import lessons from '../slices/lessons';
 import tickets from '../slices/tickets';
 import lesson from '../slices/lesson';
 import questionnaire from '../slices/questionnaire';
+import favorites from '../slices/favorites';
+import resetpass from '../slices/pass-recovery';
+import resetpassconfirm from '../slices/reset-pass-confirm';
+import verifyEmail from '../slices/auth/verify-email';
 
 const store = configureStore({
   reducer: {
@@ -14,6 +18,10 @@ const store = configureStore({
     tickets,
     lesson,
     questionnaire,
+    favorites,
+    resetpass,
+    resetpassconfirm,
+    verifyEmail,
   },
 });
 

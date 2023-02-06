@@ -1,7 +1,9 @@
 import React from 'react';
-import {Navigate, Outlet, Route, Routes,} from 'react-router-dom';
-import {CssBaseline, ThemeProvider} from '@mui/material';
-import {createTheme} from '@mui/material/styles';
+import {
+  Navigate, Outlet, Route, Routes,
+} from 'react-router-dom';
+import { CssBaseline, ThemeProvider } from '@mui/material';
+import { createTheme } from '@mui/material/styles';
 import WelcomePage from './pages/welcome';
 import LoginPage from './pages/auth/login';
 import RegisterPage from './pages/auth/register';
@@ -20,12 +22,20 @@ import MyLessonsPage from './pages/my-lessons';
 import LessonDetailsPage from './pages/lesson-details';
 import TeacherFormPage from './pages/teacher-form';
 import FavoritesPage from './pages/favorites';
+import AbonementPage from './pages/abonement';
+import InstructionRecoveryPage from './pages/instruction-recovery';
+import ResetPasswordPage from './pages/reset-password';
+import RegisterConfirmPage from './pages/auth/register-confirm';
+import VerifyEmail from './components/verify-email';
+import PersonDataPage from './pages/personal-data';
 
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import './theme/style.scss';
+import PaymentSuccessPage from './pages/payment-success';
+import PaymentFailedPage from './pages/payment-failed';
 
 const theme = createTheme({
   palette: {
@@ -77,7 +87,6 @@ const theme = createTheme({
 const App = () => {
   const auth = useAuth();
   const Layout = auth.isLoggedIn ? ProfileLayout : BaseLayout;
-
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -86,18 +95,26 @@ const App = () => {
           <Route index element={!auth.isLoggedIn ? <WelcomePage /> : <Navigate replace to="profile" />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="register" element={<RegisterPage />} />
+          <Route path="register-confirm" element={<RegisterConfirmPage />} />
           <Route path="recovery-password" element={<PasswordRecoveryPage />} />
+          <Route path="instruction-recovery-password" element={<InstructionRecoveryPage />} />
+          <Route path="reset-password/:token" element={<ResetPasswordPage />} />
+          <Route path="verify-email/:token" element={<VerifyEmail />} />
           <Route path="*" element={<ErrorPage />} />
           <Route element={auth.isLoggedIn ? <Outlet /> : <Navigate replace to="/" />}>
             <Route path="search-lessons" element={<SearchLessonsPage />} />
             <Route path="calendar" element={<CalendarPage />} />
             <Route path="profile" element={<ProfilePage auth={auth} />} />
             <Route path="settings" element={<SettingsPage />} />
-            <Route path="create-lesson" element={<CreateLessonPage />} />
             <Route path="my-lessons" element={<MyLessonsPage />} />
+            <Route path="create-lesson" element={<CreateLessonPage />} />
             <Route path="lesson-details/:id" element={<LessonDetailsPage />} />
             <Route path="teacher-form" element={<TeacherFormPage />} />
             <Route path="favorites" element={<FavoritesPage />} />
+            <Route path="abonement/:id" element={<AbonementPage />} />
+            <Route path="payment-success/:id" element={<PaymentSuccessPage />} />
+            <Route path="payment-failed/:id" element={<PaymentFailedPage />} />
+            <Route path="person-data" element={<PersonDataPage />} />
           </Route>
         </Route>
       </Routes>

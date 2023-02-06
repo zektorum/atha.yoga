@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Grid, Box, Typography, TextField, FormControl, RadioGroup, FormControlLabel, Radio,
   Button, Stack,
@@ -10,6 +10,7 @@ import TodayIcon from '@mui/icons-material/Today';
 import 'dayjs/locale/ru';
 import UploadFiles from '../upload_files';
 import postQuestionnaireSlice from '../../core/slices/questionnaire/postQuestionnaire';
+import { clearMessage } from '../../core/slices/message';
 
 const TeacherForm = () => {
   const [answers, setAnswers] = useState({
@@ -22,15 +23,25 @@ const TeacherForm = () => {
     vk_link: '',
     telegram_link: '',
     certificate_photos: [],
-    passport_photo: '',
-    user_photo: '',
-    user_with_passport_photo: '',
+    passport_photo: null,
+    user_photo: null,
+    user_with_passport_photo: null,
   });
 
-  const [photo, setPhoto] = useState([]);
-  const updateCertificate = file => {
-    setPhoto([...photo, file]);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(clearMessage());
+  }, []);
+
+  const { message } = useSelector(state => state.message);
+
+  const [photos, setPhoto] = useState([]);
+
+  const updateCertificate = files => {
+    setPhoto([...photos, ...files]);
   };
+
   const updatePhoto = (file, nameLoader) => {
     setAnswers({ ...answers, [nameLoader]: file });
   };
@@ -39,16 +50,12 @@ const TeacherForm = () => {
     setAnswers({ ...answers, [prop]: event.target.value });
   };
 
-  const dispatch = useDispatch();
-
   const postAnswers = answersArr => {
     const dateOfBirth = answersArr.date_of_birth;
-    photo.map(el => console.log(el));
-    console.log(photo);
     dispatch(postQuestionnaireSlice({
       ...answersArr,
-      certificate_photos: photo,
-      date_of_birth: dateOfBirth.toISOString().split('T')[0],
+      certificate_photos: photos,
+      date_of_birth: dateOfBirth ? `${dateOfBirth.$y}-${dateOfBirth.$M + 1}-${dateOfBirth.$D}` : null,
     }));
   };
 
@@ -56,10 +63,10 @@ const TeacherForm = () => {
     setAnswers({ ...answers, date_of_birth: newValue });
   };
 
-  const isEmpty = () => Object.values(answers).includes('') || Object.values(answers).includes(null);
+  const isEmpty = () => Object.values(answers).includes('') || Object.values(answers).includes(null) || !photos.length;
 
   return (
-    <Box sx={{ maxWidth: '732px' }}>
+    <Box sx={{ maxWidth: '732px', width: '100%' }}>
       <Typography fontWeight="600" fontSize="24px" mb="34px">
         Заполните анкету
       </Typography>
@@ -67,23 +74,21 @@ const TeacherForm = () => {
         * Поля, обязательные для заполнения
       </Typography>
       <Grid container spacing="24px" mb="60px">
-        <Grid item xs={6}>
+        <Grid item xs={12} sm={6}>
           <TextField
             fullWidth
             required
             id="first-name"
             label="Имя"
-            size="small"
             onChange={handleChangeAnswer('name')}
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} sm={6}>
           <TextField
             fullWidth
             required
             id="surname"
             label="Фамилия"
-            size="small"
             onChange={handleChangeAnswer('surname')}
           />
         </Grid>
@@ -128,6 +133,7 @@ const TeacherForm = () => {
             id="about-me"
             rows={8}
             helperText="Не более 3000 символов"
+            inputProps={{ maxLength: 3000 }}
             onChange={handleChangeAnswer('about_me')}
           />
         </Grid>
@@ -140,53 +146,50 @@ const TeacherForm = () => {
             id="work-experience"
             rows={6}
             helperText="Не более 1000 символов"
+            inputProps={{ maxLength: 1000 }}
             onChange={handleChangeAnswer('work_experience')}
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} sm={6}>
           <TextField
             fullWidth
+            required
             id="vk-link"
             label="Ссылка на страницу ВК"
-            size="small"
             onChange={handleChangeAnswer('vk_link')}
+            error={!!message?.invalid?.vk_link}
+            helperText={message?.invalid?.vk_link}
           />
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={12} sm={6}>
           <TextField
             fullWidth
+            required
             id="telegram-link"
             label="Ссылка на профиль в Telegram"
-            size="small"
             onChange={handleChangeAnswer('telegram_link')}
+            error={!!message?.invalid?.telegram_link}
+            helperText={message?.invalid?.telegram_link}
           />
         </Grid>
-        <Grid item>
-          <Typography fontWeight="600">Фото пользователя</Typography>
-        </Grid>
         <Grid item xs={12}>
+          <Typography sx={{ fontSize: '18px', fontWeight: '600', mb: '16px' }}>Фото пользователя</Typography>
           <UploadFiles updatePhoto={updatePhoto} loaderName="user_photo" />
         </Grid>
-        <Grid item>
-          <Typography fontWeight="600">Фото паспорта</Typography>
-        </Grid>
         <Grid item xs={12}>
+          <Typography sx={{ fontSize: '18px', fontWeight: '600', mb: '16px' }}>Фото паспорта</Typography>
           <UploadFiles updatePhoto={updatePhoto} loaderName="passport_photo" />
         </Grid>
-        <Grid item>
-          <Typography fontWeight="600">
+        <Grid item xs={12}>
+          <Typography sx={{ fontSize: '18px', fontWeight: '600', mb: '16px' }}>
             Фото пользователя с паспортом
           </Typography>
-        </Grid>
-        <Grid item xs={12}>
           <UploadFiles updatePhoto={updatePhoto} loaderName="user_with_passport_photo" />
         </Grid>
-        <Grid item>
-          <Typography fontWeight="600">
+        <Grid item xs={12}>
+          <Typography sx={{ fontSize: '18px', fontWeight: '600', mb: '16px' }}>
             Документы, подтверждающие квалификацию и опыт работы
           </Typography>
-        </Grid>
-        <Grid item xs={12}>
           <UploadFiles updateCertificate={updateCertificate} loaderName="certificate_photos" />
         </Grid>
       </Grid>
@@ -196,7 +199,7 @@ const TeacherForm = () => {
         alignItems="flex-end"
         gap="30px"
       >
-        <Box sx={{ width: '311px' }}>
+        <Box sx={{ maxWidth: '311px', width: '100%' }}>
           <Button
             fullWidth
             variant="contained"
@@ -207,7 +210,7 @@ const TeacherForm = () => {
             Отправить на проверку
           </Button>
         </Box>
-        <Box display="flex" sx={{ width: '311px' }}>
+        <Box display="flex" sx={{ maxWidth: '311px' }}>
           <Typography fontSize="12px" fontWeight="400" textAlign="center">
             Отправляя форму, вы соглашаетесь с
             <Typography

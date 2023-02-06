@@ -104,7 +104,7 @@ class Course(TimeStampedModel):
         "Тип платежа", max_length=30, choices=CoursePaymentTypes.choices
     )
     price = models.FloatField("Цена", validators=(MinValueValidator(limit_value=0),))
-    schedule: List[CourseSchedule] = JSONParsedField(
+    schedule = JSONParsedField(
         default=list, parse_to=CourseSchedule, verbose_name="Расписание", blank=True
     )
     status = models.CharField(
@@ -113,6 +113,10 @@ class Course(TimeStampedModel):
         choices=CourseStatuses.choices,
         default=CourseStatuses.MODERATION,
     )
+    archived = models.BooleanField("Архивирован", default=False)
+
+    def primitive_schedule_value(self) -> List[Dict]:
+        return Course.schedule.field.convert_to_primitive(value=self.schedule) or []
 
     @cached_property
     def mapped_schedule(self) -> Dict[int, List[CourseSchedule]]:
@@ -161,10 +165,6 @@ class CourseCycle(TimeStampedModel):
 
 class Review(PolymorphicModel, TimeStampedModel):
     text = models.TextField("Текст")
-    star_rating = models.IntegerField(
-        "Рейтинг",
-        validators=(MinValueValidator(limit_value=1), MaxValueValidator(limit_value=5)),
-    )
     user = models.ForeignKey(
         User, verbose_name="Автор", null=True, on_delete=models.SET_NULL
     )
@@ -263,3 +263,62 @@ class TicketTransaction(Transaction):
     class Meta:
         verbose_name = "Транзакция билета"
         verbose_name_plural = "Транзакции билетов"
+
+
+class CourseQuestion(TimeStampedModel):
+    title = models.CharField("Заголовок", max_length=120)
+    text = models.TextField("Текст")
+    author = models.ForeignKey(
+        User, verbose_name="Автор", null=True, on_delete=models.SET_NULL
+    )
+    course = models.ForeignKey(
+        BaseCourse,
+        verbose_name="Курс",
+        related_name="questions",
+        on_delete=models.CASCADE,
+    )
+
+    class Meta:
+        verbose_name = "Вопрос по курсу"
+        verbose_name_plural = "Вопросы по курсу"
+
+
+class CourseAnswer(TimeStampedModel):
+    text = models.TextField("Текст")
+    question = models.ForeignKey(
+        CourseQuestion,
+        verbose_name="Вопрос",
+        related_name="answers",
+        on_delete=models.CASCADE,
+    )
+    author = models.ForeignKey(
+        User, verbose_name="Автор", null=True, on_delete=models.SET_NULL
+    )
+
+    class Meta:
+        verbose_name = "Ответ на вопрос к курсу"
+        verbose_name_plural = "Ответы на вопрос к курсу"
+
+
+class LessonRatingStar(models.Model):
+    star_rating = models.IntegerField(
+        "Рейтинг",
+        validators=(MinValueValidator(limit_value=1), MaxValueValidator(limit_value=5)),
+    )
+    user = models.ForeignKey(
+        User,
+        verbose_name="Пользователь",
+        related_name="lesson_rating_stars",
+        null=True,
+        on_delete=models.SET_NULL,
+    )
+    lesson = models.ForeignKey(
+        Lesson,
+        verbose_name="Урок",
+        related_name="stars",
+        on_delete=models.CASCADE,
+    )
+
+    class Meta:
+        verbose_name = "Оценка урока"
+        verbose_name_plural = "Оценки урока"

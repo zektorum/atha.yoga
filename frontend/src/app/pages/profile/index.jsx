@@ -1,6 +1,8 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import Profile from '../../components/profile';
+import ProfileCard from '../../components/profile';
+import Header from '../../components/header';
+import LayoutContainer from '../../components/layout-container';
 
 const ProfilePage = ({ auth: { user } }) => {
   if (!user) {
@@ -10,7 +12,12 @@ const ProfilePage = ({ auth: { user } }) => {
   }
 
   return (
-    <Profile user={user} />
+    <>
+      <Header title="Профиль" />
+      <LayoutContainer>
+        <ProfileCard user={user} />
+      </LayoutContainer>
+    </>
   );
 };
 

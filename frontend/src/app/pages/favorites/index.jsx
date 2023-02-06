@@ -1,53 +1,59 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  Box, Typography, Container,
+  Box, Typography, Backdrop, CircularProgress,
 } from '@mui/material';
-import SettingsIcon from '@mui/icons-material/Settings';
 import LessonCard from '../../components/lesson-card';
 import getFavoritesSlice from '../../core/slices/favorites/getFavorites';
 import Header from '../../components/header';
+import LayoutContainer from '../../components/layout-container';
 
 const FavoritesPage = () => {
   const dispatch = useDispatch();
-  const { favoritesLessons, errorMessage } = useSelector(state => state.lessons);
+  const { favoritesLessons, errorMessage, isLoading } = useSelector(state => state.favorites);
 
   useEffect(() => {
     dispatch(getFavoritesSlice());
-  }, []);
+  }, [dispatch]);
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <>
       <Header title="Избранное" />
-      {errorMessage && (
-        <Typography color="error.main">
-          Error:
-          {errorMessage}
-        </Typography>
-      )}
-      <Container>
-        <Box sx={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          justifyContent: 'flex-start',
-          width: '800px',
-          gap: '24px',
-          margin: '0 auto',
-        }}
+      <LayoutContainer>
+        {isLoading && (
+        <Backdrop
+          sx={{ color: '#fff', zIndex: theme => theme.zIndex.drawer + 1 }}
+          open={isLoading}
         >
-          {favoritesLessons && favoritesLessons.data?.map(lesson => (
-            <LessonCard
-              key={lesson.id}
-              id={lesson.id}
-              title={lesson.name}
-              description={lesson.description}
-              price={lesson.price}
-              level={lesson.level}
-            />
-          ))}
+          <CircularProgress color="inherit" />
+        </Backdrop>
+        )}
+        {errorMessage && (
+          <Typography color="error.main">
+            {`Error: ${errorMessage.errors.not_found[0]}`}
+          </Typography>
+        )}
+        <Box
+          maxWidth="984px"
+        >
+          {!isLoading && Array.isArray(favoritesLessons) && (
+            favoritesLessons?.length > 0
+              ? (
+                favoritesLessons?.map(lesson => (
+                  <LessonCard
+                    key={lesson.id}
+                    id={lesson.base_course.id}
+                    title={lesson.base_course.name}
+                    description={lesson.base_course.description}
+                    price={lesson.price}
+                    level={lesson.base_course.level}
+                    favorite={lesson.favorite}
+                  />
+                ))) : ('Ничего не найдено')
+          )}
         </Box>
-      </Container>
-    </Box>
+      </LayoutContainer>
+    </>
   );
 };
 

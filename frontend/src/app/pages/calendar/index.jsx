@@ -2,7 +2,10 @@ import React from 'react';
 import ScheduleLessons from '../../components/schedule';
 
 const CalendarPage = () => (
-  <ScheduleLessons />
+  <LayoutContainer>
+    <ScheduleLessons />
+  </LayoutContainer>
+
 );
 
 export default CalendarPage;

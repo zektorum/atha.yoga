@@ -1,69 +1,157 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
-import {Card, Divider, Grid, Typography,} from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
+import {
+  Box,
+  Button,
+  Card, Divider, Grid, Menu, MenuItem, Modal, Typography,
+} from '@mui/material';
 import Stack from '@mui/material/Stack';
 import Avatar from '@mui/material/Avatar';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import SearchIcon from '@mui/icons-material/Search';
 import DateRangeOutlinedIcon from '@mui/icons-material/DateRangeOutlined';
 import MoreHorizOutlinedIcon from '@mui/icons-material/MoreHorizOutlined';
-import ellipse from '../../../assets/public/ellipse.png';
+import CloseIcon from '@mui/icons-material/Close';
+import LocalLibraryOutlinedIcon from '@mui/icons-material/LocalLibraryOutlined';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import ticket from '../../../assets/public/ticket.svg';
 
-const MyLesson = () => (
-  <Stack
-    direction="row"
-    spacing={2}
-    sx={{
-      margin: '32px auto',
-      width: '100%',
-      maxWidth: '1000px',
-    }}
-  >
-    <Card sx={{
-      p: '20px 24px 20px 20px',
+const MyLesson = ({
+  title, ticketsAmount, endDate, isOneTime, id,
+}) => {
+  const prepareEndDate = date => `${date.split('T')[0].split('-').reverse().join('.')} ${date.split('T')[1].slice(0, 5)}`;
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [openModal, setOpenModal] = React.useState(false);
+
+  const handleCloseModal = () => setOpenModal(false);
+  const openMenu = Boolean(anchorEl);
+  const handleMenuClick = event => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+  const handleOpenModal = () => {
+    handleMenuClose();
+    setOpenModal(true);
+  };
+  const deleteTicket = () => {
+    handleCloseModal();
+  };
+  const styleModal = {
+    position: 'absolute',
+    display: 'flex',
+    gap: '34px',
+    flexDirection: 'column',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 616,
+    bgcolor: '#FAFAFA',
+    border: 'none',
+    boxShadow: '0px 10px 20px rgba(16, 50, 80, 0.12)',
+    p: 3,
+    '&:focus': {
+      outline: 'none',
+    },
+  };
+  return (
+    <div style={{
+      padding: '20px 24px 20px 30px',
       borderRadius: '16px',
-      boxShadow: '0px 8px 16px rgba(46, 60, 80, 0.1)',
-      border: '1px solid #BDBDBD',
-      position: 'relative',
       width: '480px',
-
+      marginRight: '24px',
+      marginBottom: '24px',
+      background: `center / cover no-repeat url(${ticket})`,
+      filter: 'drop-shadow(0px 8px 16px rgba(46, 60, 80, .08))',
+      // outline: '1px solid red',
     }}
     >
-      <Link to="/">
-        <MoreHorizOutlinedIcon color="disabled" sx={{ position: 'absolute', top: '5px', right: '10px' }} />
-      </Link>
+      <MoreHorizOutlinedIcon
+        color="disabled"
+        sx={{ position: 'absolute', top: '10px', right: '20px' }}
+        id="basic-button"
+        aria-controls={openMenu ? 'basic-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={openMenu ? 'true' : undefined}
+        onClick={handleMenuClick}
+      />
+      <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={openMenu}
+        onClose={handleMenuClose}
+        MenuListProps={{
+          'aria-labelledby': 'basic-button',
+        }}
+      >
+        <MenuItem onClick={handleOpenModal} sx={{ fontSize: '16px', minWidth: '220px' }}>
+          <DeleteOutlinedIcon sx={{ marginRight: '19px' }} />
+          {'   '}
+          В архив
+
+        </MenuItem>
+      </Menu>
+      <Modal
+        open={openModal}
+        onClose={handleCloseModal}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={styleModal}>
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            spacing={2}
+          >
+            <Typography id="modal-modal-title" variant="h6" component="h2" fontWeight="600">
+              Переместить занятие в архив
+            </Typography>
+            <CloseIcon sx={{ width: '24px', height: '24px', color: '#616161' }} onClick={handleCloseModal} />
+          </Stack>
+          <Typography id="modal-modal-description" fontSize="16px">
+            Вы действительно хотите переместить занятие в архив?
+          </Typography>
+          <Stack
+            direction="row"
+            justifyContent="flex-end"
+            alignItems="center"
+            spacing={2}
+          >
+            <Button variant="text" sx={{ fontSize: '14px' }} onClick={handleCloseModal}>отмена</Button>
+            <Button variant="text" sx={{ fontSize: '14px' }} color="error" onClick={deleteTicket}>переместить</Button>
+          </Stack>
+        </Box>
+      </Modal>
       <Stack
         direction="row"
         spacing={2}
       >
-        <Grid container direction="column" gap="16px">
+        <Grid container direction="column" gap="16px" width="207%">
           <div>
             <Typography
               variant="h6"
-              noWrap="true"
               paragraph
               sx={{
-                fontSize: '18px', maxWidth: '271px', mb: '0',
+                fontSize: '18px',
+                maxWidth: '271px',
+                height: '43px',
+                mb: '0',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
               }}
             >
-              Бхакти-йога для начинающих
-            </Typography>
-            <Typography
-              variant="h6"
-              noWrap="true"
-              paragraph
-              sx={{
-                fontSize: '18px', maxWidth: '271px', mb: '0',
-              }}
-            >
-              по курсу Евгения Романова ещё какой-то текст чтобы добить 100ку символов
+              {title}
             </Typography>
           </div>
-          <Grid item xs container direction="column">
+          <Grid container direction="column">
             <Typography variant="caption" color="text.secondary" sx={{ fontSize: '13px', mb: '7px' }}>
               Ближайшее занятие:
             </Typography>
-            <Grid item xs container>
+            <Grid container>
               <DateRangeOutlinedIcon
                 color="primary"
                 size="small"
@@ -81,66 +169,79 @@ const MyLesson = () => (
               </Typography>
             </Grid>
           </Grid>
-          <Grid item xs container gap="6px" alignItems="center">
-            <Avatar alt="name" src="avatar" />
+          <Grid container gap="6px" alignItems="center">
+            <Avatar alt="name" src="avatar" sx={{ width: 32, height: 32 }} />
             <Typography variant="body1">
               Виктор Васильев
             </Typography>
           </Grid>
         </Grid>
         <Divider orientation="vertical" flexItem sx={{ borderStyle: 'dashed', position: 'relative' }} />
-        <img src={ellipse} alt="" style={{ position: 'absolute', bottom: '0px' }} />
-        <Grid container direction="column" gap="12px" alignItems="center" justifyContent="space-between">
-          <Grid item>
-            <Typography variant="body1" sx={{ fontWeight: '500', textAlign: 'center' }}>
-              Осталось посещений:
-            </Typography>
-          </Grid>
-          <Grid item>
-            <Typography variant="h4" color="primary">
-              1
-            </Typography>
-          </Grid>
-          <Grid item container direction="column" spacing={1} alignItems="center">
-            <Typography variant="body2">
-              Дата окончания:
-            </Typography>
-            <Typography color="primary" variant="body2" sx={{ fontWeight: '500' }}>
-              31.12.2022 23:59
-            </Typography>
 
-          </Grid>
+        <Grid container direction="column" gap="6px" alignItems="center" justifyContent="center">
+          {isOneTime && (
+            <>
+              <Grid item>
+                <LocalLibraryOutlinedIcon color="primary" fontSize="large" />
+              </Grid>
+              <Grid item>
+                <Typography variant="body1" sx={{ fontWeight: '500', textAlign: 'center' }}>
+                  Разовое занятие
+                </Typography>
+              </Grid>
+            </>
+          )}
+          {!isOneTime && (
+          <>
+
+            {ticketsAmount > 0 && (
+            <>
+              <Grid item>
+                <Typography variant="body1" sx={{ fontWeight: '500', textAlign: 'center' }}>
+                  Осталось посещений:
+                </Typography>
+              </Grid>
+              <Grid item>
+                <Typography variant="h4" color="primary">
+                  {ticketsAmount}
+                </Typography>
+              </Grid>
+            </>
+            )}
+            {!ticketsAmount && (
+            <>
+              <Grid item>
+                <Typography variant="body1" sx={{ fontWeight: '500', textAlign: 'center' }}>
+                  Посещения закончились
+                </Typography>
+              </Grid>
+              <Grid item>
+                <Button
+                  variant="outlined"
+                  component={Link}
+                  to={`/abonement/${id}`}
+                >
+                  приобрести
+                </Button>
+              </Grid>
+            </>
+            )}
+
+            <Grid container direction="column" spacing={1} alignItems="center" sx={{ mt: '4px' }}>
+              <Typography variant="body2">
+                Дата окончания:
+              </Typography>
+              <Typography color="primary" variant="body2" sx={{ fontWeight: '500' }}>
+                {prepareEndDate(endDate)}
+              </Typography>
+            </Grid>
+          </>
+
+          )}
         </Grid>
       </Stack>
-    </Card>
-    <Card sx={{
-      borderRadius: '16px',
-      boxShadow: '0px 8px 16px rgba(46, 60, 80, 0.1)',
-      border: '1px dashed #BDBDBD',
-      width: '480px',
-      p: '15px',
-
-    }}
-    >
-      <Stack
-        direction="row"
-        spacing={2}
-        sx={{ height: '100%' }}
-      >
-        <Stack direction="column" spacing={2} alignItems="center" justifyContent="center" sx={{ width: '200%', height: '100%' }}>
-          <Link to="/search-lessons">
-            <SearchIcon color="disabled" sx={{ width: '45px', height: '45px' }} />
-          </Link>
-          <Typography variant="body2" sx={{ fontWeight: '500' }}>
-            Найти занятие
-          </Typography>
-        </Stack>
-        <Divider orientation="vertical" flexItem sx={{ borderStyle: 'dashed', position: 'relative' }} />
-        <img src={ellipse} alt="" style={{ position: 'absolute', bottom: '0px' }} />
-        <Grid container direction="column" gap="12px" alignItems="center" justifyContent="space-between" />
-      </Stack>
-    </Card>
-  </Stack>
-);
+    </div>
+  );
+};
 
 export default MyLesson;

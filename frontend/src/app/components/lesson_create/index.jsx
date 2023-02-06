@@ -24,11 +24,11 @@ import {
   Radio,
   RadioGroup,
   Select,
-  Stack,
   TextField,
   Typography,
 } from '@mui/material';
-import Header from '../../components/header';
+import Header from '../header';
+import LayoutContainer from '../layout-container';
 import PaymentMethod from '../lesson_payment/index';
 import RepeatLessons from '../lesson_repeat/index';
 import LessonsService from '../../services/lessons';
@@ -223,6 +223,7 @@ const LessonCreate = () => {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="ru">
       <Header title="Создание занятия" withBackBtn />
+      <LayoutContainer>
       <form onSubmit={e => {
         e.preventDefault();
         postLessonData();
@@ -236,23 +237,23 @@ const LessonCreate = () => {
             sx={{ width: '70%', padding: '16px' }}
           >
 
-            <Grid item>
-              <Typography variant="modal">Обязательные поля *</Typography>
-            </Grid>
+              <Grid item>
+                <Typography variant="modal">Обязательные поля *</Typography>
+              </Grid>
 
-            <Grid item>
-              <TextField
-                id="lesson_name"
-                label="Название занятия"
-                name="name"
-                onChange={update}
-                value={lessonData.name}
-                required
-                fullWidth
-                error={ !!validationErrors?.name }
-                helperText={validationErrors?.name}
+              <Grid item>
+                <TextField
+                  id="lesson_name"
+                  label="Название занятия"
+                  name="name"
+                  onChange={update}
+                  value={lessonData.name}
+                  required
+                  fullWidth
+                  error={ !!validationErrors?.name }
+                  helperText={validationErrors?.name}
               />
-            </Grid>
+              </Grid>
 
             <Grid item>
               <TextField
@@ -314,19 +315,16 @@ const LessonCreate = () => {
               <TextField
                 id="lesson_link"
                 label="Данные для доступа"
-                name="link_info"
-                value={lessonData.link_info}
+                name="conferenceId"
+                value={lessonData.conferenceId}
                 onChange={update}
                 placeholder="Идентификатор конференции"
                 sx={{ width: '48%' }}
-                required
-                error={ !!validationErrors?.link_info }
-                helperText={validationErrors?.link_info}
               />
             </Grid>
 
             <Grid item>
-              <FormControl fullWidth error={ !!validationErrors.level }>
+              <FormControl fullWidth>
                 <InputLabel id="lesson-level-label">Уровень подготовки</InputLabel>
                 <Select
                   labelId="lesson-level-label"
@@ -347,7 +345,6 @@ const LessonCreate = () => {
                     </MenuItem>
                   ))}
                 </Select>
-                <FormHelperText>{ validationErrors?.level }</FormHelperText>
               </FormControl>
             </Grid>
 
@@ -366,9 +363,9 @@ const LessonCreate = () => {
               />
             </Grid>
 
-            <Grid item>
-              <Divider variant="middle" sx={{ paddingTop: '20px' }} />
-            </Grid>
+              <Grid item>
+                <Divider variant="middle" sx={{ paddingTop: '20px' }} />
+              </Grid>
 
             <RepeatLessons
               update={update}
@@ -381,25 +378,25 @@ const LessonCreate = () => {
               errorLessons={validationErrors.regularLessons}
             />
 
-            <Grid item>
-              <Divider variant="middle" sx={{ paddingTop: '20px' }} />
-            </Grid>
+              <Grid item>
+                <Divider variant="middle" sx={{ paddingTop: '20px' }} />
+              </Grid>
 
-            <PaymentMethod
-              update={update}
-              changeDonation={changeDonation}
-              payment={lessonData.payment}
-              price={lessonData.price}
+              <PaymentMethod
+                update={update}
+                changeDonation={changeDonation}
+                payment={lessonData.payment}
+                price={lessonData.price}
               error={validationErrors.payment}
-            />
-            <Grid item container sx={{ justifyContent: 'end', columnGap: '5%' }}>
-              <Button
-                size="large"
-                variant="text"
-                onClick={saveFormUsDraft}
+              />
+              <Grid item container sx={{ justifyContent: 'end', columnGap: '5%' }}>
+                <Button
+                  size="large"
+                  variant="text"
+                  onClick={saveFormUsDraft}
               >
-                Сохранить черновик
-              </Button>
+                  Сохранить черновик
+                </Button>
 
               <Button
                 size="large"
@@ -411,9 +408,10 @@ const LessonCreate = () => {
               </Button>
             </Grid>
 
-          </Grid>
-        </Container>
-      </form>
+            </Grid>
+          </Container>
+        </form>
+      </LayoutContainer>
       {isFormSend ? <Navigate to="/my-lessons" /> : ''}
       {location.pathname !== '/create-lesson' ? <AlertDialog /> : ''}
     </LocalizationProvider>

@@ -4,7 +4,7 @@ from articles.app.handlers.article_handlers import (
     ArticleListHandler,
     ArticleDetailHandler,
     ArticleListByCategoryHandler,
-    ArticleListBySearchQueryHandler,
+    ArticleListByTagHandler,
 )
 
 urlpatterns = [
@@ -15,5 +15,5 @@ urlpatterns = [
         ArticleListByCategoryHandler.as_view(),
         name="category",
     ),
-    path("search", ArticleListBySearchQueryHandler.as_view(), name="search"),
+    path("tag/<slug:tag_slug>", ArticleListByTagHandler.as_view(), name="tag"),
 ]
