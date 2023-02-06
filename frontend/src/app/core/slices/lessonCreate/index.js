@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import postLessonSlice from './postLesson';
 
 const initialState = {
-  lesson: [],
+  lessons: [],
   errorMessage: null,
 };
 
@@ -12,11 +12,11 @@ const postLessonInfoSlice = createSlice({
   initialState,
   extraReducers: {
     [postLessonSlice.fulfilled]: (state, action) => {
-      state.lesson = action.payload;
+      state.lessons = action.payload;
       state.errorMessage = null;
     },
     [postLessonSlice.rejected]: (state, action) => {
-      state.lesson = [];
+      state.lessons = [];
       state.errorMessage = action.payload;
     },
   },

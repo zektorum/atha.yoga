@@ -5,7 +5,7 @@ import './style.scss';
 
 const Logo = ({ shown }) => (
   <div className={`logo__container ${!shown ? 'logo__container--hidden' : ''}`}>
-    <img src={logo} alt="logo-image" />
+    <img src={logo} alt="Atha Yoga" />
   </div>
 );
 

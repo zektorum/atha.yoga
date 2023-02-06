@@ -1,5 +1,3 @@
-/* eslint-disable no-console */
-/* eslint-disable react/jsx-props-no-spreading */
 import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import 'dayjs/locale/ru';
@@ -35,7 +33,6 @@ import PaymentMethod from '../lesson_payment/index';
 import RepeatLessons from '../lesson_repeat/index';
 import LessonsService from '../../services/lessons';
 import { useDispatch, useSelector } from 'react-redux';
-import { setMessage } from '../../core/slices/message';
 import postLessonSlice from '../../core/slices/lessonCreate/postLesson';
 import AlertDialog from '../lesson_alert';
 
@@ -49,104 +46,83 @@ const LessonCreate = () => {
     link_info: '',
     level: [],
     complexity: 'EASY',
+
     duration: '',
     duration_number: '',
     repeat: 'once',
+
     start_datetime: '',
     deadline_datetime: '',
     dateForOnceLesson: null,
     timeForOnceLesson: null,
     startDateForRegularLesson: null,
     finishDateForRegularLesson: null,
+
     lessons: [],
     regularLessonsWithDate: [],
+
     payment: 'PAYMENT',
     donation: true,
     price: '',
     is_draft: false,
   });
-  const [errorMessageForLevel, setErrorMessageForLevel] = useState('');
-  const [errorMessageForCost, setErrorMessageForCost] = useState('');
-  const [errorMessageForOnceLessonDate, setErrorMessageForOnceLessonDate] = useState('');
-  const [errorMessageForOnceLessonTime, setErrorMessageForOnceLessonTime] = useState('');
-  const [errorMessageForStartRegularLessonDate, setErrorMessageForStartRegularLessonDate] = useState('');
-  const [errorMessageForFinishRegularLessonDate, setErrorMessageForFinishRegularLessonDate] = useState('');
-  const [errorMessageForRegularLessons, setErrorMessageForRegularLessons] = useState('');
-  const [errorMessageForLessonId, setErrorMessageForLessonId] = useState('');
   const [isFormSend, setIsFormSend] = useState(false);
-  
+  const [validationErrors, setValidationErrors] = useState({});
+
   const location = useLocation();
 
-  const getErrorMessageForCost = () => {
-    if (lessonData.payment === 'PAYMENT' && lessonData.price.length === 0) {
-      setErrorMessageForCost('Это поле не может быть пустым.')
-    } else {
-      setErrorMessageForCost('')
+  const getValidationFormErrorMessages = () => {
+    const nameValid = lessonData.name.length === 0;
+    let name = nameValid ? 'Это поле не может быть пустым.': '';
+    if (lessonData.name.length > 40) {
+      name = 'Название занятия не должно превышать 40 символов';
     }
-  }
 
-  const getErrorMessageForLessonId = () => {
-    if (lessonData.link_info.length === 0) {
-      setErrorMessageForLessonId('Это поле не может быть пустым.')
-    } else {
-      setErrorMessageForLessonId('')
+    const descriptionValid = lessonData.description.length === 0;
+    let description = descriptionValid ? 'Это поле не может быть пустым.': '';
+    if (lessonData.description.length > 150) {
+      description = 'Описание занятия не должно превышать 150 символов';
     }
-  }
 
-  const getErrorMessageForOnceLessonDate = () => {
-    if (lessonData.dateForOnceLesson === null && lessonData.repeat === 'once') {
-      setErrorMessageForOnceLessonDate('Это поле не может быть пустым.')
-    } else if (lessonData.dateForOnceLesson < Date.now()) {
-      console.log(Date.now())
-      setErrorMessageForOnceLessonDate('Дата должна быть не ранее сегодняшней')
-    } else {
-      setErrorMessageForOnceLessonDate('')
+    const paymentValid = lessonData.payment === 'PAYMENT' && !lessonData.price;
+    const payment = paymentValid ? 'Это поле не может быть пустым.': '';
+
+    const linkValid = lessonData.link.length === 0;
+    let link = linkValid ? 'Это поле не может быть пустым.': '';
+    if (!lessonData.link.match(/[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/)) {
+      link = 'Ссылка дожна быть в формате URL';
     }
-  }
 
-  const getErrorMessageForOnceLessonTime = () => {
-    if (lessonData.timeForOnceLesson === null && lessonData.repeat === 'once') {
-      setErrorMessageForOnceLessonTime('Это поле не может быть пустым.')
-    } else {
-      setErrorMessageForOnceLessonTime('')
+    const linkInfoValid = lessonData.link_info.length === 0;
+    const link_info = linkInfoValid ? 'Это поле не может быть пустым.': '';
+
+    const durationValid = lessonData.duration_number.length === 0;
+    const duration = durationValid ? 'Это поле не может быть пустым.': '';
+
+    const levelValid = lessonData.level.length === 0;
+    const level = levelValid ? 'Это поле не может быть пустым.': '';
+
+    const onceLessonTimeValid = lessonData.timeForOnceLesson === null && lessonData.repeat === 'once';
+    const onceLessonTime = onceLessonTimeValid ? 'Это поле не может быть пустым.': '';
+
+    const onceLessonDateValid = lessonData.dateForOnceLesson === null && lessonData.repeat === 'once';
+    let onceLessonDate = onceLessonDateValid ? 'Это поле не может быть пустым.': '';
+    if (lessonData.dateForOnceLesson < Date.now()) {
+      onceLessonDate = 'Дата должна быть не ранее сегодняшней';
     }
-  }
 
-  const getErrorMessageForStartRegularLessonDate = () => {
-    if (lessonData.startDateForRegularLesson === null && lessonData.repeat !== 'once') {
-      setErrorMessageForStartRegularLessonDate('Это поле не может быть пустым.')
-    } else {
-      setErrorMessageForStartRegularLessonDate('')
-    }
+    const regularLessonsFinishDateValid = lessonData.finishDateForRegularLesson === null && lessonData.repeat !== 'once';
+    const regularLessonsFinishDate = regularLessonsFinishDateValid ? 'Это поле не может быть пустым.': '';
+    
+    const regularLessonsValid = lessonData.lessons.length === 0 && lessonData.repeat !== 'once';
+    const regularLessons = regularLessonsValid ? 'Обязательно наличие одного цикла занятий.' : '';
+    
+    setValidationErrors({
+      ...validationErrors, name, description, payment, link, link_info, duration, level, onceLessonTime, onceLessonDate,
+      regularLessonsFinishDate, regularLessons
+    });
   }
-
-  const getErrorMessageForFinishRegularLessonDate = () => {
-    if (lessonData.finishDateForRegularLesson === null && lessonData.repeat !== 'once') {
-      setErrorMessageForFinishRegularLessonDate('Это поле не может быть пустым.')
-    } else {
-      setErrorMessageForFinishRegularLessonDate('')
-    }
-  }
-
-  const getErrorMessageForRegularLessons = () => {
-    if (lessonData.lessons.length === 0 && lessonData.repeat !== 'once') {
-      setErrorMessageForRegularLessons('Обязательно наличие одного цикла занятий.')
-    } else {
-      setErrorMessageForRegularLessons('')
-    }
-  }
-
-  const dispatch = useDispatch();
-  const { message } = useSelector(state => state.message)
  
-  const getErrorMessageForLevel = () => {
-    if (lessonData.level.length === 0) {
-      setErrorMessageForLevel('Это поле не может быть пустым.')
-    } else {
-      setErrorMessageForLevel('')
-    }
-  }
-
   const getStartDate = () => {
     const date = lessonData.dateForOnceLesson;
     const time = lessonData.timeForOnceLesson;
@@ -200,49 +176,29 @@ const LessonCreate = () => {
   };
 
   const saveFormUsDraft = () => {
-    console.log(location)
     getCorrectDateTime();
     getCorrectOtherData();
-    getErrorMessageForLevel();
-    getErrorMessageForCost();
-    getErrorMessageForOnceLessonDate();
-    getErrorMessageForOnceLessonTime();
-    getErrorMessageForFinishRegularLessonDate();
-    getErrorMessageForStartRegularLessonDate();
-    getErrorMessageForRegularLessons();
-    getErrorMessageForLessonId();
+    getValidationFormErrorMessages();
     setLessonData({
       ...lessonData,
-      is_draft: false,
+      is_draft: true,
     });
-    console.log(lessonData);
-    console.warn(message)
-    dispatch(postLessonSlice({ ...lessonData }));
-    LessonsService.postLesson(lessonData)
-    .then(setIsFormSend(true))
   };
 
   const saveForm = () => {
     getCorrectDateTime();
     getCorrectOtherData();
-    getErrorMessageForLevel();
-    getErrorMessageForCost();
-    getErrorMessageForOnceLessonDate();
-    getErrorMessageForOnceLessonTime();
-    getErrorMessageForFinishRegularLessonDate();
-    getErrorMessageForStartRegularLessonDate();
-    getErrorMessageForRegularLessons();
-    getErrorMessageForLessonId();
+    getValidationFormErrorMessages();
     setLessonData({
       ...lessonData,
       is_draft: false,
     });
-    console.log(lessonData);
-    console.warn(message)
-    dispatch(postLessonSlice({ ...lessonData }));
+  };
+
+  const postLessonData = () => {
     LessonsService.postLesson(lessonData)
     .then(setIsFormSend(true))
-  };
+  }
 
   const changeDonation = e => {
     const value = !(e.target.value === 'on');
@@ -269,6 +225,7 @@ const LessonCreate = () => {
       <Header title="Создание занятия" withBackBtn />
       <form onSubmit={e => {
         e.preventDefault();
+        postLessonData();
       }}
       >
         <Container sx={{ display: 'flex', justifyContent: 'center' }}>
@@ -292,8 +249,8 @@ const LessonCreate = () => {
                 value={lessonData.name}
                 required
                 fullWidth
-                error={ !!message?.invalid?.name }
-                helperText={message?.invalid?.name}
+                error={ !!validationErrors?.name }
+                helperText={validationErrors?.name}
               />
             </Grid>
 
@@ -309,8 +266,8 @@ const LessonCreate = () => {
                 fullWidth
                 required
                 rows={4}
-                error={ !!message?.invalid?.description }
-                helperText={message?.invalid?.description}
+                error={ !!validationErrors?.description }
+                helperText={validationErrors?.description}
               />
             </Grid>
 
@@ -350,8 +307,8 @@ const LessonCreate = () => {
                 onChange={update}
                 sx={{ width: '48%' }}
                 required
-                error={ !!message?.invalid?.link }
-                helperText={message?.invalid?.link}
+                error={ !!validationErrors?.link }
+                helperText={validationErrors?.link}
               />
 
               <TextField
@@ -363,13 +320,13 @@ const LessonCreate = () => {
                 placeholder="Идентификатор конференции"
                 sx={{ width: '48%' }}
                 required
-                error={ !!errorMessageForLessonId }
-                helperText={errorMessageForLessonId}
+                error={ !!validationErrors?.link_info }
+                helperText={validationErrors?.link_info}
               />
             </Grid>
 
             <Grid item>
-              <FormControl fullWidth error={ !!errorMessageForLevel }>
+              <FormControl fullWidth error={ !!validationErrors.level }>
                 <InputLabel id="lesson-level-label">Уровень подготовки</InputLabel>
                 <Select
                   labelId="lesson-level-label"
@@ -390,7 +347,7 @@ const LessonCreate = () => {
                     </MenuItem>
                   ))}
                 </Select>
-                <FormHelperText>{ errorMessageForLevel }</FormHelperText>
+                <FormHelperText>{ validationErrors?.level }</FormHelperText>
               </FormControl>
             </Grid>
 
@@ -404,8 +361,8 @@ const LessonCreate = () => {
                 required
                 value={lessonData.duration_number}
                 sx={{ width: '49%' }}
-                error={ !!message?.invalid?.duration }
-                helperText={message?.invalid?.duration}
+                error={ !!validationErrors?.duration }
+                helperText={validationErrors?.duration}
               />
             </Grid>
 
@@ -417,12 +374,11 @@ const LessonCreate = () => {
               update={update}
               lessonData={lessonData}
               setLessonData={setLessonData}
-              errorDateForOnceLesson={errorMessageForOnceLessonDate}
-              errorTimeForOnceLesson={errorMessageForOnceLessonTime}
-              errorStartForRegularLesson={errorMessageForStartRegularLessonDate}
-              errorFinishForRegularLesson={errorMessageForFinishRegularLessonDate}
-              errorLessons={errorMessageForRegularLessons}
-              errorMessage={message}
+              errorDateForOnceLesson={validationErrors.onceLessonDate}
+              errorTimeForOnceLesson={validationErrors.onceLessonTime}
+              errorStartForRegularLesson={validationErrors.regularLessonsFinishDate}
+              errorFinishForRegularLesson={validationErrors.regularLessonsFinishDate}
+              errorLessons={validationErrors.regularLessons}
             />
 
             <Grid item>
@@ -434,7 +390,7 @@ const LessonCreate = () => {
               changeDonation={changeDonation}
               payment={lessonData.payment}
               price={lessonData.price}
-              error={errorMessageForCost}
+              error={validationErrors.payment}
             />
             <Grid item container sx={{ justifyContent: 'end', columnGap: '5%' }}>
               <Button

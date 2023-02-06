@@ -1,8 +1,7 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable react/jsx-props-no-spreading */
 import React, {useState} from 'react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ru';
+import {dateRange, getDay} from './helper';
 import {DatePicker} from '@mui/x-date-pickers/DatePicker';
 import {TimePicker} from '@mui/x-date-pickers/TimePicker';
 import {
@@ -23,29 +22,6 @@ import {
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import DateRangeOutlinedIcon from '@mui/icons-material/DateRangeOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
-import { useDispatch, useSelector } from 'react-redux';
-import { setMessage } from '../../core/slices/message';
-import postLessonSlice from '../../core/slices/lessonCreate/postLesson';
-
-const dateRange = {
-  'Понедельник': 0,
-  'Вторник': 1,
-  'Среда': 2,
-  'Четверг': 3,
-  'Пятница': 4,
-  'Суббота': 5,
-  'Восресенье': 6,
-};
-
-const getDay = (num) => {
-  let day;
-  for (let el in dateRange) {
-    if (dateRange[el] === num) {
-      day = el
-    }
-  }
-  return day;
-};
 
 const OnceLesson = ({
   date, time, setLessonData, lessonData, errorTime, errorDate, error
@@ -98,7 +74,7 @@ const OnceLesson = ({
 };
 
 const RegularLessons = ({
-  lessons, start_datetime, deadline_datetime, lessonData, setLessonData, errorStartDate, errorFinishDate, errorLessons
+  start_datetime, deadline_datetime, lessonData, setLessonData, errorStartDate, errorFinishDate, errorLessons
 }) => {
   const [regularLessonDay, setRegularLessonDay] = useState('');
   const [redularLessonTime, setRegularLessonTime] = useState(null);
@@ -119,7 +95,7 @@ const RegularLessons = ({
 
   const getLessonInfo = () => {
     const time = dayjs(redularLessonTime).minute() > 9 ? `${dayjs(redularLessonTime).hour()}:${dayjs(redularLessonTime).minute()}` : `${dayjs(redularLessonTime).hour()}:0${dayjs(redularLessonTime).minute()}`;
-    const copyRegularLessons = [...lessons];
+    const copyRegularLessons = [...lessonData.lessons];
     copyRegularLessons.push({ weekday: dateRange[regularLessonDay], start_time: time });
     setLessonData({
       ...lessonData,
@@ -132,9 +108,6 @@ const RegularLessons = ({
   const deleteLesson = lesson => {
     setLessonData(lessonData.lessons.filter(p => p !== lesson));
   };
-
-  const dispatch = useDispatch();
-  const { message } = useSelector(state => state.message)
 
   return (
     <>
@@ -159,7 +132,6 @@ const RegularLessons = ({
           onChange={newValue => setFinishDate(newValue)}
           renderInput={params => <TextField {...params} sx={{ width: '35%' }} required error={ !!errorFinishDate } helperText={errorFinishDate}/>}
         />
-
         <Typography
           variant="modal"
           sx={{
@@ -215,7 +187,7 @@ const RegularLessons = ({
 
         <Button
           variant="text"
-        //  disabled={regularLessonDay.length || lessonTime === null}
+          disabled={!regularLessonDay.length || !redularLessonTime}
           onClick={getLessonInfo}
         >
           Добавить занятие
@@ -233,7 +205,7 @@ const RegularLessons = ({
             >
               <Box sx={{ width: '10%', display: 'flex', justifyContent: 'space-around' }}>
                 <DateRangeOutlinedIcon sx={{ color: '#0D6EFD', marginRight: '5px' }} />
-                <Typography variant="modal" sx={{ fontSize: '16px' }}>{getDay(lesson.day)}</Typography>
+                <Typography variant="modal" sx={{ fontSize: '16px' }}>{getDay(lesson.weekday)}</Typography>
                 <AccessTimeIcon sx={{ color: '#0D6EFD', marginLeft: '25px', marginRight: '5px' }} />
                 <Typography variant="modal" sx={{ fontSize: '16px' }}>{lesson.start_time}</Typography>
               </Box>
@@ -291,7 +263,6 @@ const RepeatLessons = ({ update, lessonData, setLessonData, errorDateForOnceLess
       )
       : (
         <RegularLessons
-          lessons={lessonData.lessons}
           start_datetime={lessonData.startDateForRegularLesson}
           deadline_datetime={lessonData.finishDateForRegularLesson}
           lessonData={lessonData}
