@@ -257,3 +257,17 @@ class CourseArchivingHandler(GenericHandler):
         ).archive()
 
         return Response(status=status.HTTP_200_OK)
+
+
+@permission_classes([IsTeacher])
+class ImCoursesRetrieveHandler(Handler):
+    def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        repository = CourseRepository(user=request.user)
+
+        courses = repository.find(user=request.user)
+
+        return Response(
+            Pagination(
+                data=courses, request=request, resource=CourseResource
+            ).paginate()
+        )
