@@ -195,7 +195,7 @@ class ShortBaseCourseResource(ModelSerializer):
 
 class ShortImCourseResourse(ModelSerializer):
     base_course = ShortBaseCourseResource()
-    lesson = LessonResource(many=True, allow_null=True, source="lessons_set")
+    lessons = LessonResource(many=True, allow_null=True, source="lessons_set")
 
     class Meta:
         model = Course
@@ -204,5 +204,5 @@ class ShortImCourseResourse(ModelSerializer):
             "deadline_datetime",
             "status",
             "base_course",
-            "lesson",
+            "lessons",
         ]

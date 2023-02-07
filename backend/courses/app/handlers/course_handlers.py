@@ -26,7 +26,6 @@ from courses.app.http.resources.course_resources import (
     CourseCardResource, ShortImCourseResourse,
 )
 from courses.app.repositories.course_repository import CourseRepository
-from courses.app.repositories.lesson_repository import LessonRepository
 from courses.app.repositories.transaction_repository import TicketTransactionRepository
 from courses.app.services.course_service import (
     BaseCourseUpdator,
@@ -228,7 +227,7 @@ class CourseStatusChangeHandler(GenericHandler):
     serializer_class = ChangeCourseStateRequest
 
     def put(
-        self, request: Request, course_pk: int, *args: Any, **kwargs: Any
+            self, request: Request, course_pk: int, *args: Any, **kwargs: Any
     ) -> Response:
         data = self.serializer_class(data=self.request.data)
         data.is_valid(raise_exception=True)
@@ -266,6 +265,9 @@ class ImCoursesRetrieveHandler(Handler):
         repository = CourseRepository(user=request.user)
 
         courses = repository.find(user=request.user)
+        for i in courses:
+            i.nearest_lesson = i.lessons_set.filter().first()
+            print(i.nearest_lesson)
 
         return Response(
             Pagination(
