@@ -76,9 +76,10 @@ class UserDetailedProfileResource(ModelSerializer):
             "email",
             "about",
             "avatar",
-            "public_teacher_profiles",
+            "teacher_profiles",
             "gender",
             "birthday",
+            "rate",
             "hide_birthday",
         ]
 
