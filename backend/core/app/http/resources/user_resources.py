@@ -81,6 +81,7 @@ class UserDetailedProfileResource(ModelSerializer):
             "birthday",
             "rate",
             "hide_birthday",
+            "roles",
         ]
 
 
@@ -110,4 +111,5 @@ class UserResource(ModelSerializer):
             "rate",
             "gender",
             "birthday",
+            "roles",
         ]
