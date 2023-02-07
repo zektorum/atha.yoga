@@ -1,5 +1,5 @@
-import React from 'react';
-import { Outlet, NavLink } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Outlet, NavLink, useLocation } from 'react-router-dom';
 import {
   Box, BottomNavigation, BottomNavigationAction, Paper,
 } from '@mui/material';
@@ -47,11 +47,35 @@ const menuItemStyle = {
       color: 'primary.main',
     },
   },
+  '& .MuiBottomNavigationAction-label': {
+    height: '16px',
+  },
+};
+
+const menuItemOtherStyle = {
+  '& .MuiSvgIcon-root': {
+    color: 'primary.main',
+  },
 };
 
 const ProfileLayout = ({ auth }) => {
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up('sm'));
+
+  const currentUrl = useLocation();
+  const [prev, setPrev] = useState('');
+  const menuPath = ['search-lessons', 'favorites', 'my-lessons', 'calendar', 'profile'];
+
+  useEffect(() => {
+    menuPath.map(el => {
+      if (currentUrl.pathname.includes(el)) {
+        setPrev(currentUrl.pathname);
+      } else if (currentUrl.pathname.includes('settings')) {
+        setPrev('');
+      }
+      return null;
+    });
+  }, [currentUrl]);
 
   return (
     <Box sx={{ display: 'flex', maxWidth: '100vw', maxHeight: '100vh' }}>
@@ -63,7 +87,7 @@ const ProfileLayout = ({ auth }) => {
           maxHeight: '100vh',
         }}
         >
-          <Menu auth={auth} menuItems={menuItems} />
+          <Menu auth={auth} menuItems={menuItems} prev={prev} />
         </Box>
       )}
 
@@ -94,7 +118,7 @@ const ProfileLayout = ({ auth }) => {
             {menuItems.map(el => (
               <BottomNavigationAction
                 key={el.title}
-                sx={{ ...menuItemStyle }}
+                sx={[{ ...menuItemStyle }, prev === el.link && { ...menuItemOtherStyle }]}
                 component={NavLink}
                 to={el.link}
                 label={el.title}
