@@ -23,9 +23,10 @@ from courses.app.http.requests.course_requests import (
 from courses.app.http.resources.context import BaseCourseResourceContext
 from courses.app.http.resources.course_resources import (
     CourseResource,
-    CourseCardResource,
+    CourseCardResource, ShortImCourseResourse,
 )
 from courses.app.repositories.course_repository import CourseRepository
+from courses.app.repositories.lesson_repository import LessonRepository
 from courses.app.repositories.transaction_repository import TicketTransactionRepository
 from courses.app.services.course_service import (
     BaseCourseUpdator,
@@ -268,6 +269,6 @@ class ImCoursesRetrieveHandler(Handler):
 
         return Response(
             Pagination(
-                data=courses, request=request, resource=CourseResource
+                data=courses, request=request, resource=ShortImCourseResourse
             ).paginate()
         )
