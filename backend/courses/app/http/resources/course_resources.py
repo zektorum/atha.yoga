@@ -182,3 +182,28 @@ class CourseCardResource(ModelSerializer):
             "rate_mean",
             "schedule",
         ]
+
+
+class ShortBaseCourseResource(ModelSerializer):
+    class Meta:
+        model = BaseCourse
+        fields = [
+            "id",
+            "name",
+            "teacher_id",
+        ]
+
+
+class ShortImCourseResourse(ModelSerializer):
+    base_course = ShortBaseCourseResource()
+    lessons = LessonResource(many=True, allow_null=True, source="lessons_set")
+
+    class Meta:
+        model = Course
+        fields = [
+            "id",
+            "deadline_datetime",
+            "status",
+            "base_course",
+            "lessons",
+        ]
