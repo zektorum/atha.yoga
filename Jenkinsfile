@@ -38,7 +38,7 @@ pipeline {
         CI_ENV_FILENAME = ""
         CI_TEST_ENV_FILENAME = ""
         PROJECT_NAME = ""
-        TESTS_NAME = ""
+        TESTING_PROJECT_NAME = ""
     }
     stages {
         stage('Build') {
@@ -57,35 +57,34 @@ pipeline {
                         CI_ENV_FILENAME = ".env/.ci-env.${BRANCH_NAME}"
                         CI_TEST_ENV_FILENAME = ".env/.ci-env.${BRANCH_NAME}.test"
                         PROJECT_NAME = "${BRANCH_NAME}"
-                        TESTS_NAME = "test"
+                        TESTING_PROJECT_NAME = "${BRANCH_NAME}.test"
                     } else if (params.BUILD_MODE == "Test pipeline") {
                         echo 'Build mode: Test pipeline'
-                        BRANCH_NAME = "develop"
                         CI_ENV_FILENAME = ".env/.ci-testing-env"
                         CI_TEST_ENV_FILENAME = ".env/.ci-testing-env.test"
                         PROJECT_NAME = "ci-testing.${BRANCH_NAME}"
-                        TESTS_NAME = "ci-testing.test"
+                        TESTING_PROJECT_NAME = "ci-testing.test"
                     }
                 }
                 echo 'Setting up environment...'
                 sh """
-                    cat $CI_TEST_ENV_FILENAME > backend/.env.test
-                    cat backend/.env.$BRANCH_NAME >> backend/.env.test
+                    cat backend/.env.$BRANCH_NAME > backend/.env.test
+                    cat $CI_TEST_ENV_FILENAME >> backend/.env.test
                     cat $CI_ENV_FILENAME > backend/.env
                     cat backend/.env.$BRANCH_NAME >> backend/.env
                     echo REFRESH_DATABASE=$REFRESH_DATABASE >> backend/.env
                     chmod g+w backend/.env.*
                 """
                 echo 'Building test environment...'
-                sh "COMPOSE_PROJECT_NAME=$TESTS_NAME docker-compose --env-file backend/.env.test \
-                    -p $TESTS_NAME build"
+                sh "COMPOSE_PROJECT_NAME=$TESTING_PROJECT_NAME docker-compose --env-file backend/.env.test \
+                    -p $TESTING_PROJECT_NAME build"
             }
         }
         stage('Run') {
             steps {
                 echo 'Running test environment...'
-                 sh "COMPOSE_PROJECT_NAME=$TESTS_NAME docker-compose --env-file backend/.env.test \
-                     -p $TESTS_NAME up -d --force-recreate"
+                 sh "COMPOSE_PROJECT_NAME=$TESTING_PROJECT_NAME docker-compose --env-file backend/.env.test \
+                     -p $TESTING_PROJECT_NAME up -d --force-recreate"
             }
         }
         stage('Test') {
@@ -93,8 +92,8 @@ pipeline {
                 script {
                     echo 'Testing started...'
                     waitUntil {
-                        EXIT_CODE = getExitCode("cypress.${TESTS_NAME}")
-                        STATUS = getContainerStatus("cypress.${TESTS_NAME}")
+                        EXIT_CODE = getExitCode("cypress.${TESTING_PROJECT_NAME}")
+                        STATUS = getContainerStatus("cypress.${TESTING_PROJECT_NAME}")
                         if (STATUS == "exited\n" && EXIT_CODE == "0\n") {
                             return true;
                         } else if (STATUS == "exited\n" && !(EXIT_CODE == "0\n")) {
@@ -116,16 +115,16 @@ pipeline {
                 script {
                    def containers = "backend frontend elasticsearch db redis dozzle rabbitmq flower".split(" ")
                    for (container in containers) {
-                        STATUS = getContainerStatus("${container}.${TESTS_NAME}")
+                        STATUS = getContainerStatus("${container}.${TESTING_PROJECT_NAME}")
                         if (STATUS == "exited\n") {
-                            sh "COMPOSE_PROJECT_NAME=$TESTS_NAME docker-compose --env-file backend/.env.test \
-                                -p $TESTS_NAME down"
-                            error "${container}.${TESTS_NAME} failed. Exiting..."
+                            sh "COMPOSE_PROJECT_NAME=$TESTING_PROJECT_NAME docker-compose --env-file backend/.env.test \
+                                -p $TESTING_PROJECT_NAME down"
+                            error "${container}.${TESTING_PROJECT_NAME} failed. Exiting..."
                         }
                    }
                    echo 'Testing was successful. Stopping test environment...'
-                   sh "COMPOSE_PROJECT_NAME=$TESTS_NAME docker-compose --env-file backend/.env.test \
-                       -p $TESTS_NAME down"
+                   sh "COMPOSE_PROJECT_NAME=$TESTING_PROJECT_NAME docker-compose --env-file backend/.env.test \
+                       -p $TESTING_PROJECT_NAME down"
                 }
             }
         }

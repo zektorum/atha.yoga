@@ -5,8 +5,7 @@ services:
     build: backend/
     container_name: "backend.${COMPOSE_PROJECT_NAME}"
     env_file:
-      - "${ENV_FILE}"
-      - ".env/.ci-env.${COMPOSE_PROJECT_NAME}"
+      - "backend/.env"
     environment:
       - "REFRESH_DATABASE=${REFRESH_DATABASE}"
     ports:
@@ -21,7 +20,7 @@ services:
     build: frontend/
     container_name: "frontend.${COMPOSE_PROJECT_NAME}"
     env_file:
-      - ".env/.ci-env.${COMPOSE_PROJECT_NAME}"
+      - "backend/.env"
     ports:
       - "${FRONTEND_PORT}:8080"
 
@@ -29,7 +28,7 @@ services:
     build: frontend/tests/
     container_name: "cypress.${COMPOSE_PROJECT_NAME}"
     env_file:
-      - ".env/.ci-env.${COMPOSE_PROJECT_NAME}"
+      - "backend/.env"
     environment:
       - "CYPRESS_baseUrl=http://frontend.${COMPOSE_PROJECT_NAME}:8080"
       - "BRANCH_NAME=${CONTAINER_SUFFIX}"
@@ -43,8 +42,7 @@ services:
     image: postgres:14
     container_name: "db.${COMPOSE_PROJECT_NAME}"
     env_file:
-      - "${ENV_FILE}"
-      - ".env/.ci-env.${COMPOSE_PROJECT_NAME}"
+      - "backend/.env"
     ports:
       - "${DATABASE_PORT}:5432"
     volumes:
@@ -54,7 +52,7 @@ services:
     container_name: "dozzle.${COMPOSE_PROJECT_NAME}"
     image: amir20/dozzle:v4.4.1
     env_file:
-      - ".env/.ci-env.${COMPOSE_PROJECT_NAME}"
+      - "backend/.env"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     ports:
@@ -66,8 +64,7 @@ services:
     image: elasticsearch:7.17.5
     container_name: "elasticsearch.${COMPOSE_PROJECT_NAME}"
     env_file:
-      - "${ENV_FILE}"
-      - ".env/.ci-env.${COMPOSE_PROJECT_NAME}"
+      - "backend/.env"
     ports:
       - "${ELASTIC_PORT}:9200"
     volumes:
@@ -88,8 +85,7 @@ services:
       - --requirepass
       - ${REDIS_PASSWORD}
     env_file:
-      - "${ENV_FILE}"
-      - ".env/.ci-env.${COMPOSE_PROJECT_NAME}"
+      - "backend/.env"
     environment:
       - "REDIS_PASSWORD=${REDIS_PASSWORD}"
       - "REDIS_PORT=${REDIS_PORT}"
@@ -102,11 +98,10 @@ services:
     image: rabbitmq:3.11.7-management
     container_name: "rabbitmq.${COMPOSE_PROJECT_NAME}"
     env_file:
-      - "${ENV_FILE}"
-      - ".env/.ci-env.${COMPOSE_PROJECT_NAME}"
+      - "backend/.env"
     ports:
-      - "${RABBITMQ_PORT}:5672"
-      - "${RABBITMQ_MANAGEMENT_PORT}:15672"
+      - ${RABBITMQ_PORT}:5672
+      - ${RABBITMQ_MANAGEMENT_PORT}:15672
     environment:
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
@@ -119,8 +114,7 @@ services:
     command: "celery flower --broker_api=http://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@\
               ${RABBITMQ_HOST}:${RABBITMQ_MANAGEMENT_PORT}/api/"
     env_file:
-      - "${ENV_FILE}"
-      - ".env/.ci-env.${COMPOSE_PROJECT_NAME}"
+      - "backend/.env"
     ports:
       - "${FLOWER_PORT}:5555"
     environment:

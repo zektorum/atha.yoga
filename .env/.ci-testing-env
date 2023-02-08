@@ -10,3 +10,7 @@ REDIS_PORT=14700
 FLOWER_PORT=14400
 RABBITMQ_PORT=11501
 RABBITMQ_MANAGEMENT_PORT=17300
+
+POSTGRES_HOST=db.ci-testing.develop
+ELASTIC_HOST=elasticsearch.ci-testing.develop
+RABBITMQ_HOST=rabbitmq.ci-testing.develop
