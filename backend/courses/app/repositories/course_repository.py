@@ -31,7 +31,7 @@ class CourseRepository(BaseRepository):
     def store(self, course: Course) -> None:
         course.save()
 
-    def find(self, user: User) -> QuerySet[Course]:
+    def find_by_teacher(self, user: User) -> QuerySet[Course]:
         return self.model.objects.filter(base_course__teacher_id=user)
 
     def find_by_id(

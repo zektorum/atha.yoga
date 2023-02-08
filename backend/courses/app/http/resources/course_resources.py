@@ -188,6 +188,7 @@ class ShortBaseCourseResource(ModelSerializer):
     class Meta:
         model = BaseCourse
         fields = [
+            "id",
             "name",
             "teacher_id",
         ]

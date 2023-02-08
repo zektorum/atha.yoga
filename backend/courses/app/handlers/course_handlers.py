@@ -264,10 +264,7 @@ class ImCoursesRetrieveHandler(Handler):
     def get(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         repository = CourseRepository(user=request.user)
 
-        courses = repository.find(user=request.user)
-        for i in courses:
-            i.nearest_lesson = i.lessons_set.filter().first()
-            print(i.nearest_lesson)
+        courses = repository.find_by_teacher(user=request.user)
 
         return Response(
             Pagination(
