@@ -107,7 +107,7 @@ const ProfileLayout = ({ auth }) => {
       {!matches && (
         <Paper
           sx={{
-            position: 'fixed', bottom: 0, left: 0, right: 0,
+            position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 1,
           }}
           elevation={3}
         >
