@@ -39,6 +39,7 @@ from courses.models import (
     BaseCourse,
     CourseStatuses,
     LessonEnrolledUser,
+    CourseTypes,
 )
 
 
@@ -60,6 +61,11 @@ class CourseCreator:
         base_course.complexity = self._data["complexity"]
         base_course.level = list(self._data["level"])
         base_course.teacher = self._user
+        if base_course.course_type == CourseTypes.ONLINE:
+            if limit := self._data["lesson_participants_limit"]:
+                base_course.lesson_participants_limit = limit
+        else:
+            base_course.lesson_participants_limit = None
         return base_course
 
     def _course(self, base_course: BaseCourse) -> Course:
