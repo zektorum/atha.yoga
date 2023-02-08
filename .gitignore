@@ -26,6 +26,3 @@ backend/core/logs/
 cache/
 */celerybeat*
 volumes/*
-
-.package-lock.json
-node_modules/.package-lock.json
