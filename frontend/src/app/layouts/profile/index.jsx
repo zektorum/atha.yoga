@@ -16,7 +16,7 @@ import Menu from '../../components/menu';
 const menuItems = [
   {
     title: 'Поиск',
-    icon: <SearchIcon color="disabled" sx={{ }}fontSize="medium" />,
+    icon: <SearchIcon color="disabled" fontSize="medium" />,
     link: '/search-lessons',
   },
   {
