@@ -16,7 +16,7 @@ import Menu from '../../components/menu';
 const menuItems = [
   {
     title: 'Поиск',
-    icon: <SearchIcon color="disabled" fontSize="medium" />,
+    icon: <SearchIcon color="disabled" sx={{ }}fontSize="medium" />,
     link: '/search-lessons',
   },
   {
@@ -47,6 +47,10 @@ const menuItemStyle = {
       color: 'primary.main',
     },
   },
+  '& .MuiSvgIcon-root': {
+    width: '24px',
+    height: '24px',
+  }
 };
 
 const menuItemOtherStyle = {

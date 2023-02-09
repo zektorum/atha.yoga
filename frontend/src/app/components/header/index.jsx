@@ -80,11 +80,13 @@ const Header = ({ title, withBackBtn = false }) => {
             </Typography>
           </>
           )}
+          { !withBackBtn && (
           <Typography
             sx={{ fontSize: { xs: '16px', sm: '18px' }, fontWeight: '500' }}
           >
             {title}
           </Typography>
+          )}
         </Stack>
         {!withBackBtn
           && (
