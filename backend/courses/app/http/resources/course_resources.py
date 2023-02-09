@@ -96,6 +96,7 @@ class BaseCourseResource(ModelSerializer):
             "course_type",
             "level",
             "teacher",
+            "lesson_participants_limit",
         ]
 
 
@@ -133,6 +134,7 @@ class BaseCourseCardResource(ModelSerializer):
             "course_type",
             "level",
             "teacher",
+            "lesson_participants_limit",
         ]
 
 
