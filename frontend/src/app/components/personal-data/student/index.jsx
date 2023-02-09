@@ -120,15 +120,15 @@ const PersonDataStudent = () => {
                   backgroundSize: 'cover',
                   backgroundPosition: 'center',
                   width: '100%',
-                  height: { xs: '120px', md: '223px' },
-                  borderRadius: '10px 10px 0px 0px',
+                  height: { xs: '120px', md: '168px' },
+                  borderRadius: '8px 8px 0px 0px',
                 }}
                 alt="img-back"
               />
             )
             : (
               <Box sx={{
-                backgroundColor: '#EEEEEE', height: { xs: '120px', md: '223px' }, borderRadius: '10px 10px 0px 0px',
+                backgroundColor: '#EEEEEE', height: { xs: '120px', md: '168px' }, borderRadius: '8px 8px 0px 0px',
               }}
               />
             )}
@@ -156,7 +156,7 @@ const PersonDataStudent = () => {
                   backgroundColor: '#fff',
                   width: { md: '124px', xs: '95px' },
                   height: { md: '124px', xs: '95px' },
-                  marginTop: { md: '-114px', xs: '-77px' },
+                  marginTop: { md: '-120px', xs: '-80px' },
                   mx: 'auto',
                   marginBottom: '8px',
                   border: '2px solid #fff',
@@ -174,7 +174,7 @@ const PersonDataStudent = () => {
                 sx={{
                   width: { md: '124px', xs: '95px' },
                   height: { md: '124px', xs: '95px' },
-                  marginTop: { md: '-114px', xs: '-77px' },
+                  marginTop: { md: '-120px', xs: '-80px' },
                   mx: 'auto',
                   mb: '8px',
                   border: '2px solid #fff',
