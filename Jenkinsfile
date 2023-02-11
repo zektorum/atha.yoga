@@ -66,13 +66,10 @@ pipeline {
                         TESTING_PROJECT_NAME = "ci-testing.test"
                     }
                 }
-                echo 'Setting up environment...'
+                echo 'Setting up testing environment...'
                 sh """
-                    cat backend/.env.$BRANCH_NAME > backend/.env.test
-                    cat $CI_TEST_ENV_FILENAME >> backend/.env.test
-                    cat $CI_ENV_FILENAME > backend/.env
-                    cat backend/.env.$BRANCH_NAME >> backend/.env
-                    echo REFRESH_DATABASE=$REFRESH_DATABASE >> backend/.env
+                    cat backend/.env.$BRANCH_NAME > backend/.env
+                    cat $CI_TEST_ENV_FILENAME >> backend/.env
                     chmod g+w backend/.env.*
                 """
                 echo 'Building test environment...'
@@ -130,6 +127,12 @@ pipeline {
         }
         stage('Deploy') {
             steps {
+                echo 'Setting up project environment...'
+                sh """
+                    cat $CI_ENV_FILENAME > backend/.env
+                    cat backend/.env.$BRANCH_NAME >> backend/.env
+                    echo REFRESH_DATABASE=$REFRESH_DATABASE >> backend/.env
+                """
                 echo 'Building project environment...'
                 sh "COMPOSE_PROJECT_NAME=$PROJECT_NAME docker-compose --env-file backend/.env \
                     -p $PROJECT_NAME up -d --build --force-recreate"
