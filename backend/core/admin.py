@@ -121,7 +121,7 @@ class AppealSupportAdmin(admin.ModelAdmin):
     )
     list_filter = ("created_at", "updated_at")
     date_hierarchy = "created_at"
-    actions = ["mailing_reject_appeal", "mark_in_process", "mailing"]
+    actions = ["mailing_reject_appeal", "mark_in_process", "mark_closed"]
 
     @admin.action(description="Отказать")
     def mailing_reject_appeal(self, request: WSGIRequest, queryset: QuerySet[AppealSupport]):
