@@ -5,6 +5,6 @@ from core.models import AppealSupportCategories
 
 
 class AppealSupportRequest(UnimplementedSerializer):
-    category = serializers.ChoiceField(choices=AppealSupportCategories.choices)
-    title = serializers.CharField(max_length=120)
+    category = serializers.CharField(max_length=30)
+    title = serializers.CharField(max_length=50)
     content = serializers.CharField(max_length=1200)
