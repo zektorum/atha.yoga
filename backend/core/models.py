@@ -283,6 +283,9 @@ class AppealSupportStatus(models.TextChoices):
 class AppealSupportCategory(models.Model):
     category = models.CharField("Категория", max_length=30)
 
+    def __str__(self):
+        return self.category
+
     class Meta:
         verbose_name = "категорию"
         verbose_name_plural = "Категории обращения в поддержку"
