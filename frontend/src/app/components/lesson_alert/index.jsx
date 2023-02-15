@@ -1,17 +1,25 @@
-/* eslint-disable react/prop-types */
-import React, { useState } from 'react';
-import {
-  Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography,
-} from '@mui/material';
+import React, {useState} from 'react';
+import {Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography,} from '@mui/material';
+import PropTypes from 'prop-types';
+import {styled} from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import { useNavigate } from 'react-router-dom';
+
+const BootstrapDialog = styled(Dialog)(({ theme }) => ({
+  '& .MuiDialogContent-root': {
+    padding: theme.spacing(2),
+  },
+  '& .MuiDialogActions-root': {
+    padding: theme.spacing(1),
+  },
+  backdropFilter: 'blur(5px)',
+}));
 
 const CustomDialogTitle = props => {
-  const { children, onClose } = props;
+  const { children, onClose, ...other } = props;
 
   return (
-    <DialogTitle sx={{ m: 0, p: 2, width: '600px' }}>
+    <DialogTitle sx={{ m: 0, p: 2, width: '600px' }} {...other}>
       {children}
       {onClose ? (
         <IconButton
@@ -31,29 +39,27 @@ const CustomDialogTitle = props => {
   );
 };
 
-const DraftAlert = ({ saveFormUsDraft }) => {
-  const [open, setOpen] = useState(false);
+CustomDialogTitle.propTypes = {
+  children: PropTypes.node,
+  onClose: PropTypes.func.isRequired,
+};
 
-  const navigate = useNavigate();
+const AlertDialog = () => {
+  const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
     setOpen(true);
   };
   const handleClose = () => {
     setOpen(false);
-    saveFormUsDraft();
   };
 
   return (
     <div>
-      <Button
-        fullWidth
-        variant="text"
-        onClick={handleClickOpen}
-      >
-        Сохранить черновик
+      <Button variant="outlined" onClick={handleClickOpen}>
+        Open dialog
       </Button>
-      <Dialog
+      <BootstrapDialog
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
         open={open}
@@ -67,16 +73,16 @@ const DraftAlert = ({ saveFormUsDraft }) => {
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => navigate(-1)}>
+          <Button onClick={handleClose}>
             Не сохранять
           </Button>
           <Button autoFocus onClick={handleClose}>
             Сохранить
           </Button>
         </DialogActions>
-      </Dialog>
+      </BootstrapDialog>
     </div>
   );
 };
 
-export default DraftAlert;
+export default AlertDialog;
