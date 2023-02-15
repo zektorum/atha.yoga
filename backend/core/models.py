@@ -287,7 +287,7 @@ class AppealSupportCategory(models.Model):
         return self.category
 
     class Meta:
-        verbose_name = "категорию"
+        verbose_name = "Категория обращения в поддержку"
         verbose_name_plural = "Категории обращения в поддержку"
 
 
@@ -299,5 +299,5 @@ class AppealSupport(TimeStampedModel):
     status = models.CharField("Статус", max_length=30, choices=AppealSupportStatus.choices)
 
     class Meta:
-        verbose_name = "обращение"
+        verbose_name = "Обращение в поддержку"
         verbose_name_plural = "Обращения в поддержку"
