@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import {
   AppBar, Typography, Stack, Badge, Toolbar, Menu, MenuItem, Avatar, Box,
@@ -39,17 +38,6 @@ const Header = ({ title, withBackBtn = false }) => {
   const auth = useAuth();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState(null);
-  const [profileData, setProfileData] = useState({});
-  const [errorMessage, setErrorMessage] = useState('');
-
-  useEffect(() => {
-    ProfileService.getProfileData()
-      .then(response => response.data.data)
-      .then(data => setProfileData({ ...profileData, ...data }))
-      .catch(error => setErrorMessage(error));
-  }, []);
-
-  const { avatar, username } = profileData;
   const [profileData, setProfileData] = useState({});
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -135,7 +123,7 @@ const Header = ({ title, withBackBtn = false }) => {
               onClick={handleMenuClick}
               sx={{ display: 'flex', cursor: 'pointer' }}
             >
-              <Typography color="text.secondary" sx={{ fontSize: '16px', display: { xs: 'none', sm: 'block' } }}>{username || 'username'}</Typography>
+              <Typography color="text.secondary" sx={{ fontSize: '16px', display: { xs: 'none', sm: 'block' } }}>{'username' && username}</Typography>
               <ExpandMoreOutlinedIcon
                 fontSize="medium"
                 sx={{ color: '#9E9E9E' }}
