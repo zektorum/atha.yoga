@@ -15,8 +15,8 @@ jobs:
       - name: Trigger Jenkins job
         uses: joshlk/jenkins-githubaction@master
         with:
-          url: ${{ env.JENKINS_URL }}
-          job_name: ${{ env.JOB_NAME }}
-          username: ${{ env.USERNAME }}
-          api_token: ${{ env.API_TOKEN }}
+          url: ${{ vars.JENKINS_URL }}
+          job_name: ${{ vars.JOB_NAME }}
+          username: ${{ vars.USERNAME }}
+          api_token: ${{ vars.API_TOKEN }}
           timeout: "1000"
