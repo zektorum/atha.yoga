@@ -26,14 +26,14 @@ class Migration(migrations.Migration):
                 ("category", models.CharField(max_length=30, verbose_name="Категория")),
             ],
             options={
-                "verbose_name": "категорию",
+                "verbose_name": "Категория обращения в поддержку",
                 "verbose_name_plural": "Категории обращения в поддержку",
             },
         ),
         migrations.AlterModelOptions(
             name="appealsupport",
             options={
-                "verbose_name": "обращение",
+                "verbose_name": "Обращение в поддержку",
                 "verbose_name_plural": "Обращения в поддержку",
             },
         ),
