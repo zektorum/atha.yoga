@@ -1,0 +1,22 @@
+name: Jenkins
+
+on:
+  push:
+    branches: [develop]
+  pull_request:
+    branches: [develop]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build project
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Trigger Jenkins job
+        uses: joshlk/jenkins-githubaction@master
+        with:
+          url: ${{ secrets.JENKINS_URL }}
+          job_name: ${{ secrets.JOB_NAME }}
+          username: ${{ secrets.USERNAME }}
+          api_token: ${{ secrets.API_TOKEN }}
+          timeout: "1000"
