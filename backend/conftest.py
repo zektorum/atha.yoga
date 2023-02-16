@@ -1,8 +1,0 @@
-from typing import Any
-
-import pytest
-
-
-@pytest.fixture(autouse=True)
-def enable_db_access_for_all_tests(db: Any) -> None:
-    pass
