@@ -77,7 +77,7 @@ pipeline {
         stage('Inspect containers') {
             steps {
                 script {
-                   def containers = "back front elasticsearch db redis dozzle rabbitmq flower".split(" ")
+                   def containers = "backend frontend elasticsearch db redis dozzle rabbitmq flower".split(" ")
                    for (container in containers) {
                         STATUS = getContainerStatus("${container}.${BRANCH_NAME}.test")
                         if (STATUS == "exited\n") {
