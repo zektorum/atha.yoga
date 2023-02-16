@@ -10,8 +10,8 @@ services:
     ports:
       - "${BACKEND_PORT}:8000"
     volumes:
-      - ./back/static:/opt/services/back/src/static
-      - ./back/core/logs:/opt/services/back/src/core/logs
+      - ./back/static:/opt/services/backend/src/static
+      - ./back/core/logs:/opt/services/backend/src/core/logs
     depends_on:
       - db
 
