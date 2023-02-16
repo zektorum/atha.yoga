@@ -34,21 +34,21 @@ pipeline {
             steps {
                 step([$class: 'GitHubCommitStatusSetter', statusResultSource : [$class: 'DefaultStatusResultSource']])
                 sh '''
-                    wget -O backend/.env.master $MASTER_ENV_LINK
-                    wget -O backend/.env.develop $DEVELOP_ENV_LINK
-                    wget -O backend/.env.stage $STAGE_ENV_LINK
-                    chmod g+w backend/.env.*
-                    cat .env/.ci-env.${BRANCH_NAME}.test > backend/.env.test
-                    cat backend/.env.${BRANCH_NAME} >> backend/.env.test
-                    cat .env/.ci-env.${BRANCH_NAME} > backend/.env
-                    cat backend/.env.${BRANCH_NAME} >> backend/.env
-                    COMPOSE_PROJECT_NAME=${BRANCH_NAME}.test docker-compose --env-file backend/.env.test -p test build
+                    wget -O back/.env.master $MASTER_ENV_LINK
+                    wget -O back/.env.develop $DEVELOP_ENV_LINK
+                    wget -O back/.env.stage $STAGE_ENV_LINK
+                    chmod g+w back/.env.*
+                    cat .env/.ci-env.${BRANCH_NAME}.test > back/.env.test
+                    cat back/.env.${BRANCH_NAME} >> back/.env.test
+                    cat .env/.ci-env.${BRANCH_NAME} > back/.env
+                    cat back/.env.${BRANCH_NAME} >> back/.env
+                    COMPOSE_PROJECT_NAME=${BRANCH_NAME}.test docker-compose --env-file back/.env.test -p test build
                 '''
             }
         }
         stage('Run') {
             steps {
-                 sh 'COMPOSE_PROJECT_NAME=${BRANCH_NAME}.test docker-compose --env-file backend/.env.test -p test \
+                 sh 'COMPOSE_PROJECT_NAME=${BRANCH_NAME}.test docker-compose --env-file back/.env.test -p test \
                      up -d --force-recreate'
             }
         }
@@ -63,7 +63,7 @@ pipeline {
                         } else if (STATUS == "exited\n" && !(EXIT_CODE == "0\n")) {
                             publishHTML([
                                 alwaysLinkToLastBuild: true, keepAll: true,
-                                reportDir: 'frontend/tests/cypress/reports/html/', reportFiles: 'index.html',
+                                reportDir: 'front/tests/cypress/reports/html/', reportFiles: 'index.html',
                                 reportName: 'Test report', reportTitles: 'The Report'
                             ])
                             return true;
@@ -77,23 +77,23 @@ pipeline {
         stage('Inspect containers') {
             steps {
                 script {
-                   def containers = "backend frontend elasticsearch db redis dozzle rabbitmq flower".split(" ")
+                   def containers = "back front elasticsearch db redis dozzle rabbitmq flower".split(" ")
                    for (container in containers) {
                         STATUS = getContainerStatus("${container}.${BRANCH_NAME}.test")
                         if (STATUS == "exited\n") {
-                            sh 'COMPOSE_PROJECT_NAME=${BRANCH_NAME}.test docker-compose --env-file backend/.env.test \
+                            sh 'COMPOSE_PROJECT_NAME=${BRANCH_NAME}.test docker-compose --env-file back/.env.test \
                                 -p test down'
                             error "${container}.${BRANCH_NAME}.test failed. Exiting..."
                         }
                    }
-                   sh 'COMPOSE_PROJECT_NAME=${BRANCH_NAME}.test docker-compose --env-file backend/.env.test -p test down'
+                   sh 'COMPOSE_PROJECT_NAME=${BRANCH_NAME}.test docker-compose --env-file back/.env.test -p test down'
                 }
             }
         }
         stage('Deploy') {
             steps {
-                sh 'COMPOSE_PROJECT_NAME=${BRANCH_NAME}.test docker-compose --env-file backend/.env -p ${BRANCH_NAME} build'
-                sh "COMPOSE_PROJECT_NAME=${BRANCH_NAME} docker-compose --env-file backend/.env -p ${BRANCH_NAME} \
+                sh 'COMPOSE_PROJECT_NAME=${BRANCH_NAME}.test docker-compose --env-file back/.env -p ${BRANCH_NAME} build'
+                sh "COMPOSE_PROJECT_NAME=${BRANCH_NAME} docker-compose --env-file back/.env -p ${BRANCH_NAME} \
                     up -d --force-recreate"
             }
         }

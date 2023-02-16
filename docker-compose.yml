@@ -2,7 +2,7 @@ version: '3'
 
 services:
   server:
-    build: backend/
+    build: back/
     container_name: "backend.${COMPOSE_PROJECT_NAME}"
     env_file:
       - "${ENV_FILE}"
@@ -10,13 +10,13 @@ services:
     ports:
       - "${BACKEND_PORT}:8000"
     volumes:
-      - ./backend/static:/opt/services/backend/src/static
-      - ./backend/core/logs:/opt/services/backend/src/core/logs
+      - ./back/static:/opt/services/back/src/static
+      - ./back/core/logs:/opt/services/back/src/core/logs
     depends_on:
       - db
 
   frontend:
-    build: frontend/
+    build: front/
     container_name: "frontend.${COMPOSE_PROJECT_NAME}"
     env_file:
       - ".env/.ci-env.${COMPOSE_PROJECT_NAME}"
@@ -24,7 +24,7 @@ services:
       - "${FRONTEND_PORT}:8080"
 
   cypress:
-    build: frontend/tests/
+    build: front/tests/
     container_name: "cypress.${COMPOSE_PROJECT_NAME}"
     env_file:
       - ".env/.ci-env.${COMPOSE_PROJECT_NAME}"
@@ -32,8 +32,8 @@ services:
       - "CYPRESS_baseUrl=http://frontend.${COMPOSE_PROJECT_NAME}:8080"
       - "BRANCH_NAME=${CONTAINER_SUFFIX}"
     volumes:
-      - ./frontend/tests/cypress/reports/:/e2e/cypress/reports/
-      - ./frontend/tests/cypress/videos/:/e2e/cypress/videos/
+      - ./front/tests/cypress/reports/:/e2e/cypress/reports/
+      - ./front/tests/cypress/videos/:/e2e/cypress/videos/
     depends_on:
       - frontend
 
